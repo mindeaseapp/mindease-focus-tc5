@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:mindease_focus/features/features.dart';
+import 'features/dashboard/presentation/dashboard_page.dart';
 
 void main() {
   runApp(const MindEaseApp());
@@ -11,9 +11,11 @@ class MindEaseApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: DashboardPage(),
+      title: 'MindEase',
+      theme: ThemeData(useMaterial3: true),
+      home: const DashboardPage(),
     );
   }
 }

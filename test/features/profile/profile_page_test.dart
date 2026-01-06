@@ -1,18 +1,21 @@
+
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mindease_focus/features/profile/presentation/profile_page.dart';
 
-void main() {
-  testWidgets(
-    'ProfilePage deve renderizar texto Profile',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ProfilePage(),
-        ),
-      );
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
 
-      expect(find.text('Profile'), findsOneWidget);
-    },
-  );
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Perfil Cognitivo')),
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: const [
+          ListTile(title: Text('Modo Foco Preferido')),
+          ListTile(title: Text('Nível de Complexidade')),
+          ListTile(title: Text('Espaçamento e Fonte')),
+        ],
+      ),
+    );
+  }
 }

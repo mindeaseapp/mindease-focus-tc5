@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -5,8 +6,16 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('Profile')),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Perfil Cognitivo')),
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: const [
+          ListTile(title: Text('Modo Foco Preferido')),
+          ListTile(title: Text('Nível de Complexidade')),
+          ListTile(title: Text('Espaçamento e Fonte')),
+        ],
+      ),
     );
   }
 }
