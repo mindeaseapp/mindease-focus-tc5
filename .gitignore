@@ -1,11 +1,33 @@
-.gitignore# Node
+# =========================
+# Node / Web
+# =========================
 node_modules/
 npm-debug.log*
 yarn-error.log*
+package-lock.json
 
+# =========================
 # Flutter
+# =========================
 .dart_tool/
 .build/
 .flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
+
+# Builds
+build/
+web/build/
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+*.iml
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
