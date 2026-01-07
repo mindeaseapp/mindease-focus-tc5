@@ -8,7 +8,8 @@
       "version": "1.0.0+1",
       "dependencies": [
         "flutter",
-        "flutter_svg"
+        "flutter_svg",
+        "provider"
       ],
       "devDependencies": [
         "flutter_lints",
@@ -49,6 +50,15 @@
         "vector_graphics",
         "vector_graphics_codec",
         "vector_graphics_compiler"
+      ]
+    },
+    {
+      "name": "provider",
+      "version": "6.1.5+1",
+      "dependencies": [
+        "collection",
+        "flutter",
+        "nested"
       ]
     },
     {
@@ -186,6 +196,13 @@
         "http_parser",
         "meta",
         "web"
+      ]
+    },
+    {
+      "name": "nested",
+      "version": "1.0.0",
+      "dependencies": [
+        "flutter"
       ]
     },
     {

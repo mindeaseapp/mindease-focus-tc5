@@ -1,19 +1,28 @@
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../../shared/controllers/theme_controller.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.watch<ThemeController>();
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Perfil Cognitivo')),
+      appBar: AppBar(
+        title: const Text('Perfil Cognitivo'),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(24),
-        children: const [
-          ListTile(title: Text('Modo Foco Preferido')),
-          ListTile(title: Text('Nível de Complexidade')),
-          ListTile(title: Text('Espaçamento e Fonte')),
+        children: [
+          SwitchListTile(
+            title: const Text('Modo Escuro'),
+            subtitle: const Text('Interface com fundo escuro'),
+            value: theme.isDark,
+            onChanged: theme.toggleDarkMode,
+          ),
         ],
       ),
     );

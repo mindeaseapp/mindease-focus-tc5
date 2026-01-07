@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'features/routes.dart';
-import 'shared/tokens/app_typography.dart';
+import 'shared/controllers/theme_controller.dart';
+import 'shared/tokens/app_theme.dart';
 
 void main() {
-  runApp(const MindEaseApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeController(),
+      child: const MindEaseApp(),
+    ),
+  );
 }
 
 class MindEaseApp extends StatelessWidget {
@@ -11,37 +19,17 @@ class MindEaseApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = context.watch<ThemeController>();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MindEase',
 
-      theme: ThemeData(
-        useMaterial3: true,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: themeController.mode,
 
-        // 🔤 FONTE GLOBAL DO APP
-        fontFamily: AppTypography.fontFamily,
-
-        // (opcional, mas profissional)
-        textTheme: const TextTheme(
-          displayLarge: AppTypography.displayLarge,
-          displayMedium: AppTypography.displayMedium,
-          displaySmall: AppTypography.displaySmall,
-          headlineLarge: AppTypography.h1,
-          headlineMedium: AppTypography.h2,
-          headlineSmall: AppTypography.h3,
-          bodyLarge: AppTypography.bodyLarge,
-          bodyMedium: AppTypography.body,
-          bodySmall: AppTypography.bodySmall,
-          labelLarge: AppTypography.labelLarge,
-          labelMedium: AppTypography.label,
-          labelSmall: AppTypography.labelSmall,
-        ),
-      ),
-
-      // ✅ PRIMEIRA TELA
       initialRoute: AppRoutes.login,
-
-      // ✅ MAPA DE ROTAS (Clean)
       routes: AppRoutes.routes,
     );
   }

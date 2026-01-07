@@ -8,6 +8,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # 🔁 Gerenciamento de estado (ThemeController)
+  provider: ^6.0.5
+
+  # 🖼 SVG (opcional, mas já configurado)
   flutter_svg: ^2.2.3
 
 dev_dependencies:
