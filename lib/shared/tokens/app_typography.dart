@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 
-/// Design Tokens — Typography
-/// Tipografia acessível, previsível e escalável
-/// Pensada para reduzir sobrecarga cognitiva
 class AppTypography {
-
-  // 🔹 Font family padrão do app
   static const String fontFamily = 'Inter';
 
-  // 🔹 Pesos mais usados
+  // Weights
   static const FontWeight light = FontWeight.w300;
   static const FontWeight regular = FontWeight.w400;
   static const FontWeight medium = FontWeight.w500;
   static const FontWeight semiBold = FontWeight.w600;
   static const FontWeight bold = FontWeight.w700;
 
-  // 🔹 Display (títulos grandes)
+  // Display
   static const TextStyle displayLarge = TextStyle(
     fontSize: 48,
     fontWeight: bold,
@@ -34,7 +29,7 @@ class AppTypography {
     height: 1.25,
   );
 
-  // 🔹 Headings
+  // Headlines
   static const TextStyle h1 = TextStyle(
     fontSize: 28,
     fontWeight: semiBold,
@@ -53,7 +48,7 @@ class AppTypography {
     height: 1.4,
   );
 
-  // 🔹 Body
+  // Body
   static const TextStyle bodyLarge = TextStyle(
     fontSize: 18,
     fontWeight: regular,
@@ -72,7 +67,7 @@ class AppTypography {
     height: 1.5,
   );
 
-  // 🔹 Labels / Inputs / Buttons
+  // Labels
   static const TextStyle labelLarge = TextStyle(
     fontSize: 16,
     fontWeight: medium,
@@ -91,23 +86,36 @@ class AppTypography {
     letterSpacing: 0.3,
   );
 
-  // 🔹 Links
-  static const TextStyle link = TextStyle(
-    fontSize: 14,
-    fontWeight: medium,
-    decoration: TextDecoration.underline,
-  );
-
-  // 🔹 Helpers (feedback cognitivo)
+  // Supporting
   static const TextStyle helper = TextStyle(
     fontSize: 12,
     fontWeight: regular,
     height: 1.4,
   );
 
+  static const TextStyle caption = TextStyle(
+    fontSize: 12,
+    fontWeight: regular,
+    color: Colors.grey,
+  );
+
+  // Interaction
+  static const TextStyle link = TextStyle(
+    fontSize: 14,
+    fontWeight: medium,
+    decoration: TextDecoration.underline,
+  );
+
+  // Feedback
   static const TextStyle error = TextStyle(
     fontSize: 12,
     fontWeight: medium,
     color: Colors.redAccent,
+  );
+
+  static const TextStyle success = TextStyle(
+    fontSize: 12,
+    fontWeight: medium,
+    color: Colors.green,
   );
 }

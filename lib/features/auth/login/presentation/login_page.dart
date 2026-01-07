@@ -7,8 +7,15 @@ import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 
 import 'login_styles.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -47,21 +54,47 @@ class LoginPage extends StatelessWidget {
                       style: LoginStyles.title,
                     ),
                     SizedBox(height: AppSpacing.lg),
+
+                    // 📧 EMAIL
                     const TextField(
-                      decoration: InputDecoration(labelText: 'Email'),
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        prefixIcon: Icon(Icons.email_outlined),
+                      ),
                     ),
+
                     SizedBox(height: AppSpacing.md),
-                    const TextField(
-                      decoration: InputDecoration(labelText: 'Senha'),
-                      obscureText: true,
+
+                    // 🔒 SENHA
+                    TextField(
+                      obscureText: _obscurePassword,
+                      decoration: InputDecoration(
+                        labelText: 'Senha',
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
+                      ),
                     ),
+
                     SizedBox(height: AppSpacing.lg),
+
                     SizedBox(
                       width: double.infinity,
                       height: AppSizes.buttonHeight,
-                      child: ElevatedButton(
+                      child: ElevatedButton.icon(
                         onPressed: () {},
-                        child: Text(
+                        icon: const Icon(Icons.login),
+                        label: Text(
                           'Entrar',
                           style: LoginStyles.buttonText,
                         ),

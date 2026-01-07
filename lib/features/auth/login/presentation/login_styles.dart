@@ -23,3 +23,4 @@ class LoginStyles {
 
   static const double cardPadding = AppSpacing.xl;
 }
+
