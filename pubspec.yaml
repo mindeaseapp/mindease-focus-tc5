@@ -21,8 +21,6 @@ flutter:
   # 📂 Assets
   assets:
     - assets/fonts/
-    - assets/icons/
-
 
   # 🔤 Fontes — Inter
   fonts:
