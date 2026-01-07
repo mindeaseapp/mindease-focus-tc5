@@ -82,24 +82,42 @@ Resultado esperado:
 
 Na raiz do projeto:
 
+### 1️⃣ flutter clean
+Limpa arquivos temporários e o cache de build do Flutter.
+
+Use quando:
+- houver mudanças na estrutura do projeto
+- ocorrerem erros inesperados de compilação
+- após grandes refatorações
+
 ```bash
-flutter pub get
-flutter run -d chrome
+flutter clean
 ```
 
 ---
 
-## ▶️ Rodar o projeto — MOBILE (Android)
-
-### Emulador
-1. Abrir Android Studio
-2. Iniciar um emulador
-3. Rodar:
+### 2️⃣ flutter pub get
+Instala e resolve todas as dependências definidas no `pubspec.yaml`.
 
 ```bash
 flutter pub get
-flutter run
 ```
+
+---
+
+### 3️⃣ flutter run -d chrome
+Executa a aplicação Flutter no navegador Google Chrome (Flutter Web).
+
+```bash
+flutter run -d chrome
+```
+
+> Caso o projeto ainda não tenha suporte Web:
+```bash
+flutter create .
+```
+
+---
 
 ### Dispositivo físico
 - Ativar Depuração USB

@@ -1,6 +1,5 @@
-
 import 'package:flutter/material.dart';
-import 'features/dashboard/presentation/dashboard_page.dart';
+import 'features/routes.dart';
 
 void main() {
   runApp(const MindEaseApp());
@@ -15,7 +14,12 @@ class MindEaseApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'MindEase',
       theme: ThemeData(useMaterial3: true),
-      home: const DashboardPage(),
+
+      // ✅ PRIMEIRA TELA
+      initialRoute: AppRoutes.login,
+
+      // ✅ MAPA DE ROTAS (Clean)
+      routes: AppRoutes.routes,
     );
   }
 }
