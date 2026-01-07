@@ -54,6 +54,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isSubmitting = true);
 
+      // Simulação de login
       Future.delayed(const Duration(seconds: 2), () {
         setState(() => _isSubmitting = false);
       });
@@ -179,6 +180,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           AppSpacing.gapLg,
 
+          // EMAIL
           TextFormField(
             controller: _emailController,
             validator: EmailValidator.validate,
@@ -191,6 +193,7 @@ class _LoginPageState extends State<LoginPage> {
 
           AppSpacing.gapMd,
 
+          // SENHA
           TextFormField(
             controller: _passwordController,
             obscureText: _obscurePassword,
@@ -214,6 +217,7 @@ class _LoginPageState extends State<LoginPage> {
 
           AppSpacing.gapSm,
 
+          // ESQUECI MINHA SENHA
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
@@ -231,6 +235,7 @@ class _LoginPageState extends State<LoginPage> {
 
           AppSpacing.gapLg,
 
+          // BOTÃO ENTRAR
           SizedBox(
             width: double.infinity,
             height: AppSizes.buttonHeight,
@@ -239,6 +244,35 @@ class _LoginPageState extends State<LoginPage> {
               child: _isSubmitting
                   ? const CircularProgressIndicator(color: Colors.white)
                   : const Text('Entrar'),
+            ),
+          ),
+
+          AppSpacing.gapMd,
+
+          // CADASTRO
+          Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Não tem uma conta? ',
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/register');
+                  },
+                  child: Text(
+                    'Cadastre-se',
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: AppTypography.semiBold,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
