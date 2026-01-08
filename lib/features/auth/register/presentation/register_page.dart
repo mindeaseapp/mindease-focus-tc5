@@ -15,7 +15,6 @@ import 'package:mindease_focus/features/auth/domain/validators/register_form_val
 
 import 'package:mindease_focus/features/auth/register/presentation/register_styles.dart';
 
-
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -166,7 +165,7 @@ class _RegisterPageState extends State<RegisterPage> {
       key: _formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Column(
-        mainAxisSize: MainAxisSize.min, // 🔥 chave do ajuste
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Crie sua conta', style: RegisterStyles.title),
@@ -178,31 +177,26 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
           AppSpacing.gapLg,
-
           TextFormField(
             controller: _nameController,
             validator: NameValidator.validate,
             onChanged: (_) => _updateFormValidity(),
-            decoration: const InputDecoration(
+            decoration: const InputDecoration( 
               labelText: 'Nome completo',
-              prefixIcon: Icon(Icons.person_outline),
+              prefixIcon: Icon(Icons.person_outline), 
             ),
           ),
-
           AppSpacing.gapMd,
-
           TextFormField(
             controller: _emailController,
             validator: EmailValidator.validate,
             onChanged: (_) => _updateFormValidity(),
-            decoration: const InputDecoration(
+            decoration: const InputDecoration( 
               labelText: 'Email',
               prefixIcon: Icon(Icons.email_outlined),
             ),
           ),
-
           AppSpacing.gapMd,
-
           TextFormField(
             controller: _passwordController,
             obscureText: _obscurePassword,
@@ -210,7 +204,7 @@ class _RegisterPageState extends State<RegisterPage> {
             onChanged: (_) => _updateFormValidity(),
             decoration: InputDecoration(
               labelText: 'Senha',
-              prefixIcon: const Icon(Icons.lock_outline),
+              prefixIcon: const Icon(Icons.lock_outline), 
               suffixIcon: IconButton(
                 icon: Icon(
                   _obscurePassword
@@ -222,9 +216,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
           ),
-
           AppSpacing.gapMd,
-
           TextFormField(
             controller: _confirmPasswordController,
             obscureText: _obscureConfirmPassword,
@@ -235,7 +227,7 @@ class _RegisterPageState extends State<RegisterPage> {
             onChanged: (_) => _updateFormValidity(),
             decoration: InputDecoration(
               labelText: 'Confirmar senha',
-              prefixIcon: const Icon(Icons.lock_outline),
+              prefixIcon: const Icon(Icons.lock_outline), 
               suffixIcon: IconButton(
                 icon: Icon(
                   _obscureConfirmPassword
@@ -248,9 +240,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
           ),
-
           AppSpacing.gapSm,
-
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -261,7 +251,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   _updateFormValidity();
                 },
               ),
-              Expanded(
+              const Expanded( 
                 child: Text(
                   'Eu aceito os termos de uso e a política de privacidade',
                   style: AppTypography.bodySmall,
@@ -269,26 +259,22 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ],
           ),
-
           AppSpacing.gapMd,
-
           SizedBox(
             width: double.infinity,
             height: AppSizes.buttonHeight,
             child: ElevatedButton(
               onPressed: (!_isFormValid || _isSubmitting) ? null : _submit,
               child: _isSubmitting
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Criar conta'),
+                  ? const CircularProgressIndicator(color: Colors.white) 
+                  : const Text('Criar conta'), 
             ),
           ),
-
           AppSpacing.gapMd,
-
           Center(
             child: TextButton(
               onPressed: () => Navigator.pushNamed(context, '/login'),
-              child: const Text('Já tem uma conta? Entrar'),
+              child: const Text('Já tem uma conta? Entrar'), 
             ),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:mindease_focus/shared/tokens/app_colors.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
@@ -17,7 +18,8 @@ class RegisterStyles {
   );
 
   static final TextStyle description = AppTypography.body.copyWith(
-    color: AppColors.textOnPrimary.withOpacity(0.85),
+    // 🔧 substitui withOpacity (deprecated) sem alterar visual
+    color: AppColors.textOnPrimary.withValues(alpha: 0.85),
   );
 
   static const double cardPadding = AppSpacing.xl;

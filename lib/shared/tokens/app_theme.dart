@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
-import 'app_sizes.dart';
-import 'app_spacing.dart';
-import 'app_typography.dart';
+
+import 'package:mindease_focus/shared/tokens/app_colors.dart';
+import 'package:mindease_focus/shared/tokens/app_sizes.dart';
+import 'package:mindease_focus/shared/tokens/app_spacing.dart';
+import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class AppTheme {
   AppTheme._();
@@ -85,8 +86,8 @@ class AppTheme {
         ),
       ),
 
-      hintStyle: TextStyle(color: AppColors.inputHint),
-      labelStyle: TextStyle(color: AppColors.textSecondary),
+      hintStyle: const TextStyle(color: AppColors.inputHint),
+      labelStyle: const TextStyle(color: AppColors.textSecondary),
       errorStyle: AppTypography.error,
     ),
 
@@ -100,7 +101,6 @@ class AppTheme {
         foregroundColor: AppColors.buttonPrimaryText,
         textStyle: AppTypography.labelLarge,
         shape: RoundedRectangleBorder(
-          // 🔧 CORREÇÃO: era borderRadiusMd (não existe)
           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
         ),
       ),
@@ -158,8 +158,8 @@ class AppTheme {
     // ======================================================
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: AppColors.card,
-      indicatorColor: AppColors.primary.withOpacity(0.12),
-      labelTextStyle: MaterialStateProperty.all(
+      indicatorColor: AppColors.primary.withValues(alpha: 0.12),
+      labelTextStyle: WidgetStateProperty.all(
         AppTypography.labelSmall,
       ),
     ),
@@ -170,7 +170,6 @@ class AppTheme {
     drawerTheme: DrawerThemeData(
       backgroundColor: AppColors.card,
       shape: RoundedRectangleBorder(
-        // 🔧 CORREÇÃO: era borderRadiusLg (não existe)
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       ),
     ),
@@ -187,8 +186,8 @@ class AppTheme {
     // 🧠 Focus / Accessibility
     // ======================================================
     focusColor: AppColors.focus,
-    hoverColor: AppColors.primary.withOpacity(0.04),
-    splashColor: AppColors.primary.withOpacity(0.08),
+    hoverColor: AppColors.primary.withValues(alpha: 0.04),
+    splashColor: AppColors.primary.withValues(alpha: 0.08),
     highlightColor: Colors.transparent,
 
     // ======================================================

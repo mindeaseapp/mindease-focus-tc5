@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-
 import 'package:mindease_focus/shared/tokens/app_colors.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class ResetPasswordStyles {
-  static final TextStyle title = AppTypography.h2;
+  // Use 'static const' apenas para o que for puro (sem copyWith)
+  static const TextStyle title = AppTypography.h2;
 
+  // Use 'static final' para o que usa copyWith ou withValues
   static final TextStyle brand = AppTypography.h1.copyWith(
     color: AppColors.textOnPrimary,
   );
@@ -16,13 +17,13 @@ class ResetPasswordStyles {
   );
 
   static final TextStyle description = AppTypography.body.copyWith(
-    color: AppColors.textOnPrimary.withOpacity(0.85),
+    color: AppColors.textOnPrimary.withValues(alpha: 0.85),
   );
 
   static final TextStyle helper = AppTypography.bodySmall.copyWith(
     color: AppColors.textSecondary,
   );
 
-  // ❗ NÃO USAR const aqui
-  static final double cardPadding = AppSpacing.cardPadding;
+  // ✅ CORREÇÃO: Garante que o padding seja uma constante absoluta
+  static const double cardPadding = AppSpacing.cardPadding;
 }

@@ -19,7 +19,7 @@ class LoginStyles {
   );
 
   static final TextStyle description = AppTypography.body.copyWith(
-    color: AppColors.textOnPrimary.withOpacity(0.85),
+    color: AppColors.textOnPrimary.withValues(alpha: 0.85),
   );
 
   static const double cardPadding = AppSpacing.xl;

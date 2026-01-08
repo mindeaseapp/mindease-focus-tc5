@@ -9,11 +9,11 @@ class DashboardPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('MindEase – Painel Cognitivo'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
+      body: const Padding(
+        padding: EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             ElevatedButton(
               onPressed: null,
               child: Text('Kanban + Pomodoro'),

@@ -11,7 +11,7 @@ class GradientPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(AppSpacing.xl), 
+      padding: const EdgeInsets.all(AppSpacing.xl), 
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [

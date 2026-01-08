@@ -1,6 +1,5 @@
-
 import 'package:flutter/material.dart';
-import 'pomodoro_widget.dart';
+import 'package:mindease_focus/features/tasks/presentation/pomodoro_widget.dart';
 
 class TasksPage extends StatelessWidget {
   const TasksPage({super.key});
@@ -9,8 +8,8 @@ class TasksPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Kanban Cognitivo')),
-      body: Column(
-        children: const [
+      body: const Column(
+        children: [
           Expanded(
             child: Row(
               children: [

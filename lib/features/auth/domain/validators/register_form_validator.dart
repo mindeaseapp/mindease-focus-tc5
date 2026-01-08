@@ -1,7 +1,7 @@
-import 'email_validator.dart';
-import 'password_validator.dart';
-import 'name_validator.dart';
-import 'confirm_password_validator.dart';
+import 'package:mindease_focus/features/auth/domain/validators/confirm_password_validator.dart';
+import 'package:mindease_focus/features/auth/domain/validators/email_validator.dart';
+import 'package:mindease_focus/features/auth/domain/validators/name_validator.dart';
+import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
 
 class RegisterFormValidator {
   static bool isValid({
