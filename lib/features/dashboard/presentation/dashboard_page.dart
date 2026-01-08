@@ -1,7 +1,4 @@
-
 import 'package:flutter/material.dart';
-import '../../tasks/presentation/tasks_page.dart';
-import '../../profile/presentation/profile_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -9,26 +6,22 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('MindEase – Painel Cognitivo')),
+      appBar: AppBar(
+        title: const Text('MindEase – Painel Cognitivo'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
             ElevatedButton(
-              child: const Text('Kanban + Pomodoro'),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const TasksPage()),
-              ),
+              onPressed: null,
+              child: Text('Kanban + Pomodoro'),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             ElevatedButton(
-              child: const Text('Perfil Cognitivo'),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ProfilePage()),
-              ),
+              onPressed: null,
+              child: Text('Perfil Cognitivo'),
             ),
           ],
         ),

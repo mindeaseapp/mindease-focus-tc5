@@ -56,7 +56,9 @@ class _LoginPageState extends State<LoginPage> {
 
       // Simulação de login
       Future.delayed(const Duration(seconds: 2), () {
-        setState(() => _isSubmitting = false);
+        if (mounted) {
+          setState(() => _isSubmitting = false);
+        }
       });
     }
   }
@@ -249,13 +251,14 @@ class _LoginPageState extends State<LoginPage> {
 
           AppSpacing.gapMd,
 
-          // CADASTRO
+          // ✅ CADASTRO — CORREÇÃO DEFINITIVA (SEM OVERFLOW)
           Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 4,
               children: [
                 Text(
-                  'Não tem uma conta? ',
+                  'Não tem uma conta?',
                   style: AppTypography.bodySmall.copyWith(
                     color: AppColors.textSecondary,
                   ),

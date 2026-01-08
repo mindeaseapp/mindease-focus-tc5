@@ -1,21 +1,28 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+import 'package:mindease_focus/features/profile/presentation/profile_page.dart';
+import 'package:mindease_focus/shared/controllers/theme_controller.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Perfil Cognitivo')),
-      body: ListView(
-        padding: const EdgeInsets.all(24),
-        children: const [
-          ListTile(title: Text('Modo Foco Preferido')),
-          ListTile(title: Text('Nível de Complexidade')),
-          ListTile(title: Text('Espaçamento e Fonte')),
-        ],
-      ),
-    );
-  }
+void main() {
+  testWidgets(
+    'ProfilePage renderiza título e opções',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ChangeNotifierProvider(
+          create: (_) => ThemeController(),
+          child: const MaterialApp(
+            home: ProfilePage(),
+          ),
+        ),
+      );
+
+      // AppBar
+      expect(find.text('Perfil Cognitivo'), findsOneWidget);
+
+      // Opção de tema
+      expect(find.text('Modo Escuro'), findsOneWidget);
+    },
+  );
 }

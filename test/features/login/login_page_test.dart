@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:mindease_focus/features/tasks/presentation/tasks_page.dart';
+import 'package:mindease_focus/features/auth/login/presentation/login_page.dart';
 
 void main() {
   testWidgets(
-    'TasksPage renderiza título Kanban + Pomodoro',
+    'LoginPage renderiza campos principais',
     (WidgetTester tester) async {
+      // Define tamanho de tela realista
       tester.binding.window.physicalSizeTestValue =
           const Size(1440, 900);
       tester.binding.window.devicePixelRatioTestValue = 1.0;
@@ -18,12 +19,15 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: TasksPage(),
+          home: LoginPage(),
         ),
       );
 
-      // AppBar existe
-      expect(find.byType(AppBar), findsOneWidget);
+      await tester.pumpAndSettle();
+
+      // Verificações estáveis
+      expect(find.byType(TextFormField), findsWidgets);
+      expect(find.text('Entrar'), findsOneWidget);
     },
   );
 }
