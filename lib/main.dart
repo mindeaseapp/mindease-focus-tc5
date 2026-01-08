@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mindease_focus/features/routes.dart';
-import 'package:mindease_focus/shared/controllers/theme_controller.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/theme_controller.dart';
 import 'package:mindease_focus/shared/tokens/app_theme.dart';
 
 void main() {

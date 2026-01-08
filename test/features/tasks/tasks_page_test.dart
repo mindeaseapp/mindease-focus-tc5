@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:mindease_focus/features/tasks/presentation/tasks_page.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/tasks/tasks_page.dart';
 
 void main() {
   testWidgets(

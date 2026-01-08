@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mindease_focus/features/tasks/presentation/pomodoro_widget.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/tasks/pomodoro_widget.dart';
 
 class TasksPage extends StatelessWidget {
   const TasksPage({super.key});

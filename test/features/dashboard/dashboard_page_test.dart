@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:mindease_focus/features/dashboard/presentation/dashboard_page.dart';
-
+import 'package:mindease_focus/features/auth/presentation/pages/dashboard/dashboard_page.dart';
 void main() {
   testWidgets(
     'DashboardPage renderiza título e botões principais',

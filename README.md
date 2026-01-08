@@ -206,13 +206,78 @@ Arquivo:
 - Separação por features
 - Barrel Files (`features.dart`) para imports limpos
 
+
+## Clean Architecture adaptada para Flutter
 ```
 lib/
-├── core/
-├── features/
-│   ├── dashboard
-│   ├── tasks
-│   └── profile
+ ├─ features/
+ │   └─ auth/
+ │       ├─ presentation/
+ │       │   ├─ pages/
+ │       │   ├─ widgets/
+ │       │   └─ controllers/
+ │       │
+ │       ├─ domain/
+ │       │   ├─ entities/
+ │       │   ├─ usecases/
+ │       │   ├─ repositories/
+ │       │   └─ validators/
+ │       │
+ │       └─ data/
+ │           ├─ models/
+ │           ├─ datasources/
+ │           └─ repositories/
+ │
+ ├─ shared/
+ │   ├─ theme/
+ │   ├─ tokens/
+ │   ├─ widgets/
+ │   └─ utils/
+ │
+ ├─ routes.dart
+ └─ main.dart
+
+
+=================================================
+🔵 1. Presentation (UI)
+
+Responsabilidade:
+⦁	Widgets
+⦁	Pages
+⦁	Controllers / Cubit / Bloc / ViewModel
+⦁	Validações de formulário
+⦁	Estados de tela
+
+=================================================
+🟢 2. Domain (Regra de Negócio)
+
+Responsabilidade:
+⦁	Entidades
+⦁	UseCases
+⦁	Interfaces (contracts)
+⦁	Validators de regra de negócio
+
+
+=================================================
+🟡 3. Data (Implementação)
+
+Responsabilidade:
+
+⦁	Implementar repositórios
+⦁	DTOs / Models
+⦁	Datasources (API, local, cache)
+
+=================================================
+⚫ 4. Core / Shared (Transversal)
+
+Responsabilidade:
+
+⦁	Temas
+⦁	Tokens de design
+⦁	Helpers
+⦁	Erros globais
+⦁	Configuração de DI
+
 ```
 
 ---

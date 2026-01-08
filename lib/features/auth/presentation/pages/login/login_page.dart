@@ -7,44 +7,39 @@ import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_colors.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
-import 'package:mindease_focus/features/auth/domain/validators/name_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/email_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
-import 'package:mindease_focus/features/auth/domain/validators/confirm_password_validator.dart';
-import 'package:mindease_focus/features/auth/domain/validators/register_form_validator.dart';
+import 'package:mindease_focus/features/auth/domain/validators/login_form_validator.dart';
 
-import 'package:mindease_focus/features/auth/register/presentation/register_styles.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/login/login_styles.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
-  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
 
   bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
-  bool _acceptedTerms = false;
   bool _isSubmitting = false;
   bool _isFormValid = false;
 
   bool get _isMobile => MediaQuery.of(context).size.width < 768;
 
+  // ======================================================
+  // 🔄 FORM STATE
+  // ======================================================
+
   void _updateFormValidity() {
-    final isValid = RegisterFormValidator.isValid(
-      name: _nameController.text,
+    final isValid = LoginFormValidator.isValid(
       email: _emailController.text,
       password: _passwordController.text,
-      confirmPassword: _confirmPasswordController.text,
-      acceptedTerms: _acceptedTerms,
     );
 
     if (isValid != _isFormValid) {
@@ -59,20 +54,25 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isSubmitting = true);
 
+      // Simulação de login
       Future.delayed(const Duration(seconds: 2), () {
-        setState(() => _isSubmitting = false);
+        if (mounted) {
+          setState(() => _isSubmitting = false);
+        }
       });
     }
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
+
+  // ======================================================
+  // 🧱 UI
+  // ======================================================
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +82,9 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   // ======================================================
-  // 📱 MOBILE — NÃO MEXE
+  // 📱 MOBILE
   // ======================================================
+
   Widget _buildMobile() {
     return SingleChildScrollView(
       child: Column(
@@ -92,16 +93,16 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('MindEase', style: RegisterStyles.brand),
+                Text('MindEase', style: LoginStyles.brand),
                 AppSpacing.gapLg,
                 Text(
                   'Facilitando sua jornada acadêmica e profissional',
-                  style: RegisterStyles.subtitle,
+                  style: LoginStyles.subtitle,
                 ),
                 AppSpacing.gapMd,
                 Text(
                   'Uma plataforma pensada para pessoas neurodivergentes.',
-                  style: RegisterStyles.description,
+                  style: LoginStyles.description,
                 ),
               ],
             ),
@@ -110,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Card(
               child: Padding(
-                padding: const EdgeInsets.all(RegisterStyles.cardPadding),
+                padding: const EdgeInsets.all(LoginStyles.cardPadding),
                 child: _buildForm(),
               ),
             ),
@@ -121,34 +122,35 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   // ======================================================
-  // 🖥️ DESKTOP — AJUSTADO
+  // 🖥️ DESKTOP
   // ======================================================
+
   Widget _buildDesktop() {
     return FlexGrid(
       left: GradientPanel(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('MindEase', style: RegisterStyles.brand),
+            Text('MindEase', style: LoginStyles.brand),
             AppSpacing.gapLg,
             Text(
               'Facilitando sua jornada acadêmica e profissional',
-              style: RegisterStyles.subtitle,
+              style: LoginStyles.subtitle,
             ),
             AppSpacing.gapMd,
             Text(
               'Uma plataforma pensada para pessoas neurodivergentes.',
-              style: RegisterStyles.description,
+              style: LoginStyles.description,
             ),
           ],
         ),
       ),
       right: Center(
-        child: SizedBox(
-          width: 420,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(RegisterStyles.cardPadding),
+              padding: const EdgeInsets.all(LoginStyles.cardPadding),
               child: _buildForm(),
             ),
           ),
@@ -158,45 +160,42 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   // ======================================================
-  // 🧩 FORM — COMPACTO PARA WEB
+  // 🧩 FORM
   // ======================================================
+
   Widget _buildForm() {
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Crie sua conta', style: RegisterStyles.title),
+          Text('Bem-vindo de volta', style: LoginStyles.title),
           AppSpacing.gapSm,
           Text(
-            'Comece sua jornada com o MindEase',
+            'Entre com suas credenciais para continuar',
             style: AppTypography.bodySmall.copyWith(
               color: AppColors.textSecondary,
+              fontWeight: AppTypography.medium,
             ),
           ),
           AppSpacing.gapLg,
-          TextFormField(
-            controller: _nameController,
-            validator: NameValidator.validate,
-            onChanged: (_) => _updateFormValidity(),
-            decoration: const InputDecoration( 
-              labelText: 'Nome completo',
-              prefixIcon: Icon(Icons.person_outline), 
-            ),
-          ),
-          AppSpacing.gapMd,
+
+          // EMAIL
           TextFormField(
             controller: _emailController,
             validator: EmailValidator.validate,
             onChanged: (_) => _updateFormValidity(),
-            decoration: const InputDecoration( 
+            decoration: const InputDecoration(
               labelText: 'Email',
               prefixIcon: Icon(Icons.email_outlined),
             ),
           ),
+
           AppSpacing.gapMd,
+
+          // SENHA
           TextFormField(
             controller: _passwordController,
             obscureText: _obscurePassword,
@@ -204,77 +203,79 @@ class _RegisterPageState extends State<RegisterPage> {
             onChanged: (_) => _updateFormValidity(),
             decoration: InputDecoration(
               labelText: 'Senha',
-              prefixIcon: const Icon(Icons.lock_outline), 
+              prefixIcon: const Icon(Icons.lock_outline),
               suffixIcon: IconButton(
                 icon: Icon(
                   _obscurePassword
                       ? Icons.visibility_outlined
                       : Icons.visibility_off_outlined,
                 ),
-                onPressed: () =>
-                    setState(() => _obscurePassword = !_obscurePassword),
-              ),
-            ),
-          ),
-          AppSpacing.gapMd,
-          TextFormField(
-            controller: _confirmPasswordController,
-            obscureText: _obscureConfirmPassword,
-            validator: (_) => ConfirmPasswordValidator.validate(
-              password: _passwordController.text,
-              confirmPassword: _confirmPasswordController.text,
-            ),
-            onChanged: (_) => _updateFormValidity(),
-            decoration: InputDecoration(
-              labelText: 'Confirmar senha',
-              prefixIcon: const Icon(Icons.lock_outline), 
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscureConfirmPassword
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                ),
-                onPressed: () => setState(
-                  () => _obscureConfirmPassword = !_obscureConfirmPassword,
-                ),
-              ),
-            ),
-          ),
-          AppSpacing.gapSm,
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Checkbox(
-                value: _acceptedTerms,
-                onChanged: (value) {
-                  setState(() => _acceptedTerms = value ?? false);
-                  _updateFormValidity();
+                onPressed: () {
+                  setState(() => _obscurePassword = !_obscurePassword);
                 },
               ),
-              const Expanded( 
-                child: Text(
-                  'Eu aceito os termos de uso e a política de privacidade',
-                  style: AppTypography.bodySmall,
+            ),
+          ),
+
+          AppSpacing.gapSm,
+
+          // ESQUECI MINHA SENHA
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/reset-password');
+              },
+              child: Text(
+                'Esqueci minha senha',
+                style: AppTypography.bodySmall.copyWith(
+                  fontWeight: AppTypography.medium,
                 ),
               ),
-            ],
+            ),
           ),
-          AppSpacing.gapMd,
+
+          AppSpacing.gapLg,
+
+          // BOTÃO ENTRAR
           SizedBox(
             width: double.infinity,
             height: AppSizes.buttonHeight,
             child: ElevatedButton(
               onPressed: (!_isFormValid || _isSubmitting) ? null : _submit,
               child: _isSubmitting
-                  ? const CircularProgressIndicator(color: Colors.white) 
-                  : const Text('Criar conta'), 
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('Entrar'),
             ),
           ),
+
           AppSpacing.gapMd,
+
+          // ✅ CADASTRO — CORREÇÃO DEFINITIVA (SEM OVERFLOW)
           Center(
-            child: TextButton(
-              onPressed: () => Navigator.pushNamed(context, '/login'),
-              child: const Text('Já tem uma conta? Entrar'), 
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 4,
+              children: [
+                Text(
+                  'Não tem uma conta?',
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/register');
+                  },
+                  child: Text(
+                    'Cadastre-se',
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: AppTypography.semiBold,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
