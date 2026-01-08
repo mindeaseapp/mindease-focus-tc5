@@ -86,7 +86,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               ),
             ),
             Padding(
-              // ✅ Agora aceita 'const' porque ResetPasswordStyles.cardPadding é 'static const'
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Card(
                 child: Padding(

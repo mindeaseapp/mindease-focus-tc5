@@ -4,10 +4,8 @@ import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class ResetPasswordStyles {
-  // Use 'static const' apenas para o que for puro (sem copyWith)
   static const TextStyle title = AppTypography.h2;
 
-  // Use 'static final' para o que usa copyWith ou withValues
   static final TextStyle brand = AppTypography.h1.copyWith(
     color: AppColors.textOnPrimary,
   );
@@ -24,6 +22,5 @@ class ResetPasswordStyles {
     color: AppColors.textSecondary,
   );
 
-  // ✅ CORREÇÃO: Garante que o padding seja uma constante absoluta
   static const double cardPadding = AppSpacing.cardPadding;
 }
