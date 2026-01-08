@@ -6,8 +6,8 @@ import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 
 import 'package:mindease_focus/features/auth/domain/validators/email_validator.dart';
+import 'package:mindease_focus/features/auth/reset_password/presentation/reset_password_styles.dart';
 
-import 'reset_password_styles.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});

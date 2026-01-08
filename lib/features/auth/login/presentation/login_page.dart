@@ -11,7 +11,7 @@ import 'package:mindease_focus/features/auth/domain/validators/email_validator.d
 import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/login_form_validator.dart';
 
-import 'login_styles.dart';
+import 'package:mindease_focus/features/auth/login/presentation/login_styles.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

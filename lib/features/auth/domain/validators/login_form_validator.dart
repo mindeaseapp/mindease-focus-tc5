@@ -1,5 +1,5 @@
-import 'email_validator.dart';
-import 'password_validator.dart';
+import 'package:mindease_focus/features/auth/domain/validators/email_validator.dart';
+import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
 
 class LoginFormValidator {
   static bool isValid({

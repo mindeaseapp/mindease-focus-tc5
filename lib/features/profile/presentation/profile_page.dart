@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../shared/controllers/theme_controller.dart';
+import 'package:mindease_focus/shared/controllers/theme_controller.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

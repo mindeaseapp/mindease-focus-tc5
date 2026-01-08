@@ -1,20 +1,29 @@
 class PasswordValidator {
+  static final RegExp _hasUppercase = RegExp(r'[A-Z]');
+  static final RegExp _hasLowercase = RegExp(r'[a-z]');
+  static final RegExp _hasNumber = RegExp(r'\d');
+
   static String? validate(String? value) {
     if (value == null || value.isEmpty) {
       return 'Informe sua senha';
     }
+
     if (value.length < 8) {
       return 'A senha deve ter no mínimo 8 caracteres';
     }
-    if (!RegExp(r'[A-Z]').hasMatch(value)) {
+
+    if (!_hasUppercase.hasMatch(value)) {
       return 'Inclua pelo menos uma letra maiúscula';
     }
-    if (!RegExp(r'[a-z]').hasMatch(value)) {
+
+    if (!_hasLowercase.hasMatch(value)) {
       return 'Inclua pelo menos uma letra minúscula';
     }
-    if (!RegExp(r'\d').hasMatch(value)) {
+
+    if (!_hasNumber.hasMatch(value)) {
       return 'Inclua pelo menos um número';
     }
+
     return null;
   }
 }

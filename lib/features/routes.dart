@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 // ==============================
 // AUTH
 // ==============================
-import 'auth/login/presentation/login_page.dart';
-import 'auth/register/presentation/register_page.dart';
-import 'auth/reset_password/presentation/reset_password_page.dart';
+import 'package:mindease_focus/features/auth/login/presentation/login_page.dart';
+import 'package:mindease_focus/features/auth/register/presentation/register_page.dart';
+import 'package:mindease_focus/features/auth/reset_password/presentation/reset_password_page.dart';
 
 // ==============================
 // APP
 // ==============================
-import 'dashboard/presentation/dashboard_page.dart';
-import 'profile/presentation/profile_page.dart';
+import 'package:mindease_focus/features/dashboard/presentation/dashboard_page.dart';
+import 'package:mindease_focus/features/profile/presentation/profile_page.dart';
 
 class AppRoutes {
   // ======================================================

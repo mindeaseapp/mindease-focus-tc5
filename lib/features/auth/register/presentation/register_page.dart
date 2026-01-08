@@ -13,7 +13,8 @@ import 'package:mindease_focus/features/auth/domain/validators/password_validato
 import 'package:mindease_focus/features/auth/domain/validators/confirm_password_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/register_form_validator.dart';
 
-import 'register_styles.dart';
+import 'package:mindease_focus/features/auth/register/presentation/register_styles.dart';
+
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
