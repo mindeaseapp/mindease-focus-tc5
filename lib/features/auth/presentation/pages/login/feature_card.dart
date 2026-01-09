@@ -6,7 +6,7 @@ import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 
-/// Card para exibir features do MindEase
+/// Card para exibir features do MindEase/// Card para exibir features do MindEase
 class FeatureCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -19,8 +19,13 @@ class FeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: AppSizes.featureCardMinHeight,
+    // Usamos ConstrainedBox em vez de SizedBox com altura fixa
+    // Isso garante que o card tenha no MÍNIMO o tamanho padrão, 
+    // mas possa crescer se o texto precisar de mais espaço.
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: AppSizes.featureCardMinHeight,
+      ),
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
@@ -40,6 +45,7 @@ class FeatureCard extends StatelessWidget {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min, // Importante para não forçar expansão desnecessária
           children: [
             Container(
               padding: const EdgeInsets.all(AppSpacing.sm),
@@ -83,29 +89,37 @@ class FeatureCardsRow extends StatelessWidget {
       spacing: AppSpacing.md,
       runSpacing: AppSpacing.md,
       alignment: WrapAlignment.start,
+      crossAxisAlignment: WrapCrossAlignment.start, // Garante alinhamento no topo
       children: [
-        SizedBox(
-          width: isMobile ? double.infinity : AppSizes.featureCardWidth,
-          child: const FeatureCard(
+        _buildResponsiveBox(
+          isMobile,
+          const FeatureCard(
             icon: Icons.palette_outlined,
             title: 'Interface\nPersonalizável',
           ),
         ),
-        SizedBox(
-          width: isMobile ? double.infinity : AppSizes.featureCardWidth,
-          child: const FeatureCard(
+        _buildResponsiveBox(
+          isMobile,
+          const FeatureCard(
             icon: Icons.psychology_outlined,
             title: 'Modo Foco',
           ),
         ),
-        SizedBox(
-          width: isMobile ? double.infinity : AppSizes.featureCardWidth,
-          child: const FeatureCard(
+        _buildResponsiveBox(
+          isMobile,
+          const FeatureCard(
             icon: Icons.notifications_active_outlined,
             title: 'Alertas',
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildResponsiveBox(bool isMobile, Widget child) {
+    return SizedBox(
+      width: isMobile ? double.infinity : AppSizes.featureCardWidth,
+      child: child,
     );
   }
 }
