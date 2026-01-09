@@ -144,56 +144,57 @@ class _LoginPageState extends State<LoginPage> {
   // ======================================================
   // 🖥️ DESKTOP
   // ======================================================
-
-  Widget _buildDesktop() {
-    return FlexGrid(
-      left: GradientPanel(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: AppOpacity.medium),
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                  ),
-                  child: const Icon(
-                    Icons.psychology_outlined,
-                    color: Colors.white,
-                    size: AppSizes.iconLG,
-                  ),
+Widget _buildDesktop() {
+  return FlexGrid(
+    left: GradientPanel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: AppOpacity.medium),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                 ),
-                AppSpacing.hGapSm,
-                Text('MindEase', style: LoginStyles.brand),
-              ],
-            ),
-            AppSpacing.gapLg,
-            Text(
-              'Facilitando sua jornada acadêmica e profissional',
-              style: LoginStyles.subtitle,
-            ),
-            AppSpacing.gapMd,
-            Text(
-              'Uma plataforma pensada para pessoas neurodivergentes.',
-              style: LoginStyles.description,
-            ),
-            const Spacer(),
-            const FeatureCardsRow(),
-          ],
-        ),
-      ),
-      right: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420),
-          child: Card(
-            child: _buildForm(),
+                child: const Icon(
+                  Icons.psychology_outlined,
+                  color: Colors.white,
+                  size: AppSizes.iconLG,
+                ),
+              ),
+              AppSpacing.hGapSm,
+              Text('MindEase', style: LoginStyles.brand),
+            ],
           ),
+          AppSpacing.gapLg,
+          Text(
+            'Facilitando sua jornada acadêmica e profissional',
+            style: LoginStyles.subtitle,
+          ),
+          AppSpacing.gapMd,
+          Text(
+            'Uma plataforma pensada para pessoas neurodivergentes.',
+            style: LoginStyles.description,
+          ),
+
+          AppSpacing.gapXl,
+
+          const FeatureCardsRow(),
+        ],
+      ),
+    ),
+    right: Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: Card(
+          child: _buildForm(),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   // ======================================================
   // 🧩 FORM (CORRIGIDO)
