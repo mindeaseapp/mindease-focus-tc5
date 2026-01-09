@@ -1,0 +1,50 @@
+import 'package:flutter/material.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
+import 'package:mindease_focus/features/auth/presentation/widgets/settings_section_card.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/profile/widgets/toggle_setting_tile.dart';
+
+class CognitiveAlertsCard extends StatelessWidget {
+  final ProfilePreferencesController controller;
+
+  const CognitiveAlertsCard({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (_, __) {
+        return SettingsSectionCard(
+          semanticsLabel: 'Alertas Cognitivos',
+          icon: Icons.access_time_outlined,
+          title: 'Alertas Cognitivos',
+          children: [
+            ToggleSettingTile(
+              title: 'Lembrete de Pausas',
+              subtitle: 'Notifica quando é hora de fazer uma pausa',
+              value: controller.breakReminder,
+              onChanged: controller.setBreakReminder,
+              semanticsLabel:
+                  'Lembrete de pausas. ${controller.breakReminder ? "Ativado" : "Desativado"}',
+            ),
+            ToggleSettingTile(
+              title: 'Alerta de Tempo na Tarefa',
+              subtitle: 'Avisa quando você está muito tempo em uma tarefa',
+              value: controller.taskTimeAlert,
+              onChanged: controller.setTaskTimeAlert,
+              semanticsLabel:
+                  'Alerta de tempo na tarefa. ${controller.taskTimeAlert ? "Ativado" : "Desativado"}',
+            ),
+            ToggleSettingTile(
+              title: 'Transição Suave',
+              subtitle: 'Avisos antes de mudar de atividade',
+              value: controller.smoothTransition,
+              onChanged: controller.setSmoothTransition,
+              semanticsLabel:
+                  'Transição suave. ${controller.smoothTransition ? "Ativado" : "Desativado"}',
+            ),
+          ],
+        );
+      },
+    );
+  }
+}

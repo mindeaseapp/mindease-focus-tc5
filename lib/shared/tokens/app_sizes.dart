@@ -15,6 +15,11 @@ class AppSizes {
   /// Conteúdo central (forms, login, auth)
   static const double maxContentWidth = 420;
 
+  /// ✅ Perfil / Configurações (layout de conteúdo mais largo no web)
+  /// Igual ao seu print: título + card na mesma largura.
+  /// Ajuste fino: 780 ~ 920 (eu recomendo 840 como padrão).
+  static const double maxProfileWidth = 840;
+
   /// Páginas padrão
   static const double maxPageWidth = 1200;
 
@@ -141,15 +146,16 @@ class AppSizes {
   static bool isDesktop(BuildContext context) =>
       MediaQuery.of(context).size.width >= breakpointDesktop;
 
-// ======================================================
-// 🪪 FEATURE CARDS
-// ======================================================
+  // ======================================================
+  // 🪪 FEATURE CARDS
+  // ======================================================
 
   /// Largura padrão do FeatureCard em layouts desktop
   static const double featureCardWidth = 140;
 
   /// Altura mínima do FeatureCard (garante cards iguais)
   static const double featureCardMinHeight = 140;
+
   // ======================================================
   // 📐 RESPONSIVE VALUES
   // ======================================================
