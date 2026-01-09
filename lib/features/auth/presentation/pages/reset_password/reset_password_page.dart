@@ -18,11 +18,18 @@ class ResetPasswordPage extends StatefulWidget {
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _emailFocusNode = FocusNode();
 
   bool _isSubmitting = false;
   bool _isFormValid = false;
 
   bool get _isMobile => MediaQuery.of(context).size.width < 768;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_updateFormValidity);
+  }
 
   void _updateFormValidity() {
     final isValid = EmailValidator.validate(_emailController.text) == null;
@@ -45,6 +52,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Se o email existir, enviaremos instruções para redefinir a senha.'),
+            duration: Duration(seconds: 4),
           ),
         );
       });
@@ -53,14 +61,19 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   @override
   void dispose() {
+    _emailController.removeListener(_updateFormValidity);
     _emailController.dispose();
+    _emailFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _isMobile ? _buildMobile() : _buildDesktop(),
+      body: Semantics(
+        label: 'Página de recuperação de senha',
+        child: _isMobile ? _buildMobile() : _buildDesktop(),
+      ),
     );
   }
 
@@ -77,9 +90,21 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('MindEase', style: ResetPasswordStyles.brand),
+                  Semantics(
+                    header: true,
+                    label: 'MindEase',
+                    child: ExcludeSemantics(
+                      child: Text('MindEase', style: ResetPasswordStyles.brand),
+                    ),
+                  ),
                   AppSpacing.gapLg,
-                  Text('Não se preocupe, ajudaremos você', style: ResetPasswordStyles.subtitle),
+                  Semantics(
+                    header: true,
+                    label: 'Não se preocupe, ajudaremos você',
+                    child: ExcludeSemantics(
+                      child: Text('Não se preocupe, ajudaremos você', style: ResetPasswordStyles.subtitle),
+                    ),
+                  ),
                   AppSpacing.gapMd,
                   Text('Recupere o acesso à sua conta de forma simples e segura.', style: ResetPasswordStyles.description),
                 ],
@@ -107,9 +132,21 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('MindEase', style: ResetPasswordStyles.brand),
+            Semantics(
+              header: true,
+              label: 'MindEase',
+              child: ExcludeSemantics(
+                child: Text('MindEase', style: ResetPasswordStyles.brand),
+              ),
+            ),
             AppSpacing.gapLg,
-            Text('Não se preocupe, ajudaremos você', style: ResetPasswordStyles.subtitle),
+            Semantics(
+              header: true,
+              label: 'Não se preocupe, ajudaremos você',
+              child: ExcludeSemantics(
+                child: Text('Não se preocupe, ajudaremos você', style: ResetPasswordStyles.subtitle),
+              ),
+            ),
             AppSpacing.gapMd,
             Text('Recupere o acesso à sua conta de forma simples e segura.', style: ResetPasswordStyles.description),
           ],
@@ -137,45 +174,76 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('Recuperar senha', style: ResetPasswordStyles.title),
+          Semantics(
+            header: true,
+            label: 'Recuperar senha',
+            child: const ExcludeSemantics(
+              child: Text('Recuperar senha', style: ResetPasswordStyles.title),
+            ),
+          ),
           AppSpacing.gapSm,
           Text('Digite seu email e enviaremos instruções para redefinir sua senha.', style: ResetPasswordStyles.helper),
           AppSpacing.gapLg,
-          TextFormField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.done,
-            autofillHints: const [AutofillHints.email],
-            validator: EmailValidator.validate,
-            onChanged: (_) => _updateFormValidity(),
-            onFieldSubmitted: (_) => _submit(),
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              hintText: 'nome@email.com',
-              prefixIcon: Icon(Icons.email_outlined),
+          Semantics(
+            label: 'Campo de email. Digite seu endereço de email para receber instruções de recuperação de senha',
+            textField: true,
+            child: TextFormField(
+              controller: _emailController,
+              focusNode: _emailFocusNode,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.done,
+              autofillHints: const [AutofillHints.email],
+              validator: EmailValidator.validate,
+              onChanged: (_) => _updateFormValidity(),
+              onFieldSubmitted: (_) => _submit(),
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                hintText: 'nome@email.com',
+                prefixIcon: Icon(Icons.email_outlined),
+              ),
             ),
           ),
           AppSpacing.gapLg,
-          SizedBox(
-            width: double.infinity,
-            height: AppSizes.buttonHeight,
-            child: ElevatedButton(
-              onPressed: (!_isFormValid || _isSubmitting) ? null : _submit,
-              child: _isSubmitting
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                    )
-                  : const Text('Enviar instruções'),
+          Semantics(
+            button: true,
+            enabled: _isFormValid && !_isSubmitting,
+            label: _isSubmitting 
+              ? 'Enviando instruções. Por favor, aguarde' 
+              : _isFormValid 
+                ? 'Enviar instruções de recuperação de senha' 
+                : 'Botão desabilitado. Digite um email válido para enviar instruções',
+            child: SizedBox(
+              width: double.infinity,
+              height: AppSizes.buttonHeight,
+              child: ElevatedButton(
+                onPressed: (!_isFormValid || _isSubmitting) ? null : _submit,
+                child: _isSubmitting
+                    ? Semantics(
+                        label: 'Carregando',
+                        child: const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                            semanticsLabel: 'Enviando instruções',
+                          ),
+                        ),
+                      )
+                    : const Text('Enviar instruções'),
+              ),
             ),
           ),
           AppSpacing.gapLg,
           Center(
-            child: TextButton.icon(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back),
-              label: const Text('Voltar para login'),
+            child: Semantics(
+              button: true,
+              label: 'Voltar para a página de login',
+              child: TextButton.icon(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back),
+                label: const Text('Voltar para login'),
+              ),
             ),
           ),
         ],

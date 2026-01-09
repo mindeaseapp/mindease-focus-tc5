@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:mindease_focus/shared/tokens/app_opacity.dart';
 import 'package:mindease_focus/shared/tokens/app_colors.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
@@ -158,7 +158,7 @@ class AppTheme {
     // ======================================================
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: AppColors.card,
-      indicatorColor: AppColors.primary.withValues(alpha: 0.12),
+      indicatorColor: AppColors.primary.withValues(alpha: AppOpacity.focus),
       labelTextStyle: WidgetStateProperty.all(
         AppTypography.labelSmall,
       ),
@@ -186,8 +186,8 @@ class AppTheme {
     // 🧠 Focus / Accessibility
     // ======================================================
     focusColor: AppColors.focus,
-    hoverColor: AppColors.primary.withValues(alpha: 0.04),
-    splashColor: AppColors.primary.withValues(alpha: 0.08),
+    hoverColor: AppColors.primary.withValues(alpha: AppOpacity.medium),
+    splashColor: AppColors.primary.withValues(alpha: AppOpacity.pressed),
     highlightColor: Colors.transparent,
 
     // ======================================================

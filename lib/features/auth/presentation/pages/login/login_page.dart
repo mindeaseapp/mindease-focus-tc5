@@ -6,12 +6,14 @@ import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_colors.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
+import 'package:mindease_focus/shared/tokens/app_opacity.dart';
 
 import 'package:mindease_focus/features/auth/domain/validators/email_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/login_form_validator.dart';
 
 import 'package:mindease_focus/features/auth/presentation/pages/login/login_styles.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/login/feature_card.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,6 +27,9 @@ class _LoginPageState extends State<LoginPage> {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
 
   bool _obscurePassword = true;
   bool _isSubmitting = false;
@@ -54,7 +59,6 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isSubmitting = true);
 
-      // Simulação de login
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
           setState(() => _isSubmitting = false);
@@ -67,6 +71,8 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -93,17 +99,49 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('MindEase', style: LoginStyles.brand),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(AppSpacing.sm),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(
+                          alpha: AppOpacity.medium
+                        ),
+                        borderRadius:
+                            BorderRadius.circular(AppSpacing.radiusSm),
+                      ),
+                      child: const Icon(
+                        Icons.psychology_outlined,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                    AppSpacing.hGapSm,
+                    Semantics(
+                      header: true,
+                      label: 'MindEase - Nome da aplicação',
+                      child: Text('MindEase', style: LoginStyles.brand),
+                    ),
+                  ],
+                ),
                 AppSpacing.gapLg,
-                Text(
-                  'Facilitando sua jornada acadêmica e profissional',
-                  style: LoginStyles.subtitle,
+                Semantics(
+                  label: 'Facilitando sua jornada acadêmica e profissional',
+                  child: Text(
+                    'Facilitando sua jornada acadêmica e profissional',
+                    style: LoginStyles.subtitle,
+                  ),
                 ),
                 AppSpacing.gapMd,
-                Text(
-                  'Uma plataforma pensada para pessoas neurodivergentes.',
-                  style: LoginStyles.description,
+                Semantics(
+                  label: 'Uma plataforma pensada para pessoas neurodivergentes',
+                  child: Text(
+                    'Uma plataforma pensada para pessoas neurodivergentes.',
+                    style: LoginStyles.description,
+                  ),
                 ),
+                AppSpacing.gapXl,
+                const FeatureCardsRow(),
               ],
             ),
           ),
@@ -131,17 +169,46 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('MindEase', style: LoginStyles.brand),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.sm),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: AppOpacity.medium),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                  ),
+                  child: const Icon(
+                    Icons.psychology_outlined,
+                    color: Colors.white,
+                    size: AppSizes.iconLG,
+                  ),
+                ),
+                AppSpacing.hGapSm,
+                Semantics(
+                  header: true,
+                  label: 'MindEase - Nome da aplicação',
+                  child: Text('MindEase', style: LoginStyles.brand),
+                ),
+              ],
+            ),
             AppSpacing.gapLg,
-            Text(
-              'Facilitando sua jornada acadêmica e profissional',
-              style: LoginStyles.subtitle,
+            Semantics(
+              label: 'Facilitando sua jornada acadêmica e profissional',
+              child: Text(
+                'Facilitando sua jornada acadêmica e profissional',
+                style: LoginStyles.subtitle,
+              ),
             ),
             AppSpacing.gapMd,
-            Text(
-              'Uma plataforma pensada para pessoas neurodivergentes.',
-              style: LoginStyles.description,
+            Semantics(
+              label: 'Uma plataforma pensada para pessoas neurodivergentes',
+              child: Text(
+                'Uma plataforma pensada para pessoas neurodivergentes.',
+                style: LoginStyles.description,
+              ),
             ),
+            const Spacer(),
+            const FeatureCardsRow(),
           ],
         ),
       ),
@@ -171,48 +238,78 @@ class _LoginPageState extends State<LoginPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Bem-vindo de volta', style: LoginStyles.title),
+          Semantics(
+            header: true,
+            label: 'Bem-vindo de volta',
+            child: Text('Bem-vindo de volta', style: LoginStyles.title),
+          ),
           AppSpacing.gapSm,
-          Text(
-            'Entre com suas credenciais para continuar',
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: AppTypography.medium,
+          Semantics(
+            label: 'Entre com suas credenciais para continuar',
+            child: Text(
+              'Entre com suas credenciais para continuar',
+              style: AppTypography.bodySmall.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: AppTypography.medium,
+              ),
             ),
           ),
           AppSpacing.gapLg,
 
-          // EMAIL
-          TextFormField(
-            controller: _emailController,
-            validator: EmailValidator.validate,
-            onChanged: (_) => _updateFormValidity(),
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              prefixIcon: Icon(Icons.email_outlined),
+          Semantics(
+            label: 'Campo de email',
+            hint: 'Digite seu endereço de email',
+            child: TextFormField(
+              controller: _emailController,
+              focusNode: _emailFocusNode,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              validator: EmailValidator.validate,
+              onChanged: (_) => _updateFormValidity(),
+              onFieldSubmitted: (_) {
+                FocusScope.of(context).requestFocus(_passwordFocusNode);
+              },
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                prefixIcon: Icon(Icons.email_outlined),
+              ),
             ),
           ),
 
           AppSpacing.gapMd,
 
           // SENHA
-          TextFormField(
-            controller: _passwordController,
-            obscureText: _obscurePassword,
-            validator: PasswordValidator.validate,
-            onChanged: (_) => _updateFormValidity(),
-            decoration: InputDecoration(
-              labelText: 'Senha',
-              prefixIcon: const Icon(Icons.lock_outline),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
+          Semantics(
+            label: 'Campo de senha',
+            hint: 'Digite sua senha',
+            obscured: _obscurePassword,
+            child: TextFormField(
+              controller: _passwordController,
+              focusNode: _passwordFocusNode,
+              obscureText: _obscurePassword,
+              textInputAction: TextInputAction.done,
+              validator: PasswordValidator.validate,
+              onChanged: (_) => _updateFormValidity(),
+              onFieldSubmitted: (_) => _submit(),
+              decoration: InputDecoration(
+                labelText: 'Senha',
+                prefixIcon: const Icon(Icons.lock_outline),
+                suffixIcon: Semantics(
+                  label: _obscurePassword ? 'Mostrar senha' : 'Ocultar senha',
+                  button: true,
+                  child: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                    ),
+                    onPressed: () {
+                      setState(() => _obscurePassword = !_obscurePassword);
+                    },
+                    tooltip:
+                        _obscurePassword ? 'Mostrar senha' : 'Ocultar senha',
+                  ),
                 ),
-                onPressed: () {
-                  setState(() => _obscurePassword = !_obscurePassword);
-                },
               ),
             ),
           ),
@@ -222,14 +319,19 @@ class _LoginPageState extends State<LoginPage> {
           // ESQUECI MINHA SENHA
           Align(
             alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/reset-password');
-              },
-              child: Text(
-                'Esqueci minha senha',
-                style: AppTypography.bodySmall.copyWith(
-                  fontWeight: AppTypography.medium,
+            child: Semantics(
+              button: true,
+              label: 'Esqueci minha senha',
+              hint: 'Recuperar senha',
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/reset-password');
+                },
+                child: Text(
+                  'Esqueci minha senha',
+                  style: AppTypography.bodySmall.copyWith(
+                    fontWeight: AppTypography.medium,
+                  ),
                 ),
               ),
             ),
@@ -238,44 +340,64 @@ class _LoginPageState extends State<LoginPage> {
           AppSpacing.gapLg,
 
           // BOTÃO ENTRAR
-          SizedBox(
-            width: double.infinity,
-            height: AppSizes.buttonHeight,
-            child: ElevatedButton(
-              onPressed: (!_isFormValid || _isSubmitting) ? null : _submit,
-              child: _isSubmitting
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Entrar'),
+          Semantics(
+            button: true,
+            enabled: _isFormValid && !_isSubmitting,
+            label: _isSubmitting ? 'Entrando, aguarde' : 'Entrar na conta',
+            child: SizedBox(
+              width: double.infinity,
+              height: AppSizes.buttonHeight,
+              child: ElevatedButton(
+                onPressed: (!_isFormValid || _isSubmitting) ? null : _submit,
+                child: _isSubmitting
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text('Entrar'),
+              ),
             ),
           ),
 
           AppSpacing.gapMd,
 
-          // ✅ CADASTRO — CORREÇÃO DEFINITIVA (SEM OVERFLOW)
+          // CADASTRO
           Center(
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 4,
-              children: [
-                Text(
-                  'Não tem uma conta?',
-                  style: AppTypography.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/register');
-                  },
-                  child: Text(
-                    'Cadastre-se',
+            child: Semantics(
+              label: 'Não tem uma conta? Cadastre-se',
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 4,
+                children: [
+                  Text(
+                    'Não tem uma conta?',
                     style: AppTypography.bodySmall.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: AppTypography.semiBold,
+                      color: AppColors.textSecondary,
                     ),
                   ),
-                ),
-              ],
+                  Semantics(
+                    button: true,
+                    label: 'Cadastre-se',
+                    hint: 'Criar nova conta',
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/register');
+                      },
+                      child: Text(
+                        'Cadastre-se',
+                        style: AppTypography.bodySmall.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: AppTypography.semiBold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

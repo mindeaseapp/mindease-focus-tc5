@@ -141,6 +141,15 @@ class AppSizes {
   static bool isDesktop(BuildContext context) =>
       MediaQuery.of(context).size.width >= breakpointDesktop;
 
+// ======================================================
+// 🪪 FEATURE CARDS
+// ======================================================
+
+  /// Largura padrão do FeatureCard em layouts desktop
+  static const double featureCardWidth = 140;
+
+  /// Altura mínima do FeatureCard (garante cards iguais)
+  static const double featureCardMinHeight = 140;
   // ======================================================
   // 📐 RESPONSIVE VALUES
   // ======================================================

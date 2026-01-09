@@ -37,6 +37,11 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  final _nameFocusNode = FocusNode();
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+  final _confirmPasswordFocusNode = FocusNode();
+
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _acceptedTerms = false;
@@ -104,6 +109,10 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _nameFocusNode.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    _confirmPasswordFocusNode.dispose();
     _registerController.dispose();
     super.dispose();
   }
@@ -123,16 +132,26 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('MindEase', style: RegisterStyles.brand),
+                Semantics(
+                  header: true,
+                  label: 'MindEase - Nome da aplicação',
+                  child: Text('MindEase', style: RegisterStyles.brand),
+                ),
                 AppSpacing.gapLg,
-                Text(
-                  'Facilitando sua jornada acadêmica e profissional',
-                  style: RegisterStyles.subtitle,
+                Semantics(
+                  label: 'Facilitando sua jornada acadêmica e profissional',
+                  child: Text(
+                    'Facilitando sua jornada acadêmica e profissional',
+                    style: RegisterStyles.subtitle,
+                  ),
                 ),
                 AppSpacing.gapMd,
-                Text(
-                  'Uma plataforma pensada para pessoas neurodivergentes.',
-                  style: RegisterStyles.description,
+                Semantics(
+                  label: 'Uma plataforma pensada para pessoas neurodivergentes',
+                  child: Text(
+                    'Uma plataforma pensada para pessoas neurodivergentes.',
+                    style: RegisterStyles.description,
+                  ),
                 ),
               ],
             ),
@@ -157,16 +176,26 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('MindEase', style: RegisterStyles.brand),
+            Semantics(
+              header: true,
+              label: 'MindEase - Nome da aplicação',
+              child: Text('MindEase', style: RegisterStyles.brand),
+            ),
             AppSpacing.gapLg,
-            Text(
-              'Facilitando sua jornada acadêmica e profissional',
-              style: RegisterStyles.subtitle,
+            Semantics(
+              label: 'Facilitando sua jornada acadêmica e profissional',
+              child: Text(
+                'Facilitando sua jornada acadêmica e profissional',
+                style: RegisterStyles.subtitle,
+              ),
             ),
             AppSpacing.gapMd,
-            Text(
-              'Uma plataforma pensada para pessoas neurodivergentes.',
-              style: RegisterStyles.description,
+            Semantics(
+              label: 'Uma plataforma pensada para pessoas neurodivergentes',
+              child: Text(
+                'Uma plataforma pensada para pessoas neurodivergentes.',
+                style: RegisterStyles.description,
+              ),
             ),
           ],
         ),
@@ -193,120 +222,236 @@ class _RegisterPageState extends State<RegisterPage> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Crie sua conta', style: RegisterStyles.title),
+          Semantics(
+            header: true,
+            label: 'Crie sua conta',
+            child: Text('Crie sua conta', style: RegisterStyles.title),
+          ),
           AppSpacing.gapSm,
-          Text(
-            'Comece sua jornada com o MindEase',
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.textSecondary,
+          Semantics(
+            label: 'Comece sua jornada com o MindEase',
+            child: Text(
+              'Comece sua jornada com o MindEase',
+              style: AppTypography.bodySmall.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
           ),
           AppSpacing.gapLg,
-          TextFormField(
-            controller: _nameController,
-            validator: NameValidator.validate,
-            onChanged: (_) => _updateFormValidity(),
-            decoration: const InputDecoration(
-              labelText: 'Nome completo',
-              prefixIcon: Icon(Icons.person_outline),
-            ),
-          ),
-          AppSpacing.gapMd,
-          TextFormField(
-            controller: _emailController,
-            validator: EmailValidator.validate,
-            onChanged: (_) => _updateFormValidity(),
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              prefixIcon: Icon(Icons.email_outlined),
-            ),
-          ),
-          AppSpacing.gapMd,
-          TextFormField(
-            controller: _passwordController,
-            obscureText: _obscurePassword,
-            validator: PasswordValidator.validate,
-            onChanged: (_) => _updateFormValidity(),
-            decoration: InputDecoration(
-              labelText: 'Senha',
-              prefixIcon: const Icon(Icons.lock_outline),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                ),
-                onPressed: () =>
-                    setState(() => _obscurePassword = !_obscurePassword),
+
+          // NOME COMPLETO
+          Semantics(
+            label: 'Campo de nome completo',
+            hint: 'Digite seu nome completo',
+            child: TextFormField(
+              controller: _nameController,
+              focusNode: _nameFocusNode,
+              keyboardType: TextInputType.name,
+              textInputAction: TextInputAction.next,
+              textCapitalization: TextCapitalization.words,
+              validator: NameValidator.validate,
+              onChanged: (_) => _updateFormValidity(),
+              onFieldSubmitted: (_) {
+                FocusScope.of(context).requestFocus(_emailFocusNode);
+              },
+              decoration: const InputDecoration(
+                labelText: 'Nome completo',
+                prefixIcon: Icon(Icons.person_outline),
               ),
             ),
           ),
+
           AppSpacing.gapMd,
-          TextFormField(
-            controller: _confirmPasswordController,
-            obscureText: _obscureConfirmPassword,
-            validator: (_) => ConfirmPasswordValidator.validate(
-              password: _passwordController.text,
-              confirmPassword: _confirmPasswordController.text,
+
+          // EMAIL
+          Semantics(
+            label: 'Campo de email',
+            hint: 'Digite seu endereço de email',
+            child: TextFormField(
+              controller: _emailController,
+              focusNode: _emailFocusNode,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              validator: EmailValidator.validate,
+              onChanged: (_) => _updateFormValidity(),
+              onFieldSubmitted: (_) {
+                FocusScope.of(context).requestFocus(_passwordFocusNode);
+              },
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                prefixIcon: Icon(Icons.email_outlined),
+              ),
             ),
-            onChanged: (_) => _updateFormValidity(),
-            decoration: InputDecoration(
-              labelText: 'Confirmar senha',
-              prefixIcon: const Icon(Icons.lock_outline),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscureConfirmPassword
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                ),
-                onPressed: () => setState(
-                  () => _obscureConfirmPassword = !_obscureConfirmPassword,
+          ),
+
+          AppSpacing.gapMd,
+
+          // SENHA
+          Semantics(
+            label: 'Campo de senha',
+            hint: 'Digite sua senha',
+            obscured: _obscurePassword,
+            child: TextFormField(
+              controller: _passwordController,
+              focusNode: _passwordFocusNode,
+              obscureText: _obscurePassword,
+              textInputAction: TextInputAction.next,
+              validator: PasswordValidator.validate,
+              onChanged: (_) => _updateFormValidity(),
+              onFieldSubmitted: (_) {
+                FocusScope.of(context).requestFocus(_confirmPasswordFocusNode);
+              },
+              decoration: InputDecoration(
+                labelText: 'Senha',
+                prefixIcon: const Icon(Icons.lock_outline),
+                suffixIcon: Semantics(
+                  label: _obscurePassword 
+                    ? 'Mostrar senha' 
+                    : 'Ocultar senha',
+                  button: true,
+                  child: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                    ),
+                    onPressed: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
+                    tooltip: _obscurePassword 
+                      ? 'Mostrar senha' 
+                      : 'Ocultar senha',
+                  ),
                 ),
               ),
             ),
           ),
+
+          AppSpacing.gapMd,
+
+          // CONFIRMAR SENHA
+          Semantics(
+            label: 'Campo de confirmação de senha',
+            hint: 'Digite novamente sua senha',
+            obscured: _obscureConfirmPassword,
+            child: TextFormField(
+              controller: _confirmPasswordController,
+              focusNode: _confirmPasswordFocusNode,
+              obscureText: _obscureConfirmPassword,
+              textInputAction: TextInputAction.done,
+              validator: (_) => ConfirmPasswordValidator.validate(
+                password: _passwordController.text,
+                confirmPassword: _confirmPasswordController.text,
+              ),
+              onChanged: (_) => _updateFormValidity(),
+              onFieldSubmitted: (_) {
+                if (_isFormValid && !_registerController.isLoading) {
+                  _submit();
+                }
+              },
+              decoration: InputDecoration(
+                labelText: 'Confirmar senha',
+                prefixIcon: const Icon(Icons.lock_outline),
+                suffixIcon: Semantics(
+                  label: _obscureConfirmPassword 
+                    ? 'Mostrar confirmação de senha' 
+                    : 'Ocultar confirmação de senha',
+                  button: true,
+                  child: IconButton(
+                    icon: Icon(
+                      _obscureConfirmPassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                    ),
+                    onPressed: () => setState(
+                      () => _obscureConfirmPassword = !_obscureConfirmPassword,
+                    ),
+                    tooltip: _obscureConfirmPassword 
+                      ? 'Mostrar confirmação de senha' 
+                      : 'Ocultar confirmação de senha',
+                  ),
+                ),
+              ),
+            ),
+          ),
+
           AppSpacing.gapSm,
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Checkbox(
-                value: _acceptedTerms,
-                onChanged: (value) {
-                  setState(() => _acceptedTerms = value ?? false);
-                  _updateFormValidity();
-                },
-              ),
-              const Expanded(
-                child: Text(
-                  'Eu aceito os termos de uso e a política de privacidade',
-                  style: AppTypography.bodySmall,
+
+          // TERMOS DE USO
+          Semantics(
+            label: 'Aceitar termos de uso e política de privacidade',
+            hint: _acceptedTerms 
+              ? 'Termos aceitos' 
+              : 'Marque para aceitar os termos',
+            checked: _acceptedTerms,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Semantics(
+                  excludeSemantics: true,
+                  child: Checkbox(
+                    value: _acceptedTerms,
+                    onChanged: (value) {
+                      setState(() => _acceptedTerms = value ?? false);
+                      _updateFormValidity();
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
-          AppSpacing.gapMd,
-          SizedBox(
-            width: double.infinity,
-            height: AppSizes.buttonHeight,
-            child: ElevatedButton(
-              onPressed: (!_isFormValid || _registerController.isLoading)
-                  ? null
-                  : _submit,
-              child: _registerController.isLoading
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                          color: Colors.white, strokeWidth: 2),
-                    )
-                  : const Text('Criar conta'),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() => _acceptedTerms = !_acceptedTerms);
+                      _updateFormValidity();
+                    },
+                    child: const Text(
+                      'Eu aceito os termos de uso e a política de privacidade',
+                      style: AppTypography.bodySmall,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
+
           AppSpacing.gapMd,
+
+          // BOTÃO CRIAR CONTA
+          Semantics(
+            button: true,
+            enabled: _isFormValid && !_registerController.isLoading,
+            label: _registerController.isLoading 
+              ? 'Criando conta, aguarde' 
+              : 'Criar conta',
+            child: SizedBox(
+              width: double.infinity,
+              height: AppSizes.buttonHeight,
+              child: ElevatedButton(
+                onPressed: (!_isFormValid || _registerController.isLoading)
+                    ? null
+                    : _submit,
+                child: _registerController.isLoading
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                            color: Colors.white, strokeWidth: 2),
+                      )
+                    : const Text('Criar conta'),
+              ),
+            ),
+          ),
+
+          AppSpacing.gapMd,
+
+          // LINK PARA LOGIN
           Center(
-            child: TextButton(
-              onPressed: () => Navigator.pushNamed(context, '/login'),
-              child: const Text('Já tem uma conta? Entrar'),
+            child: Semantics(
+              button: true,
+              label: 'Já tem uma conta? Entrar',
+              hint: 'Ir para página de login',
+              child: TextButton(
+                onPressed: () => Navigator.pushNamed(context, '/login'),
+                child: const Text('Já tem uma conta? Entrar'),
+              ),
             ),
           ),
         ],
