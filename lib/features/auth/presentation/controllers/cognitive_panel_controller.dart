@@ -2,6 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/profile/models/cognitive_panel_models.dart';
 
 class CognitivePanelController extends ChangeNotifier {
+  // ✅ opcional: avisa alguém quando a complexidade mudar (ex.: prefs)
+  final ValueChanged<InterfaceComplexity>? onComplexityChanged;
+
+  CognitivePanelController({this.onComplexityChanged});
+
   InterfaceComplexity _complexity = InterfaceComplexity.medium;
   DisplayMode _displayMode = DisplayMode.balanced;
   ElementSpacing _spacing = ElementSpacing.medium;
@@ -43,12 +48,14 @@ class CognitivePanelController extends ChangeNotifier {
     _enforceRulesAfterComplexityChange();
 
     notifyListeners();
+
+    // ✅ avisa (se alguém quiser reagir: prefs/app/analytics etc.)
+    onComplexityChanged?.call(_complexity);
   }
 
   void setDisplayMode(DisplayMode value) {
     final allowed = _complexity.allowedDisplayModes;
-    final next =
-        allowed.contains(value) ? value : _complexity.defaultDisplayMode;
+    final next = allowed.contains(value) ? value : _complexity.defaultDisplayMode;
 
     if (_displayMode == next) return;
     _displayMode = next;
@@ -60,8 +67,7 @@ class CognitivePanelController extends ChangeNotifier {
     final candidate = ElementSpacing.values[index];
 
     final allowed = _complexity.allowedSpacings;
-    final next =
-        allowed.contains(candidate) ? candidate : _complexity.defaultSpacing;
+    final next = allowed.contains(candidate) ? candidate : _complexity.defaultSpacing;
 
     if (_spacing == next) return;
     _spacing = next;
@@ -69,13 +75,11 @@ class CognitivePanelController extends ChangeNotifier {
   }
 
   void setFontSizeFromSlider(double value) {
-    final index =
-        value.round().clamp(0, FontSizePreference.values.length - 1);
+    final index = value.round().clamp(0, FontSizePreference.values.length - 1);
     final candidate = FontSizePreference.values[index];
 
     final allowed = _complexity.allowedFontSizes;
-    final next =
-        allowed.contains(candidate) ? candidate : _complexity.defaultFontSize;
+    final next = allowed.contains(candidate) ? candidate : _complexity.defaultFontSize;
 
     if (_fontSize == next) return;
     _fontSize = next;

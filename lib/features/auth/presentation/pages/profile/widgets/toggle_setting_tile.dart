@@ -11,6 +11,13 @@ class ToggleSettingTile extends StatelessWidget {
   final ValueChanged<bool> onChanged;
   final String semanticsLabel;
 
+  // ✅ NOVO (opcional): permite travar o switch
+  final bool enabled;
+
+  // ✅ NOVO (opcional): texto a mostrar quando estiver travado
+  // (ex.: "Disponível no modo Médio/Avançado")
+  final String? disabledReason;
+
   const ToggleSettingTile({
     super.key,
     required this.title,
@@ -18,28 +25,36 @@ class ToggleSettingTile extends StatelessWidget {
     required this.value,
     required this.onChanged,
     required this.semanticsLabel,
+    this.enabled = true,
+    this.disabledReason,
   });
 
   @override
   Widget build(BuildContext context) {
     // ✅ Regra Hacka: "Ocultar distrações" remove textos secundários
-    // (menos ruído cognitivo)
     final hideDistractions = context.select<ProfilePreferencesController, bool>(
       (c) => c.hideDistractions,
     );
 
-    final Widget? effectiveSubtitle = (subtitle == null || hideDistractions)
-        ? null
-        : Text(
-            subtitle!,
-            style: Theme.of(context).textTheme.bodySmall,
-          );
+    // ✅ se estiver desabilitado, prioriza o motivo (quando existir)
+    final String? effectiveSubtitleText = enabled ? subtitle : (disabledReason ?? subtitle);
+
+    final Widget? effectiveSubtitle =
+        (effectiveSubtitleText == null || hideDistractions)
+            ? null
+            : Text(
+                effectiveSubtitleText,
+                style: Theme.of(context).textTheme.bodySmall,
+              );
 
     return MergeSemantics(
       child: Semantics(
         container: true,
+        enabled: enabled,
         label: semanticsLabel,
         toggled: value,
+        // opcional: dá uma dica pro leitor de tela quando estiver travado
+        hint: enabled ? null : (disabledReason ?? 'Opção desativada'),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: AppSizes.minTapArea),
           child: SwitchListTile.adaptive(
@@ -51,7 +66,7 @@ class ToggleSettingTile extends StatelessWidget {
             ),
             subtitle: effectiveSubtitle,
             value: value,
-            onChanged: onChanged,
+            onChanged: enabled ? onChanged : null, // ✅ trava de verdade
           ),
         ),
       ),

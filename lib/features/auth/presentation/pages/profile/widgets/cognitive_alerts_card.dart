@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
-import 'package:mindease_focus/features/auth/presentation/widgets/settings_section_card.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/profile/models/cognitive_panel_models.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/profile/widgets/toggle_setting_tile.dart';
+import 'package:mindease_focus/features/auth/presentation/widgets/settings_section_card.dart';
 
 class CognitiveAlertsCard extends StatelessWidget {
   final ProfilePreferencesController controller;
@@ -13,6 +15,16 @@ class CognitiveAlertsCard extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (_, __) {
+        final allowed = controller.complexity.allowedCognitiveAlerts;
+        final isSimple = controller.complexity == InterfaceComplexity.simple;
+
+        final canBreakReminder =
+            allowed.contains(CognitiveAlertSetting.breakReminder);
+        final canTaskTimeAlert =
+            allowed.contains(CognitiveAlertSetting.taskTimeAlert);
+        final canSmoothTransition =
+            allowed.contains(CognitiveAlertSetting.smoothTransition);
+
         return SettingsSectionCard(
           semanticsLabel: 'Alertas Cognitivos',
           icon: Icons.access_time_outlined,
@@ -23,6 +35,7 @@ class CognitiveAlertsCard extends StatelessWidget {
               subtitle: 'Notifica quando é hora de fazer uma pausa',
               value: controller.breakReminder,
               onChanged: controller.setBreakReminder,
+              enabled: canBreakReminder,
               semanticsLabel:
                   'Lembrete de pausas. ${controller.breakReminder ? "Ativado" : "Desativado"}',
             ),
@@ -31,6 +44,9 @@ class CognitiveAlertsCard extends StatelessWidget {
               subtitle: 'Avisa quando você está muito tempo em uma tarefa',
               value: controller.taskTimeAlert,
               onChanged: controller.setTaskTimeAlert,
+              enabled: canTaskTimeAlert,
+              disabledReason:
+                  isSimple ? 'Disponível no modo Médio/Avançado' : null,
               semanticsLabel:
                   'Alerta de tempo na tarefa. ${controller.taskTimeAlert ? "Ativado" : "Desativado"}',
             ),
@@ -39,6 +55,7 @@ class CognitiveAlertsCard extends StatelessWidget {
               subtitle: 'Avisos antes de mudar de atividade',
               value: controller.smoothTransition,
               onChanged: controller.setSmoothTransition,
+              enabled: canSmoothTransition,
               semanticsLabel:
                   'Transição suave. ${controller.smoothTransition ? "Ativado" : "Desativado"}',
             ),
