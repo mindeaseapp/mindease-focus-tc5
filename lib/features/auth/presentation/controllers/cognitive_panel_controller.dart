@@ -18,21 +18,51 @@ class CognitivePanelController extends ChangeNotifier {
   double get spacingSliderValue => _spacing.index.toDouble();
   double get fontSizeSliderValue => _fontSize.index.toDouble();
 
+  void _enforceRulesAfterComplexityChange() {
+    final allowedModes = _complexity.allowedDisplayModes;
+    if (!allowedModes.contains(_displayMode)) {
+      _displayMode = _complexity.defaultDisplayMode;
+    }
+
+    final allowedSpacings = _complexity.allowedSpacings;
+    if (!allowedSpacings.contains(_spacing)) {
+      _spacing = _complexity.defaultSpacing;
+    }
+
+    final allowedFonts = _complexity.allowedFontSizes;
+    if (!allowedFonts.contains(_fontSize)) {
+      _fontSize = _complexity.defaultFontSize;
+    }
+  }
+
   void setComplexity(InterfaceComplexity value) {
     if (_complexity == value) return;
     _complexity = value;
+
+    // ✅ previsível e consistente
+    _enforceRulesAfterComplexityChange();
+
     notifyListeners();
   }
 
   void setDisplayMode(DisplayMode value) {
-    if (_displayMode == value) return;
-    _displayMode = value;
+    final allowed = _complexity.allowedDisplayModes;
+    final next =
+        allowed.contains(value) ? value : _complexity.defaultDisplayMode;
+
+    if (_displayMode == next) return;
+    _displayMode = next;
     notifyListeners();
   }
 
   void setSpacingFromSlider(double value) {
     final index = value.round().clamp(0, ElementSpacing.values.length - 1);
-    final next = ElementSpacing.values[index];
+    final candidate = ElementSpacing.values[index];
+
+    final allowed = _complexity.allowedSpacings;
+    final next =
+        allowed.contains(candidate) ? candidate : _complexity.defaultSpacing;
+
     if (_spacing == next) return;
     _spacing = next;
     notifyListeners();
@@ -41,7 +71,12 @@ class CognitivePanelController extends ChangeNotifier {
   void setFontSizeFromSlider(double value) {
     final index =
         value.round().clamp(0, FontSizePreference.values.length - 1);
-    final next = FontSizePreference.values[index];
+    final candidate = FontSizePreference.values[index];
+
+    final allowed = _complexity.allowedFontSizes;
+    final next =
+        allowed.contains(candidate) ? candidate : _complexity.defaultFontSize;
+
     if (_fontSize == next) return;
     _fontSize = next;
     notifyListeners();
