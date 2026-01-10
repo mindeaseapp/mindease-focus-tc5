@@ -59,7 +59,8 @@ class MindEaseApp extends StatelessWidget {
 
         return MediaQuery(
           data: mq.copyWith(
-            // reduz estímulos (transições/animações) quando "Ocultar Distrações" está ligado
+            // Quando "Ocultar Distrações" estiver ON:
+            // - reduz estímulo visual (sem animações/transições)
             disableAnimations: prefs.hideDistractions,
           ),
           child: child ?? const SizedBox.shrink(),

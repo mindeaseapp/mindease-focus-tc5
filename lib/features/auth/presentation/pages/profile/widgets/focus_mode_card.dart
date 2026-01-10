@@ -14,55 +14,58 @@ class FocusModeCard extends StatelessWidget {
     final prefs = context.watch<ProfilePreferencesController>();
     final theme = context.read<ThemeController>();
 
+    // ✅ Hacka: quando "Ocultar distrações" está ON,
+    // reduz conteúdo visual (ex.: remove subtítulos).
+    final reduceVisualNoise = prefs.hideDistractions;
+
     return SettingsSectionCard(
       semanticsLabel: 'Modo Foco',
       icon: Icons.visibility_outlined,
       title: 'Modo Foco',
       children: [
-        // ✅ Regra Hacka: "reduzir estímulos visuais"
-        // Efeito visual é aplicado em widgets que leem prefs.hideDistractions
+        // ✅ Ocultar Distrações (efeito visual IMEDIATO no card)
         ToggleSettingTile(
           title: 'Ocultar Distrações',
-          subtitle: 'Remove elementos não essenciais da interface',
+          subtitle: reduceVisualNoise
+              ? null
+              : 'Remove elementos não essenciais da interface',
           value: prefs.hideDistractions,
           onChanged: prefs.setHideDistractions,
           semanticsLabel:
               'Ocultar distrações. ${prefs.hideDistractions ? "Ativado" : "Desativado"}',
         ),
 
-        // ✅ Regra Hacka: "alto contraste" precisa refletir visualmente
+        // ✅ Alto Contraste (reflete globalmente no tema)
         ToggleSettingTile(
           title: 'Alto Contraste',
-          subtitle: 'Aumenta o contraste para melhor legibilidade',
+          subtitle: reduceVisualNoise
+              ? null
+              : 'Aumenta o contraste para melhor legibilidade',
           value: prefs.highContrast,
           onChanged: (value) {
-            // 1) salva a preferência
             prefs.setHighContrast(value);
-
-            // 2) aplica no app (tema global)
             theme.toggleHighContrast(value);
 
-            // (opcional) se quiser: ao ligar alto contraste, desliga gradiente também?
-            // Isso fica a seu critério, mas pode ajudar acessibilidade.
+            // opcional (se quiser seguir uma regra mais “forte” do hacka):
+            // ao ligar alto contraste, também liga "ocultar distrações"
+            // para reduzir carga cognitiva.
             // if (value && !prefs.hideDistractions) prefs.setHideDistractions(true);
           },
           semanticsLabel:
               'Alto contraste. ${prefs.highContrast ? "Ativado" : "Desativado"}',
         ),
 
-        // ✅ Regra: modo escuro é global (MaterialApp.themeMode)
+        // ✅ Modo Escuro (reflete globalmente no tema)
         ToggleSettingTile(
           title: 'Modo Escuro',
-          subtitle: 'Interface com fundo escuro',
+          subtitle: reduceVisualNoise ? null : 'Interface com fundo escuro',
           value: prefs.darkMode,
           onChanged: (value) {
-            // 1) salva a preferência
             prefs.setDarkMode(value);
-
-            // 2) aplica no app (tema global)
             theme.toggleDarkMode(value);
           },
-          semanticsLabel: 'Modo escuro. ${prefs.darkMode ? "Ativado" : "Desativado"}',
+          semanticsLabel:
+              'Modo escuro. ${prefs.darkMode ? "Ativado" : "Desativado"}',
         ),
       ],
     );
