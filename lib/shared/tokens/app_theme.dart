@@ -45,7 +45,8 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSizes.inputBorderRadius),
-        borderSide: const BorderSide(color: AppColors.inputFocusedBorder, width: 2),
+        borderSide:
+            const BorderSide(color: AppColors.inputFocusedBorder, width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSizes.inputBorderRadius),
@@ -53,7 +54,8 @@ class AppTheme {
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSizes.inputBorderRadius),
-        borderSide: const BorderSide(color: AppColors.inputErrorBorder, width: 2),
+        borderSide:
+            const BorderSide(color: AppColors.inputErrorBorder, width: 2),
       ),
       hintStyle: const TextStyle(color: AppColors.inputHint),
       labelStyle: const TextStyle(color: AppColors.textSecondary),
@@ -83,7 +85,6 @@ class AppTheme {
     brightness: Brightness.dark,
     colorScheme: AppColors.darkScheme,
     scaffoldBackgroundColor: AppColors.backgroundDark,
-
     fontFamily: AppTypography.fontFamily,
     textTheme: const TextTheme(
       displayLarge: AppTypography.displayLarge,
@@ -103,7 +104,6 @@ class AppTheme {
       displayColor: AppColors.textPrimaryDark,
     ),
 
-    // Inputs / Dropdown (DropdownButtonFormField usa InputDecoration)
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.inputBackgroundDark,
@@ -137,7 +137,6 @@ class AppTheme {
       errorStyle: AppTypography.error,
     ),
 
-    // Cards iguais no dark
     cardTheme: CardThemeData(
       color: AppColors.cardDark,
       elevation: AppSizes.cardElevation,
@@ -152,7 +151,6 @@ class AppTheme {
       space: AppSpacing.md,
     ),
 
-    // Switch / Slider com contraste bom
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
@@ -193,4 +191,71 @@ class AppTheme {
     splashColor: AppColors.primaryLight.withValues(alpha: AppOpacity.pressed),
     highlightColor: Colors.transparent,
   );
+
+  // ======================================================
+  // ✅ HIGH CONTRAST (Hacka - Acessibilidade Cognitiva)
+  // ======================================================
+
+  static ThemeData get lightHighContrast => _applyHighContrast(light);
+  static ThemeData get darkHighContrast => _applyHighContrast(dark);
+
+  /// ✅ reforço de contraste sem depender de token extra
+  static ThemeData _applyHighContrast(ThemeData base) {
+    final isDark = base.brightness == Brightness.dark;
+
+    // ✅ fallback garantido (não depende de AppColors.borderStrong)
+    final strongBorderColor = isDark ? Colors.white : Colors.black;
+
+    final strongBorder = BorderSide(
+      color: strongBorderColor,
+      width: 1.8,
+    );
+
+    final focusedBorder = BorderSide(
+      color: base.colorScheme.primary,
+      width: 3.0,
+    );
+
+    final textColor = isDark ? Colors.white : Colors.black;
+
+    return base.copyWith(
+      textTheme: base.textTheme.apply(
+        bodyColor: textColor,
+        displayColor: textColor,
+      ),
+
+      dividerTheme: base.dividerTheme.copyWith(
+        thickness: 1.6,
+        color: strongBorderColor,
+      ),
+
+      cardTheme: base.cardTheme.copyWith(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.cardBorderRadius),
+          side: strongBorder,
+        ),
+      ),
+
+      inputDecorationTheme: base.inputDecorationTheme.copyWith(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.inputBorderRadius),
+          borderSide: strongBorder,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.inputBorderRadius),
+          borderSide: strongBorder,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.inputBorderRadius),
+          borderSide: focusedBorder,
+        ),
+      ),
+
+      // ✅ deixa o switch com contorno mais evidente (contraste perceptível)
+      switchTheme: base.switchTheme.copyWith(
+        trackOutlineColor: WidgetStatePropertyAll(strongBorderColor),
+        trackOutlineWidth: const WidgetStatePropertyAll(1.6),
+      ),
+    );
+  }
 }
