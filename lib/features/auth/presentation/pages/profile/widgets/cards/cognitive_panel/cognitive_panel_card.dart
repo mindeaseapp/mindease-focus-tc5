@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/cognitive_panel_controller.dart';
-import 'package:mindease_focus/features/auth/presentation/pages/profile/models/cognitive_panel_models.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/profile/models/cognitive_panel/cognitive_panel_models.dart';
 import 'package:mindease_focus/features/auth/presentation/widgets/app_card.dart';
 import 'package:mindease_focus/features/auth/presentation/widgets/section_header.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';

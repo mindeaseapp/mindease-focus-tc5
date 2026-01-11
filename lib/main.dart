@@ -18,9 +18,7 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<ThemeController>(
-          create: (_) => ThemeController(),
-        ),
+        ChangeNotifierProvider<ThemeController>(create: (_) => ThemeController()),
         ChangeNotifierProvider<ProfilePreferencesController>(
           create: (_) => ProfilePreferencesController(),
         ),
@@ -42,7 +40,6 @@ class MindEaseApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'MindEase',
 
-      // ✅ Alto contraste aplica tema global
       theme: themeController.highContrast
           ? AppTheme.lightHighContrast
           : AppTheme.light,
@@ -50,23 +47,17 @@ class MindEaseApp extends StatelessWidget {
           ? AppTheme.darkHighContrast
           : AppTheme.dark,
 
-      // ✅ Modo escuro global
       themeMode: themeController.mode,
 
-      // ✅ Modo foco: efeito global (reduz estímulo)
       builder: (context, child) {
         final mq = MediaQuery.of(context);
-
         return MediaQuery(
-          data: mq.copyWith(
-            // Quando "Ocultar Distrações" estiver ON:
-            // - reduz estímulo visual (sem animações/transições)
-            disableAnimations: prefs.hideDistractions,
-          ),
+          data: mq.copyWith(disableAnimations: prefs.hideDistractions),
           child: child ?? const SizedBox.shrink(),
         );
       },
 
+      // ✅ IMPORTANTÍSSIMO: isso usa o routes.dart que registrou /tasks
       initialRoute: AppRoutes.login,
       routes: AppRoutes.routes,
     );

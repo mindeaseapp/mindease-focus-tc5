@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:mindease_focus/features/auth/presentation/pages/profile/models/cognitive_panel_models.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/profile/models/cognitive_panel/cognitive_panel_models.dart';
 
 class ProfilePreferencesController extends ChangeNotifier {
   // ==========================

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mindease_focus/shared/layout/flex_grid.dart';
-import 'package:mindease_focus/shared/widgets/gradient_panel.dart';
+import 'package:mindease_focus/shared/widgets/gradient_panel/gradient_panel.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_colors.dart';
