@@ -58,6 +58,9 @@ class _LoginPageState extends State<LoginPage> {
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
           setState(() => _isSubmitting = false);
+          
+          // Navega para o Dashboard após login
+          Navigator.pushReplacementNamed(context, '/dashboard');
         }
       });
     }
