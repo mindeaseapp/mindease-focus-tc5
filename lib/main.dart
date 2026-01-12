@@ -57,9 +57,13 @@ class MindEaseApp extends StatelessWidget {
         );
       },
 
-      // ✅ IMPORTANTÍSSIMO: isso usa o routes.dart que registrou /tasks
+      // ✅ Mantém seu fluxo normal
       initialRoute: AppRoutes.login,
       routes: AppRoutes.routes,
+
+      // ✅ NOVO: fallback quando a rota não existir + regras logado/deslogado
+      onGenerateRoute: AppRoutes.onGenerateRoute,
+      onUnknownRoute: AppRoutes.onUnknownRoute,
     );
   }
 }
