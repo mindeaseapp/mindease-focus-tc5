@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:mindease_focus/features/routes.dart';
-import 'not_found_styles.dart';
+import 'package:mindease_focus/shared/pages/not_found/not_found_styles.dart';
 
 class NotFoundPage extends StatelessWidget {
   final String? requestedRoute;
@@ -20,6 +20,9 @@ class NotFoundPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        // ✅ REMOVE a seta/back do AppBar
+        automaticallyImplyLeading: false,
+
         title: const Text('Página não encontrada'),
       ),
       body: Center(
@@ -49,7 +52,6 @@ class NotFoundPage extends StatelessWidget {
                 ),
                 NotFoundStyles.gap24,
 
-                // ✅ CTA muda conforme login
                 ElevatedButton(
                   style: NotFoundStyles.primaryButtonStyle(context),
                   onPressed: () {

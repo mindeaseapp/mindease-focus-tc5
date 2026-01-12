@@ -1,22 +1,28 @@
 # =========================
-# Node / Web
+# Node / Web tooling (husky/commitlint)
 # =========================
 node_modules/
 npm-debug.log*
 yarn-error.log*
-package-lock.json
+pnpm-debug.log*
+
+# Se você usa npm/yarn/pnpm e quer lockfile versionado (recomendado),
+# NÃO ignore. Então removi package-lock.json daqui.
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
 
 # =========================
-# Flutter
+# Flutter / Dart
 # =========================
 .dart_tool/
-.build/
 .flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 
 # Builds
 build/
+# Se você tem pasta web/build gerada por algum processo, essa linha cobre.
 web/build/
 
 # =========================

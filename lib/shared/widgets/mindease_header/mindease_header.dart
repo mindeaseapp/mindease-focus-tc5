@@ -40,6 +40,9 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
     final isMobile = _isMobile(context);
 
     return AppBar(
+      // ✅ REMOVE o botão de voltar automático (seta do header)
+      automaticallyImplyLeading: false,
+
       toolbarHeight: MindEaseHeaderStyles.toolbarHeight(context),
       elevation: MindEaseHeaderStyles.elevation,
       centerTitle: MindEaseHeaderStyles.centerTitle,
