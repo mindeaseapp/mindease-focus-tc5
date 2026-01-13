@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 // ==============================
 // AUTH
@@ -6,39 +7,102 @@ import 'package:flutter/material.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/login/login_page.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/register/register_page.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/reset_password/reset_password_page.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/update_password/update_password_page.dart';
 
 // ==============================
 // APP
 // ==============================
 import 'package:mindease_focus/features/auth/presentation/pages/dashboard/dashboard_page.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/profile/profile_page.dart';
-import 'package:mindease_focus/features/auth/presentation/pages/profile/models/profile_view_model.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/profile/models/profile_view/profile_view_model.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/tasks_page.dart';
 
+// ==============================
+// SHARED
+// ==============================
+import 'package:mindease_focus/shared/auth/auth_guard.dart';
+
+// ==============================
+// NOT FOUND
+// ==============================
+import 'package:mindease_focus/shared/pages/not_found/not_found_page.dart';
+
 class AppRoutes {
+  // Públicas
   static const String login = '/login';
   static const String register = '/register';
   static const String resetPassword = '/reset-password';
+  static const String updatePassword = '/update-password';
+
+  // Protegidas
   static const String dashboard = '/dashboard';
   static const String profile = '/profile';
   static const String tasks = '/tasks';
 
+  // Not Found
+  static const String notFound = '/not_found';
+
   static final Map<String, WidgetBuilder> routes = {
+    // ✅ públicas
     login: (_) => const LoginPage(),
     register: (_) => const RegisterPage(),
     resetPassword: (_) => const ResetPasswordPage(),
-    dashboard: (_) => const DashboardPage(),
-    tasks: (_) => const TasksPage(),
+    updatePassword: (_) => const UpdatePasswordPage(),
 
-    // ✅ Profile dinâmico (somente leitura por enquanto)
+    // ✅ protegidas
+    dashboard: (_) => const AuthGuard(child: DashboardPage()),
+    tasks: (_) => const AuthGuard(child: TasksPage()),
+
+    // ✅ Profile dinâmico + protegido + "somente leitura por enquanto"
     profile: (context) {
+      final user = Supabase.instance.client.auth.currentUser;
+
+      final name = user?.userMetadata?['name']?.toString() ??
+          user?.email?.split('@').first ??
+          'Usuário MindEase';
+
+      final email = user?.email ?? 'sem-email@local';
+
       final vm = ProfileViewModel.demo(
-        name: 'Usuário MindEase',
-        email: 'usuario@mindease.com',
-        // ✅ sem onOpenPersonalInfo
+        name: name,
+        email: email,
+        // ✅ sem onOpenPersonalInfo (igual Larissa)
       );
 
-      return ProfilePage(viewModel: vm);
+      return AuthGuard(
+        child: ProfilePage(viewModel: vm),
+      );
     },
+
+    // ✅ rota fixa
+    notFound: (_) => const NotFoundPage(),
   };
+
+  /// ✅ Fallback principal:
+  /// - Se existir no map -> abre
+  /// - Se não -> NotFound
+  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+    final routeName = settings.name;
+    final builder = routes[routeName];
+
+    if (builder != null) {
+      return MaterialPageRoute(
+        builder: builder,
+        settings: settings,
+      );
+    }
+
+    return MaterialPageRoute(
+      builder: (_) => NotFoundPage(requestedRoute: routeName),
+      settings: const RouteSettings(name: notFound),
+    );
+  }
+
+  /// ✅ Backup extra
+  static Route<dynamic> onUnknownRoute(RouteSettings settings) {
+    return MaterialPageRoute(
+      builder: (_) => NotFoundPage(requestedRoute: settings.name),
+      settings: const RouteSettings(name: notFound),
+    );
+  }
 }

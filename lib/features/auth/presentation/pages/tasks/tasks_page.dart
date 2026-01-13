@@ -1,97 +1,73 @@
-// ==============================
-// 📄 TASKS PAGE
-// ==============================
-// Página principal de tarefas com Pomodoro Timer + Kanban Board
-// Similar ao TasksPage do React
-
 import 'package:flutter/material.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/pomodoro_timer.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/kanban_board.dart';
 
-/// TasksPage - Página completa de gerenciamento de tarefas
-/// 
-/// Em React seria:
-/// export function TasksPage() {
-///   return (
-///     <div>
-///       <PomodoroTimer />
-///       <KanbanBoard />
-///     </div>
-///   );
-/// }
 class TasksPage extends StatelessWidget {
   const TasksPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // AppBar - Barra superior
       appBar: AppBar(
         title: const Text('Kanban Cognitivo'),
-        backgroundColor: Colors.blue.shade600,
+        backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         elevation: 2,
       ),
-      
-      // Body - Conteúdo principal
       body: LayoutBuilder(
         builder: (context, constraints) {
-          // Mobile: layout vertical (timer acima, kanban abaixo)
           if (constraints.maxWidth < 900) {
-            return _buildMobileLayout();
+            return const _MobileLayout();
           }
-          
-          // Desktop: layout horizontal (timer à esquerda, kanban à direita)
-          return _buildDesktopLayout();
+          return const _DesktopLayout();
         },
       ),
     );
   }
+}
 
-  /// Layout para mobile (vertical)
-  Widget _buildMobileLayout() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+class _MobileLayout extends StatelessWidget {
+  const _MobileLayout();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SingleChildScrollView(
+      padding: EdgeInsets.all(16),
       child: Column(
         children: [
-          // Timer Pomodoro
-          const PomodoroTimer(),
-          
-          const SizedBox(height: 24),
-          
-          // Kanban Board
+          PomodoroTimer(),
+          SizedBox(height: 24),
           SizedBox(
-            height: 600, // Altura fixa para o kanban
-            child: const KanbanBoard(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Layout para desktop (com scroll vertical)
-  Widget _buildDesktopLayout() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          // Timer Pomodoro no topo
-          const PomodoroTimer(),
-          
-          const SizedBox(height: 24),
-          
-          // Kanban Board com altura mínima fixa
-          // Isso garante que o Kanban sempre tenha espaço adequado
-          // e permite scroll vertical se necessário
-          SizedBox(
-            height: 700, // Altura mínima para visualização adequada
-            child: const KanbanBoard(),
+            height: 600,
+            child: KanbanBoard(),
           ),
         ],
       ),
     );
   }
 }
+
+class _DesktopLayout extends StatelessWidget {
+  const _DesktopLayout();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SingleChildScrollView(
+      padding: EdgeInsets.all(24),
+      child: Column(
+        children: [
+          PomodoroTimer(),
+          SizedBox(height: 24),
+          SizedBox(
+            height: 700,
+            child: KanbanBoard(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 // ==============================
 // 📝 CONCEITOS FLUTTER IMPORTANTES

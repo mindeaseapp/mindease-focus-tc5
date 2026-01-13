@@ -7,6 +7,9 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // ✅ remove o botão de voltar automático (seta)
+        automaticallyImplyLeading: false,
+
         title: const Text('MindEase – Painel Cognitivo'),
       ),
       body: Padding(

@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+// Layout e Widgets
 import 'package:mindease_focus/shared/layout/flex_grid.dart';
-import 'package:mindease_focus/shared/widgets/gradient_panel.dart';
+import 'package:mindease_focus/shared/widgets/gradient_panel/gradient_panel.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_colors.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 import 'package:mindease_focus/shared/tokens/app_opacity.dart';
 
+// Validators
 import 'package:mindease_focus/features/auth/domain/validators/email_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/login_form_validator.dart';
 
+// Estilos e Componentes
 import 'package:mindease_focus/features/auth/presentation/pages/login/login_styles.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/login/feature_card.dart';
+
+// Controllers
+import 'package:mindease_focus/features/auth/presentation/controllers/login_controller.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -32,10 +40,18 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordFocusNode = FocusNode();
 
   bool _obscurePassword = true;
-  bool _isSubmitting = false;
   bool _isFormValid = false;
 
   bool get _isMobile => MediaQuery.of(context).size.width < 768;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
 
   void _updateFormValidity() {
     final isValid = LoginFormValidator.isValid(
@@ -48,39 +64,50 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _submit() {
+  Future<void> _submit(LoginController controller) async {
     FocusScope.of(context).unfocus();
-    if (!_isFormValid || _isSubmitting) return;
 
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isSubmitting = true);
+    // ✅ evita submit duplicado e valida form
+    if (controller.isLoading) return;
+    if (!_formKey.currentState!.validate()) return;
 
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) {
-          setState(() => _isSubmitting = false);
-          
-          // Navega para o Dashboard após login
-          Navigator.pushReplacementNamed(context, '/dashboard');
-        }
-      });
+    final success = await controller.login(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+      // ✅ atualiza auth global (seu fluxo)
+      context.read<AuthController>().refreshUser();
+
+      // ✅ navega pro dashboard (mantém funcionalidade)
+      Navigator.pushReplacementNamed(context, '/dashboard');
+    } else if (controller.errorMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(controller.errorMessage!),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
   @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _emailFocusNode.dispose();
-    _passwordFocusNode.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // Evita que o teclado redimensione o fundo, prevenindo quebras no GradientPanel
-      resizeToAvoidBottomInset: true, 
-      body: _isMobile ? _buildMobile() : _buildDesktop(),
+    return ChangeNotifierProvider(
+      create: (_) => LoginController(),
+      child: Consumer<LoginController>(
+        builder: (context, controller, _) {
+          return Scaffold(
+            resizeToAvoidBottomInset: true,
+            body: _isMobile
+                ? _buildMobile(controller)
+                : _buildDesktop(controller),
+          );
+        },
+      ),
     );
   }
 
@@ -88,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
   // 📱 MOBILE
   // ======================================================
 
-  Widget _buildMobile() {
+  Widget _buildMobile(LoginController controller) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -136,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
           Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Card(
-              child: _buildForm(), // Removido Padding fixo aqui para gerenciar dentro do formulário
+              child: _buildForm(controller),
             ),
           ),
         ],
@@ -147,63 +174,62 @@ class _LoginPageState extends State<LoginPage> {
   // ======================================================
   // 🖥️ DESKTOP
   // ======================================================
-Widget _buildDesktop() {
-  return FlexGrid(
-    left: GradientPanel(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.sm),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: AppOpacity.medium),
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                ),
-                child: const Icon(
-                  Icons.psychology_outlined,
-                  color: Colors.white,
-                  size: AppSizes.iconLG,
-                ),
-              ),
-              AppSpacing.hGapSm,
-              Text('MindEase', style: LoginStyles.brand),
-            ],
-          ),
-          AppSpacing.gapLg,
-          Text(
-            'Facilitando sua jornada acadêmica e profissional',
-            style: LoginStyles.subtitle,
-          ),
-          AppSpacing.gapMd,
-          Text(
-            'Uma plataforma pensada para pessoas neurodivergentes.',
-            style: LoginStyles.description,
-          ),
 
-          AppSpacing.gapXl,
-
-          const FeatureCardsRow(),
-        ],
-      ),
-    ),
-    right: Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 420),
-        child: Card(
-          child: _buildForm(),
+  Widget _buildDesktop(LoginController controller) {
+    return FlexGrid(
+      left: GradientPanel(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.sm),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: AppOpacity.medium),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                  ),
+                  child: const Icon(
+                    Icons.psychology_outlined,
+                    color: Colors.white,
+                    size: AppSizes.iconLG,
+                  ),
+                ),
+                AppSpacing.hGapSm,
+                Text('MindEase', style: LoginStyles.brand),
+              ],
+            ),
+            AppSpacing.gapLg,
+            Text(
+              'Facilitando sua jornada acadêmica e profissional',
+              style: LoginStyles.subtitle,
+            ),
+            AppSpacing.gapMd,
+            Text(
+              'Uma plataforma pensada para pessoas neurodivergentes.',
+              style: LoginStyles.description,
+            ),
+            AppSpacing.gapXl,
+            const FeatureCardsRow(),
+          ],
         ),
       ),
-    ),
-  );
-}
+      right: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: Card(
+            child: _buildForm(controller),
+          ),
+        ),
+      ),
+    );
+  }
 
   // ======================================================
-  // 🧩 FORM (CORRIGIDO)
+  // 🧩 FORM (layout da Larissa + lógica da Michele)
   // ======================================================
 
-  Widget _buildForm() {
+  Widget _buildForm(LoginController controller) {
     return Padding(
       padding: const EdgeInsets.all(LoginStyles.cardPadding),
       child: Form(
@@ -227,7 +253,7 @@ Widget _buildDesktop() {
             ),
             AppSpacing.gapLg,
 
-            // Campos de Input
+            // Email
             TextFormField(
               controller: _emailController,
               focusNode: _emailFocusNode,
@@ -235,6 +261,7 @@ Widget _buildDesktop() {
               textInputAction: TextInputAction.next,
               validator: EmailValidator.validate,
               onChanged: (_) => _updateFormValidity(),
+              enabled: !controller.isLoading,
               decoration: const InputDecoration(
                 labelText: 'Email',
                 prefixIcon: Icon(Icons.email_outlined),
@@ -243,6 +270,7 @@ Widget _buildDesktop() {
 
             AppSpacing.gapMd,
 
+            // Senha
             TextFormField(
               controller: _passwordController,
               focusNode: _passwordFocusNode,
@@ -250,7 +278,8 @@ Widget _buildDesktop() {
               textInputAction: TextInputAction.done,
               validator: PasswordValidator.validate,
               onChanged: (_) => _updateFormValidity(),
-              onFieldSubmitted: (_) => _submit(),
+              onFieldSubmitted: (_) => _submit(controller),
+              enabled: !controller.isLoading,
               decoration: InputDecoration(
                 labelText: 'Senha',
                 prefixIcon: const Icon(Icons.lock_outline),
@@ -260,9 +289,9 @@ Widget _buildDesktop() {
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined,
                   ),
-                  onPressed: () {
-                    setState(() => _obscurePassword = !_obscurePassword);
-                  },
+                  onPressed: controller.isLoading
+                      ? null
+                      : () => setState(() => _obscurePassword = !_obscurePassword),
                 ),
               ),
             ),
@@ -272,20 +301,24 @@ Widget _buildDesktop() {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () => Navigator.pushNamed(context, '/reset-password'),
+                onPressed: controller.isLoading
+                    ? null
+                    : () => Navigator.pushNamed(context, '/reset-password'),
                 child: const Text('Esqueci minha senha'),
               ),
             ),
 
             AppSpacing.gapLg,
 
-            // Botão Entrar
+            // Entrar
             SizedBox(
               width: double.infinity,
               height: AppSizes.buttonHeight,
               child: ElevatedButton(
-                onPressed: (!_isFormValid || _isSubmitting) ? null : _submit,
-                child: _isSubmitting
+                onPressed: (!_isFormValid || controller.isLoading)
+                    ? null
+                    : () => _submit(controller),
+                child: controller.isLoading
                     ? const SizedBox(
                         width: 20,
                         height: 20,
@@ -313,7 +346,9 @@ Widget _buildDesktop() {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, '/register'),
+                    onTap: controller.isLoading
+                        ? null
+                        : () => Navigator.pushNamed(context, '/register'),
                     child: Text(
                       'Cadastre-se',
                       style: AppTypography.bodySmall.copyWith(
