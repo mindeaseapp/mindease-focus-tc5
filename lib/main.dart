@@ -11,7 +11,9 @@ import 'package:mindease_focus/shared/tokens/app_theme.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/theme_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
-
+import 'package:mindease_focus/features/auth/data/datasources/task_remote_datasource.dart';
+import 'package:mindease_focus/features/auth/data/repositories/task_repository.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/task_controller.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -20,12 +22,26 @@ Future<void> main() async {
       anonKey: 'sb_publishable_mHOOBibYEftti209CvA_dg_4NG4atPg', 
     );
 
-  runApp(
+runApp(
     MultiProvider(
       providers: [
-         ChangeNotifierProvider(create: (_) => ThemeController()),
+        ChangeNotifierProvider(create: (_) => ThemeController()),
         ChangeNotifierProvider(create: (_) => ProfilePreferencesController()),
         ChangeNotifierProvider(create: (_) => AuthController()),
+        
+        // ✅ INJEÇÃO DO TASK CONTROLLER
+        ChangeNotifierProvider(
+          create: (_) {
+            // 1. Pega o cliente do Supabase
+            final supabase = Supabase.instance.client;
+            // 2. Cria o DataSource
+            final dataSource = TaskRemoteDataSourceImpl(supabase);
+            // 3. Cria o Repositório (na pasta Data)
+            final repository = TaskRepository(dataSource);
+            // 4. Cria o Controller
+            return TaskController(repository: repository);
+          },
+        ),
       ],
       child: const MindEaseApp(),
     ),

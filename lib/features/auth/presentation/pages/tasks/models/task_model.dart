@@ -1,5 +1,5 @@
 // ==============================
-// 📦 TASK MODEL
+// 📦 TASK MODEL (Entidade Única)
 // ==============================
 
 enum TaskStatus {
@@ -13,7 +13,7 @@ class Task {
   final String title;
   final String? description;
   final TaskStatus status;
-  final String? timeSpent;
+  final String? timeSpent; // Campo opcional (ainda não vem do banco)
 
   const Task({
     required this.id,
@@ -22,6 +22,32 @@ class Task {
     required this.status,
     this.timeSpent,
   });
+
+  // ✅ CONVERTER DE SUPABASE (JSON) -> PARA TASK
+  factory Task.fromJson(Map<String, dynamic> json) {
+    return Task(
+      id: json['id'].toString(),
+      title: json['title'],
+      description: json['description'],
+      // Converte a string 'todo' do banco para o enum TaskStatus.todo
+      status: TaskStatus.values.firstWhere(
+        (e) => e.toString().split('.').last == json['status'],
+        orElse: () => TaskStatus.todo,
+      ),
+      timeSpent: null, 
+    );
+  }
+
+  // ✅ CONVERTER DE TASK -> PARA SUPABASE (JSON)
+  Map<String, dynamic> toJson({required String userId}) {
+    return {
+      'user_id': userId, // Vincula ao usuário logado
+      'title': title,
+      'description': description,
+      // Salva no banco apenas a string: 'todo', 'inProgress' etc
+      'status': status.toString().split('.').last,
+    };
+  }
 
   Task copyWith({
     String? id,
@@ -53,33 +79,4 @@ class Task {
   @override
   String toString() => 'Task(id: $id, title: $title, status: $status)';
 }
-
-// ✅ Agora tudo const -> some os 4 warnings prefer_const_constructors
-const List<Task> initialTasks = [
-  Task(
-    id: '1',
-    title: 'Estudar React Hooks',
-    description: 'Revisar useState, useEffect e useContext',
-    status: TaskStatus.inProgress,
-    timeSpent: '2h',
-  ),
-  Task(
-    id: '2',
-    title: 'Fazer exercícios de algoritmos',
-    description: 'Resolver 5 problemas no LeetCode',
-    status: TaskStatus.todo,
-  ),
-  Task(
-    id: '3',
-    title: 'Revisar projeto final',
-    description: 'Preparar apresentação para a aula',
-    status: TaskStatus.inProgress,
-    timeSpent: '1h 30m',
-  ),
-  Task(
-    id: '4',
-    title: 'Ler capítulo 5 - Algoritmos',
-    status: TaskStatus.done,
-    timeSpent: '45m',
-  ),
-];
+// 🗑️ (Remova a lista initialTasks que existia aqui)

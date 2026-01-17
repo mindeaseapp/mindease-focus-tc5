@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// 1. Imports de Navegação e Estado
+// Imports de Navegação e Estado
 import 'package:mindease_focus/features/routes.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/task_controller.dart';
 
-// 2. Imports dos Widgets Compartilhados
+// Imports dos Widgets Compartilhados
 import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header.dart';
 import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header_styles.dart';
 import 'package:mindease_focus/shared/widgets/mindease_drawer/mindease_drawer.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 
-// 3. Imports dos Widgets da Página
+// Imports dos Widgets da Página
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/pomodoro_timer.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/kanban_board.dart';
 
@@ -34,7 +35,7 @@ class TasksPage extends StatelessWidget {
           Navigator.of(context).pushReplacementNamed(AppRoutes.dashboard);
           break;
         case MindEaseNavItem.tasks:
-          break;
+          break; // Já estamos aqui
         case MindEaseNavItem.profile:
           Navigator.of(context).pushReplacementNamed(AppRoutes.profile);
           break;
@@ -65,7 +66,6 @@ class TasksPage extends StatelessWidget {
       selectedItemColor = Colors.white;
       unselectedItemColor = Colors.white60;
     } else {
-      // Usa os estilos do Header para manter consistência
       selectedItemColor = MindEaseHeaderStyles.navFg(context, selected: true);
       unselectedItemColor = MindEaseHeaderStyles.navFg(context, selected: false);
     }
@@ -94,32 +94,25 @@ class TasksPage extends StatelessWidget {
             Container(
               width: double.infinity,
               color: tabBarBackgroundColor,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: isDarkMode ? Colors.transparent : Colors.grey.shade200,
-                      width: 1,
-                    ),
+              // ✅ REMOVIDO: decoration com borda manual
+              child: TabBar(
+                // ✅ NOVO: Remove a linha divisória padrão do Flutter
+                dividerColor: Colors.transparent,
+                
+                labelColor: selectedItemColor,
+                unselectedLabelColor: unselectedItemColor,
+                indicatorColor: selectedItemColor,
+                indicatorWeight: 3,
+                tabs: const [
+                  Tab(
+                    icon: Icon(Icons.timer_outlined),
+                    text: 'Foco',
                   ),
-                ),
-                child: TabBar(
-                  labelColor: selectedItemColor,
-                  unselectedLabelColor: unselectedItemColor,
-                  indicatorColor: selectedItemColor,
-                  indicatorWeight: 3,
-                  // Removi overlayColor para evitar erros de versão do Flutter
-                  tabs: const [
-                    Tab(
-                      icon: Icon(Icons.timer_outlined),
-                      text: 'Foco',
-                    ),
-                    Tab(
-                      icon: Icon(Icons.view_kanban_outlined),
-                      text: 'Tarefas',
-                    ),
-                  ],
-                ),
+                  Tab(
+                    icon: Icon(Icons.view_kanban_outlined),
+                    text: 'Tarefas',
+                  ),
+                ],
               ),
             ),
 
@@ -175,14 +168,34 @@ class _PomodoroTabContent extends StatelessWidget {
   }
 }
 
-class _KanbanTabContent extends StatelessWidget {
+class _KanbanTabContent extends StatefulWidget {
   const _KanbanTabContent();
 
   @override
+  State<_KanbanTabContent> createState() => _KanbanTabContentState();
+}
+
+class _KanbanTabContentState extends State<_KanbanTabContent> {
+  
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TaskController>().loadTasks();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final taskController = context.watch<TaskController>();
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isMobile = constraints.maxWidth < 600;
+
+        if (taskController.isLoading && taskController.tasks.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
         return Container(
           color: Theme.of(context).brightness == Brightness.dark 
@@ -190,9 +203,31 @@ class _KanbanTabContent extends StatelessWidget {
               : Colors.grey.shade50,
           child: Padding(
             padding: EdgeInsets.all(isMobile ? 12 : 24),
-            child: const Column(
+            child: Column(
               children: [
-                 Expanded(
+                 if (taskController.error != null)
+                   Container(
+                     padding: const EdgeInsets.all(12),
+                     margin: const EdgeInsets.only(bottom: 16),
+                     decoration: BoxDecoration(
+                       color: Colors.red.shade100,
+                       borderRadius: BorderRadius.circular(8),
+                     ),
+                     child: Row(
+                       children: [
+                         const Icon(Icons.error_outline, color: Colors.red),
+                         const SizedBox(width: 12),
+                         Expanded(
+                           child: Text(
+                             taskController.error!, 
+                             style: const TextStyle(color: Colors.red),
+                           ),
+                         ),
+                       ],
+                     ),
+                   ),
+
+                 const Expanded(
                    child: KanbanBoard(),
                  ),
               ],
