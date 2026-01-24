@@ -1,7 +1,21 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:mindease_focus/features/auth/data/repositories/profile_repository.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/profile/models/user_preferences/user_preferences_model.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/profile/models/cognitive_panel/cognitive_panel_models.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfilePreferencesController extends ChangeNotifier {
+  final ProfileRepository? repository;
+  
+  // Debounce para evitar excesso de writes
+  Timer? _debounceTimer;
+  String? _currentUserId;
+
+  ProfilePreferencesController({
+    this.repository,
+  });
+
   // ==========================
   // Modo Foco
   // ==========================
@@ -28,6 +42,65 @@ class ProfilePreferencesController extends ChangeNotifier {
   InterfaceComplexity _complexity = InterfaceComplexity.medium;
   InterfaceComplexity get complexity => _complexity;
 
+  // ==========================
+  // Initialization
+  // ==========================
+  Future<void> loadPreferences(String userId) async {
+    if (repository == null) return;
+    _currentUserId = userId;
+
+    try {
+      final prefs = await repository!.getPreferences(userId);
+      
+      hideDistractions = prefs.hideDistractions;
+      highContrast = prefs.highContrast;
+      darkMode = prefs.darkMode;
+      breakReminder = prefs.breakReminder;
+      taskTimeAlert = prefs.taskTimeAlert;
+      smoothTransition = prefs.smoothTransition;
+      pushNotifications = prefs.pushNotifications;
+      notificationSounds = prefs.notificationSounds;
+      _complexity = prefs.complexity;
+      
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error loading preferences: $e');
+    }
+  }
+
+  void _scheduleSave() {
+    // Fallback: Se _currentUserId for nulo, tenta pegar da sessão atual
+    if (_currentUserId == null) {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user != null) {
+        _currentUserId = user.id;
+      }
+    }
+
+    if (repository == null || _currentUserId == null) return;
+
+    if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+    
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      final prefs = UserPreferencesModel(
+        userId: _currentUserId!,
+        hideDistractions: hideDistractions,
+        highContrast: highContrast,
+        darkMode: darkMode,
+        breakReminder: breakReminder,
+        taskTimeAlert: taskTimeAlert,
+        smoothTransition: smoothTransition,
+        pushNotifications: pushNotifications,
+        notificationSounds: notificationSounds,
+        complexity: _complexity,
+      );
+      
+      repository!.updatePreferences(prefs).catchError((e) {
+        debugPrint('Error saving preferences: $e');
+      });
+    });
+  }  
+
   /// ✅ Chame isso sempre que o usuário trocar a complexidade no Painel Cognitivo
   void applyComplexity(InterfaceComplexity value) {
     if (_complexity == value) return;
@@ -35,6 +108,7 @@ class ProfilePreferencesController extends ChangeNotifier {
 
     _enforceAfterComplexityChange();
     notifyListeners();
+    _scheduleSave();
   }
 
   void _enforceAfterComplexityChange() {
@@ -87,16 +161,19 @@ class ProfilePreferencesController extends ChangeNotifier {
   void setHideDistractions(bool v) {
     hideDistractions = v;
     notifyListeners();
+    _scheduleSave();
   }
 
   void setHighContrast(bool v) {
     highContrast = v;
     notifyListeners();
+    _scheduleSave();
   }
 
   void setDarkMode(bool v) {
     darkMode = v;
     notifyListeners();
+    _scheduleSave();
   }
 
   void setBreakReminder(bool v) {
@@ -105,6 +182,7 @@ class ProfilePreferencesController extends ChangeNotifier {
 
     breakReminder = v;
     notifyListeners();
+    _scheduleSave();
   }
 
   void setTaskTimeAlert(bool v) {
@@ -112,6 +190,7 @@ class ProfilePreferencesController extends ChangeNotifier {
 
     taskTimeAlert = v;
     notifyListeners();
+    _scheduleSave();
   }
 
   void setSmoothTransition(bool v) {
@@ -119,6 +198,7 @@ class ProfilePreferencesController extends ChangeNotifier {
 
     smoothTransition = v;
     notifyListeners();
+    _scheduleSave();
   }
 
   void setPushNotifications(bool v) {
@@ -127,6 +207,7 @@ class ProfilePreferencesController extends ChangeNotifier {
     pushNotifications = v;
     _enforceDependencies();
     notifyListeners();
+    _scheduleSave();
   }
 
   void setNotificationSounds(bool v) {
@@ -138,5 +219,6 @@ class ProfilePreferencesController extends ChangeNotifier {
 
     notificationSounds = v;
     notifyListeners();
+    _scheduleSave();
   }
 }

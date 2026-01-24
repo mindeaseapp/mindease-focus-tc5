@@ -49,8 +49,20 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late final CognitivePanelController _cognitiveController =
-      CognitivePanelController();
+  late final CognitivePanelController _cognitiveController;
+
+  @override
+  void initState() {
+    super.initState();
+    // ✅ Inicializa o controller local com callback para salvar no Supabase
+    _cognitiveController = CognitivePanelController(
+      onComplexityChanged: (newComplexity) {
+        if (mounted) {
+           context.read<ProfilePreferencesController>().applyComplexity(newComplexity);
+        }
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -62,6 +74,15 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     // Seus controllers
     final prefs = context.watch<ProfilePreferencesController>();
+    
+    // ✅ Sincronia: Se o dado do Supabase mudar (load inicial), atualiza a UI
+    if (prefs.complexity != _cognitiveController.complexity) {
+      // Usamos postFrameCallback ou apenas setamos se não estivermos no meio de build? 
+      // Como o setComplexity tem check de igualdade e notifyListeners, melhor evitar chamar durante build se possível,
+      // mas aqui é essencial para a UI refletir o estado.
+      // O controller local tem check de igualdade, então só vai notificar se mudar de verdade.
+      _cognitiveController.setComplexity(prefs.complexity);
+    }
 
     // Marcelo: Auth real
     final authController = context.watch<AuthController>();

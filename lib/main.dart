@@ -9,7 +9,10 @@ import 'package:mindease_focus/shared/tokens/app_theme.dart';
 
 // Controllers Globais
 import 'package:mindease_focus/features/auth/presentation/controllers/theme_controller.dart';
-import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
+// ✅ Profile Integration (Refatorado)
+import 'package:mindease_focus/features/auth/data/datasources/profile_remote_datasource.dart';
+import 'package:mindease_focus/features/auth/data/repositories/profile_repository.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart'; // Keep this import for the controller itself
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/auth/data/datasources/task_remote_datasource.dart';
 import 'package:mindease_focus/features/auth/data/repositories/task_repository.dart';
@@ -26,7 +29,18 @@ runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeController()),
-        ChangeNotifierProvider(create: (_) => ProfilePreferencesController()),
+        
+        // ✅ INJEÇÃO DO PROFILE PREFERENCES CONTROLLER (REFATORADO)
+        ChangeNotifierProvider(create: (_) {
+          final supabase = Supabase.instance.client;
+          final remoteDataSource = ProfileRemoteDataSourceImpl(supabase);
+          final repository = ProfileRepository(remoteDataSource);
+          
+          return ProfilePreferencesController(
+            repository: repository,
+          );
+        }),
+
         ChangeNotifierProvider(create: (_) => AuthController()),
         
         // ✅ INJEÇÃO DO TASK CONTROLLER
