@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 class TasksPageStyles {
-  // Tabs
   static const int tabCount = 2;
   static const double tabIndicatorWeight = 3;
 
-  // Pomodoro tab padding
   static const EdgeInsets pomodoroPadding = EdgeInsets.all(24);
   static const double pomodoroMaxWidth = 600;
 
@@ -14,7 +12,6 @@ class TasksPageStyles {
     color: Colors.grey,
   );
 
-  // Kanban
   static const double mobileBreakpoint = 600;
 
   static EdgeInsets kanbanPadding({required bool isMobile}) =>
@@ -26,7 +23,6 @@ class TasksPageStyles {
         : Colors.grey.shade50;
   }
 
-  // Error box
   static const EdgeInsets errorPadding = EdgeInsets.all(12);
   static const EdgeInsets errorMargin = EdgeInsets.only(bottom: 16);
 
@@ -38,7 +34,6 @@ class TasksPageStyles {
 
   static const TextStyle errorText = TextStyle(color: Colors.red);
 
-  // Tab bar background
   static Color tabBarBackgroundColor(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return isDarkMode ? Theme.of(context).colorScheme.surface : Colors.white;

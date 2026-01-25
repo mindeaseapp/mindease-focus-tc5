@@ -5,7 +5,6 @@ import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class LoginStyles {
-  // text-2xl + font-bold
   static final TextStyle title = AppTypography.h2.copyWith(
     fontWeight: AppTypography.bold,
   );

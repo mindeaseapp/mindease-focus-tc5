@@ -9,12 +9,10 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
   final MindEaseNavItem current;
   final ValueChanged<MindEaseNavItem> onNavigate;
 
-  /// Texto exibido no canto direito (web) e usado em Semantics
   final String userLabel;
 
   final VoidCallback onLogout;
 
-  /// Widget do logo (se você tiver asset). Se não passar, usa ícone padrão.
   final Widget? logo;
 
   const MindEaseHeader({
@@ -31,7 +29,6 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
       Size.fromHeight(MindEaseHeaderStyles.preferredHeight);
 
   bool _isMobileByWidth(BuildContext context) {
-    // ✅ garante comportamento correto no Flutter Web em viewport pequena
     final w = MediaQuery.sizeOf(context).width;
     return w < 600;
   }
@@ -41,24 +38,18 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
     final isMobile = _isMobileByWidth(context);
 
     return AppBar(
-      // remove seta de voltar padrão
       automaticallyImplyLeading: false,
-
       toolbarHeight: MindEaseHeaderStyles.toolbarHeight(context),
       elevation: MindEaseHeaderStyles.elevation,
       centerTitle: MindEaseHeaderStyles.centerTitle,
       backgroundColor: MindEaseHeaderStyles.backgroundColor(context),
       surfaceTintColor: MindEaseHeaderStyles.surfaceTintColor,
-
-      // ✅ no mobile, encosta mais o logo na esquerda (igual sua imagem)
       titleSpacing: isMobile ? 0 : MindEaseHeaderStyles.titleSpacing,
 
-      // ✅ MOBILE: só logo (sem texto)
-      // ✅ WEB: logo + navbar + menu do usuário
       title: isMobile
           ? _BrandTitle(
               logo: logo,
-              label: '', // não renderiza texto
+              label: '',
             )
           : Row(
               children: [
@@ -66,24 +57,37 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
                   logo: logo,
                   label: 'MindEase',
                 ),
+
                 Expanded(
                   child: Center(
-                    child: _WebNavBar(
-                      current: current,
-                      onNavigate: onNavigate,
+                    child: ClipRect(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.center,
+                        child: _WebNavBar(
+                          current: current,
+                          onNavigate: onNavigate,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                _UserMenu(
-                  userLabel: userLabel,
-                  onNavigate: onNavigate,
-                  onLogout: onLogout,
+
+                ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: MindEaseHeaderStyles.userMaxWidth,
+                  ),
+                  child: _UserMenu(
+                    userLabel: userLabel,
+                    onNavigate: onNavigate,
+                    onLogout: onLogout,
+                  ),
                 ),
+
                 MindEaseHeaderStyles.rightGap,
               ],
             ),
 
-      // ✅ MOBILE: hambúrguer na direita abre Drawer (igual sua imagem)
       actions: isMobile
           ? <Widget>[
               Builder(
@@ -269,6 +273,7 @@ class _UserMenu extends StatelessWidget {
           child: Padding(
             padding: MindEaseHeaderStyles.userPadding,
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   Icons.account_circle,
@@ -276,9 +281,13 @@ class _UserMenu extends StatelessWidget {
                   color: MindEaseHeaderStyles.userIconColor(context),
                 ),
                 const SizedBox(width: AppSpacing.sm),
-                Text(
-                  userLabel,
-                  style: MindEaseHeaderStyles.userLabelStyle(context),
+                Flexible(
+                  child: Text(
+                    userLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: MindEaseHeaderStyles.userLabelStyle(context),
+                  ),
                 ),
               ],
             ),
