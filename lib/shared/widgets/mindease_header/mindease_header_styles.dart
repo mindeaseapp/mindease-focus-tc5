@@ -6,7 +6,6 @@ import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class MindEaseHeaderStyles {
-  // ===== AppBar =====
   static const double elevation = 0;
   static const bool centerTitle = false;
   static const Color surfaceTintColor = Colors.transparent;
@@ -21,7 +20,6 @@ class MindEaseHeaderStyles {
   static Color backgroundColor(BuildContext context) =>
       Theme.of(context).scaffoldBackgroundColor;
 
-  // ===== Brand =====
   static const double brandLogoBox = AppSizes.iconXL;
   static const SizedBox brandGap = SizedBox(width: AppSpacing.sm);
 
@@ -35,10 +33,10 @@ class MindEaseHeaderStyles {
     );
   }
 
-  // ===== Web title row =====
   static const SizedBox rightGap = SizedBox(width: AppSpacing.md);
 
-  // ===== Overlay / Ink =====
+  static const double userMaxWidth = 220;
+
   static BorderRadius inkRadius =
       BorderRadius.circular(AppSizes.cardBorderRadiusSm);
 
@@ -59,7 +57,6 @@ class MindEaseHeaderStyles {
     });
   }
 
-  // ===== Web Nav Item =====
   static const BoxConstraints navItemConstraints = BoxConstraints(
     minHeight: AppSizes.minTapArea,
   );
@@ -108,6 +105,5 @@ class MindEaseHeaderStyles {
     );
   }
 
-  // ===== Mobile actions =====
   static const SizedBox mobileActionsGap = SizedBox(width: AppSpacing.sm);
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/models/task_model.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/new_task_dialog_styles.dart';
 
 class NewTaskDialog extends StatefulWidget {
-  // ✅ Agora recebe uma função que aceita Strings e Status
   final void Function(String title, String description, TaskStatus status) onAddTask;
 
   const NewTaskDialog({
@@ -32,22 +32,21 @@ class _NewTaskDialogState extends State<NewTaskDialog> {
 
     if (!_formKey.currentState!.validate()) return;
 
-    // ✅ Envia os dados para quem chamou (KanbanBoard)
     widget.onAddTask(
       _titleController.text.trim(),
       _descriptionController.text.trim(),
       _selectedStatus,
     );
-    
+
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Criar Nova Tarefa'),
+      title: const Text(NewTaskDialogStyles.title),
       content: SizedBox(
-        width: 500,
+        width: NewTaskDialogStyles.contentWidth,
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -57,39 +56,36 @@ class _NewTaskDialogState extends State<NewTaskDialog> {
               children: [
                 TextFormField(
                   controller: _titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Título da Tarefa',
-                    hintText: 'Ex: Estudar Flutter',
-                    prefixIcon: Icon(Icons.title),
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) => value!.trim().isEmpty ? 'Insira um título' : null,
+                  decoration: NewTaskDialogStyles.titleDecoration,
+                  validator: (value) =>
+                      value!.trim().isEmpty ? 'Insira um título' : null,
                   textInputAction: TextInputAction.next,
                 ),
-                const SizedBox(height: 16),
+                NewTaskDialogStyles.gap16,
                 TextFormField(
                   controller: _descriptionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Descrição (opcional)',
-                    prefixIcon: Icon(Icons.notes),
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
+                  decoration: NewTaskDialogStyles.descriptionDecoration,
+                  maxLines: NewTaskDialogStyles.descriptionMaxLines,
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _handleSubmit(),
                 ),
-                const SizedBox(height: 16),
+                NewTaskDialogStyles.gap16,
                 DropdownButtonFormField<TaskStatus>(
                   initialValue: _selectedStatus,
-                  decoration: const InputDecoration(
-                    labelText: 'Status Inicial',
-                    prefixIcon: Icon(Icons.flag),
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: NewTaskDialogStyles.statusDecoration,
                   items: const [
-                    DropdownMenuItem(value: TaskStatus.todo, child: Text('A Fazer')),
-                    DropdownMenuItem(value: TaskStatus.inProgress, child: Text('Em Andamento')),
-                    DropdownMenuItem(value: TaskStatus.done, child: Text('Concluído')),
+                    DropdownMenuItem(
+                      value: TaskStatus.todo,
+                      child: Text('A Fazer'),
+                    ),
+                    DropdownMenuItem(
+                      value: TaskStatus.inProgress,
+                      child: Text('Em Andamento'),
+                    ),
+                    DropdownMenuItem(
+                      value: TaskStatus.done,
+                      child: Text('Concluído'),
+                    ),
                   ],
                   onChanged: (v) => setState(() => _selectedStatus = v!),
                 ),
@@ -101,11 +97,11 @@ class _NewTaskDialogState extends State<NewTaskDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancelar'),
+          child: const Text(NewTaskDialogStyles.cancelLabel),
         ),
         ElevatedButton(
           onPressed: _handleSubmit,
-          child: const Text('Criar Tarefa'),
+          child: const Text(NewTaskDialogStyles.submitLabel),
         ),
       ],
     );

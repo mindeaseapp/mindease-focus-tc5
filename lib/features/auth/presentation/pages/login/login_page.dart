@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// Layout e Widgets
+import 'package:mindease_focus/features/routes.dart';
+
 import 'package:mindease_focus/shared/layout/flex_grid.dart';
 import 'package:mindease_focus/shared/widgets/gradient_panel/gradient_panel.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
@@ -10,16 +11,13 @@ import 'package:mindease_focus/shared/tokens/app_colors.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 import 'package:mindease_focus/shared/tokens/app_opacity.dart';
 
-// Validators
 import 'package:mindease_focus/features/auth/domain/validators/email_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/login_form_validator.dart';
 
-// Estilos e Componentes
 import 'package:mindease_focus/features/auth/presentation/pages/login/login_styles.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/login/feature_card.dart';
 
-// Controllers
 import 'package:mindease_focus/features/auth/presentation/controllers/login_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 
@@ -67,7 +65,6 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _submit(LoginController controller) async {
     FocusScope.of(context).unfocus();
 
-    // ✅ evita submit duplicado e valida form
     if (controller.isLoading) return;
     if (!_formKey.currentState!.validate()) return;
 
@@ -79,11 +76,13 @@ class _LoginPageState extends State<LoginPage> {
     if (!mounted) return;
 
     if (success) {
-      // ✅ atualiza auth global (seu fluxo)
       context.read<AuthController>().refreshUser();
 
-      // ✅ navega pro dashboard (mantém funcionalidade)
-      Navigator.pushReplacementNamed(context, '/dashboard');
+      Navigator.pushReplacementNamed(
+        context,
+        AppRoutes.dashboard,
+        arguments: {'showWelcome': true},
+      );
     } else if (controller.errorMessage != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -102,18 +101,12 @@ class _LoginPageState extends State<LoginPage> {
         builder: (context, controller, _) {
           return Scaffold(
             resizeToAvoidBottomInset: true,
-            body: _isMobile
-                ? _buildMobile(controller)
-                : _buildDesktop(controller),
+            body: _isMobile ? _buildMobile(controller) : _buildDesktop(controller),
           );
         },
       ),
     );
   }
-
-  // ======================================================
-  // 📱 MOBILE
-  // ======================================================
 
   Widget _buildMobile(LoginController controller) {
     return SingleChildScrollView(
@@ -171,10 +164,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // ======================================================
-  // 🖥️ DESKTOP
-  // ======================================================
-
   Widget _buildDesktop(LoginController controller) {
     return FlexGrid(
       left: GradientPanel(
@@ -225,10 +214,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // ======================================================
-  // 🧩 FORM (layout da Larissa + lógica da Michele)
-  // ======================================================
-
   Widget _buildForm(LoginController controller) {
     return Padding(
       padding: const EdgeInsets.all(LoginStyles.cardPadding),
@@ -253,7 +238,6 @@ class _LoginPageState extends State<LoginPage> {
             ),
             AppSpacing.gapLg,
 
-            // Email
             TextFormField(
               controller: _emailController,
               focusNode: _emailFocusNode,
@@ -270,7 +254,6 @@ class _LoginPageState extends State<LoginPage> {
 
             AppSpacing.gapMd,
 
-            // Senha
             TextFormField(
               controller: _passwordController,
               focusNode: _passwordFocusNode,

@@ -21,7 +21,7 @@ import 'package:mindease_focus/features/auth/presentation/pages/profile/widgets/
 import 'package:mindease_focus/features/auth/presentation/widgets/settings_tile.dart';
 import 'package:mindease_focus/features/auth/presentation/widgets/settings_section_card.dart';
 
-// Identidade real (seu caminho novo)
+// Identidade real
 import 'package:mindease_focus/features/auth/presentation/pages/profile/widgets/cards/profile_identity_tile/profile_identity_tile.dart';
 
 // Layout/Tokens
@@ -29,11 +29,14 @@ import 'package:mindease_focus/shared/layout/centered_constrained.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 
-// Header + Drawer (seu)
+// Header + Drawer
 import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header.dart';
 import 'package:mindease_focus/shared/widgets/mindease_drawer/mindease_drawer.dart';
 
-// Styles separados (seu)
+// ✅ NOVO: FAB com Popover + Ajuda
+import 'package:mindease_focus/shared/widgets/focus_mode/mindease_accessibility_fab.dart';
+
+// Styles
 import 'package:mindease_focus/features/auth/presentation/pages/profile/profile_styles.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -72,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Seus controllers
+    // Controllers
     final prefs = context.watch<ProfilePreferencesController>();
     
     // ✅ Sincronia: Se o dado do Supabase mudar (load inicial), atualiza a UI
@@ -84,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
       _cognitiveController.setComplexity(prefs.complexity);
     }
 
-    // Marcelo: Auth real
+    // Auth
     final authController = context.watch<AuthController>();
     final userEntity = authController.user;
 
@@ -102,7 +105,6 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     }
 
-    // Logout: limpa estado + vai pro login
     void logout() {
       context.read<AuthController>().logout();
 
@@ -131,6 +133,10 @@ class _ProfilePageState extends State<ProfilePage> {
               onLogout: logout,
             )
           : null,
+
+      // ✅ AQUI: adiciona o Popover (expandir) + Ajuda na tela de Perfil
+      floatingActionButton: const MindEaseAccessibilityFab(),
+
       body: SafeArea(
         top: false,
         child: FocusTraversalGroup(
@@ -144,33 +150,32 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // --- Cabeçalho da Página ---
-                  Center(
+                  Align(
+                    alignment: ProfilePageStyles.headerAlignment(context),
                     child: Column(
+                      crossAxisAlignment:
+                          ProfilePageStyles.headerCrossAxisAlignment(context),
                       children: [
                         Semantics(
                           header: true,
                           child: Text(
                             widget.viewModel.pageTitle,
-                            textAlign: ProfilePageStyles.headerTextAlign,
+                            textAlign: ProfilePageStyles.headerTextAlign(context),
                             style: ProfilePageStyles.titleStyle(context),
                           ),
                         ),
                         AppSpacing.gapXs,
                         Text(
                           widget.viewModel.pageSubtitle,
-                          textAlign: ProfilePageStyles.headerTextAlign,
+                          textAlign: ProfilePageStyles.headerTextAlign(context),
                           style: ProfilePageStyles.subtitleStyle(context),
                         ),
                       ],
                     ),
                   ),
-
                   AppSpacing.gapXl,
 
-                  // ============================================
                   // 1) Identidade REAL do usuário
-                  // ============================================
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(AppSpacing.md),
@@ -181,12 +186,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                   ),
-
                   AppSpacing.gapLg,
 
-                  // ============================================
                   // 2) Seção do ViewModel
-                  // ============================================
                   SettingsSectionCard(
                     semanticsLabel: 'Informações pessoais',
                     icon: Icons.person_outline,
@@ -196,40 +198,25 @@ class _ProfilePageState extends State<ProfilePage> {
                         for (final tile in section.tiles) SettingsTile(data: tile),
                     ],
                   ),
-
                   AppSpacing.gapLg,
 
-                  // ============================================
                   // 3) Painel Cognitivo
-                  // ============================================
                   CognitivePanelCard(controller: _cognitiveController),
-
                   AppSpacing.gapLg,
 
-                  // ============================================
                   // 4) Modo Foco
-                  // ============================================
                   const FocusModeCard(),
-
                   AppSpacing.gapLg,
 
-                  // ============================================
                   // 5) Alertas e Preferências
-                  // ============================================
                   CognitiveAlertsCard(controller: prefs),
-
                   AppSpacing.gapLg,
 
-                  // ============================================
                   // 6) Notificações
-                  // ============================================
                   NotificationsCard(controller: prefs),
-
                   AppSpacing.gapXl,
 
-                  // ============================================
                   // 7) Botão logout
-                  // ============================================
                   SizedBox(
                     height: 50,
                     child: OutlinedButton.icon(
@@ -242,7 +229,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       label: const Text('Sair da Conta'),
                     ),
                   ),
-
                   AppSpacing.gapXl,
                 ],
               ),

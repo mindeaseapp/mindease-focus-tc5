@@ -1,27 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
 import 'package:provider/provider.dart';
 
-// Imports de Navegação e Estado
 import 'package:mindease_focus/features/routes.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/task_controller.dart';
 
-// Imports dos Widgets Compartilhados
 import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header.dart';
 import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header_styles.dart';
 import 'package:mindease_focus/shared/widgets/mindease_drawer/mindease_drawer.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 
-// Imports dos Widgets da Página
+import 'package:mindease_focus/shared/widgets/focus_mode/mindease_accessibility_fab.dart';
+
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/pomodoro_timer.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/kanban_board.dart';
+
+import 'package:mindease_focus/features/auth/presentation/pages/tasks/tasks_page_styles.dart';
 
 class TasksPage extends StatelessWidget {
   const TasksPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // === LÓGICA DE DADOS ===
+    final isFocusMode = context.watch<FocusModeController>().enabled;
+
+    final args = ModalRoute.of(context)?.settings.arguments;
+    final initialTab = (args is int) ? args : 0;
+
+    final effectiveInitialTab = isFocusMode ? 0 : initialTab;
+
+    final safeInitialIndex =
+        effectiveInitialTab.clamp(0, TasksPageStyles.tabCount - 1).toInt();
+
     final authController = context.watch<AuthController>();
     final userEntity = authController.user;
 
@@ -35,7 +46,7 @@ class TasksPage extends StatelessWidget {
           Navigator.of(context).pushReplacementNamed(AppRoutes.dashboard);
           break;
         case MindEaseNavItem.tasks:
-          break; // Já estamos aqui
+          break;
         case MindEaseNavItem.profile:
           Navigator.of(context).pushReplacementNamed(AppRoutes.profile);
           break;
@@ -50,15 +61,10 @@ class TasksPage extends StatelessWidget {
       );
     }
 
-    // === LÓGICA DE TEMA ===
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    // Fundo da barra de abas
-    final tabBarBackgroundColor = isDarkMode 
-        ? Theme.of(context).colorScheme.surface 
-        : Colors.white;
+    final tabBarBackgroundColor = TasksPageStyles.tabBarBackgroundColor(context);
 
-    // Cores dos Ícones/Texto
     Color selectedItemColor;
     Color unselectedItemColor;
 
@@ -71,7 +77,8 @@ class TasksPage extends StatelessWidget {
     }
 
     return DefaultTabController(
-      length: 2,
+      length: TasksPageStyles.tabCount,
+      initialIndex: safeInitialIndex,
       child: Scaffold(
         appBar: MindEaseHeader(
           current: MindEaseNavItem.tasks,
@@ -79,48 +86,48 @@ class TasksPage extends StatelessWidget {
           onNavigate: goTo,
           onLogout: logout,
         ),
-        
-        drawer: AppSizes.isMobile(context)
+
+        drawer: AppSizes.isMobile(context) && !isFocusMode
             ? MindEaseDrawer(
                 current: MindEaseNavItem.tasks,
                 onNavigate: goTo,
                 onLogout: logout,
               )
             : null,
-            
+
+        floatingActionButton: const MindEaseAccessibilityFab(),
+
         body: Column(
           children: [
-            // Container da TabBar
-            Container(
-              width: double.infinity,
-              color: tabBarBackgroundColor,
-              // ✅ REMOVIDO: decoration com borda manual
-              child: TabBar(
-                // ✅ NOVO: Remove a linha divisória padrão do Flutter
-                dividerColor: Colors.transparent,
-                
-                labelColor: selectedItemColor,
-                unselectedLabelColor: unselectedItemColor,
-                indicatorColor: selectedItemColor,
-                indicatorWeight: 3,
-                tabs: const [
-                  Tab(
-                    icon: Icon(Icons.timer_outlined),
-                    text: 'Foco',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.view_kanban_outlined),
-                    text: 'Tarefas',
-                  ),
-                ],
+            if (!isFocusMode)
+              Container(
+                width: double.infinity,
+                color: tabBarBackgroundColor,
+                child: TabBar(
+                  dividerColor: Colors.transparent,
+                  labelColor: selectedItemColor,
+                  unselectedLabelColor: unselectedItemColor,
+                  indicatorColor: selectedItemColor,
+                  indicatorWeight: TasksPageStyles.tabIndicatorWeight,
+                  tabs: const [
+                    Tab(
+                      icon: Icon(Icons.timer_outlined),
+                      text: 'Foco',
+                    ),
+                    Tab(
+                      icon: Icon(Icons.view_kanban_outlined),
+                      text: 'Tarefas',
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-            // Conteúdo
-            const Expanded(
+            Expanded(
               child: TabBarView(
-                physics: BouncingScrollPhysics(),
-                children: [
+                physics: isFocusMode
+                    ? const ClampingScrollPhysics()
+                    : const BouncingScrollPhysics(),
+                children: const [
                   _PomodoroTabContent(),
                   _KanbanTabContent(),
                 ],
@@ -133,8 +140,6 @@ class TasksPage extends StatelessWidget {
   }
 }
 
-// === WIDGETS DE CONTEÚDO ===
-
 class _PomodoroTabContent extends StatelessWidget {
   const _PomodoroTabContent();
 
@@ -143,17 +148,19 @@ class _PomodoroTabContent extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: TasksPageStyles.pomodoroPadding,
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
+              constraints: const BoxConstraints(
+                maxWidth: TasksPageStyles.pomodoroMaxWidth,
+              ),
               child: Column(
                 children: [
                   Semantics(
                     header: true,
                     child: const Text(
                       'Seu tempo de foco',
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                      style: TasksPageStyles.pomodoroTitleText,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -176,7 +183,6 @@ class _KanbanTabContent extends StatefulWidget {
 }
 
 class _KanbanTabContentState extends State<_KanbanTabContent> {
-  
   @override
   void initState() {
     super.initState();
@@ -191,45 +197,42 @@ class _KanbanTabContentState extends State<_KanbanTabContent> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isMobile = constraints.maxWidth < 600;
+        final isMobile = constraints.maxWidth < TasksPageStyles.mobileBreakpoint;
 
         if (taskController.isLoading && taskController.tasks.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
         return Container(
-          color: Theme.of(context).brightness == Brightness.dark 
-              ? Colors.transparent 
-              : Colors.grey.shade50,
+          color: TasksPageStyles.kanbanBackgroundColor(context),
           child: Padding(
-            padding: EdgeInsets.all(isMobile ? 12 : 24),
+            padding: TasksPageStyles.kanbanPadding(isMobile: isMobile),
             child: Column(
               children: [
-                 if (taskController.error != null)
-                   Container(
-                     padding: const EdgeInsets.all(12),
-                     margin: const EdgeInsets.only(bottom: 16),
-                     decoration: BoxDecoration(
-                       color: Colors.red.shade100,
-                       borderRadius: BorderRadius.circular(8),
-                     ),
-                     child: Row(
-                       children: [
-                         const Icon(Icons.error_outline, color: Colors.red),
-                         const SizedBox(width: 12),
-                         Expanded(
-                           child: Text(
-                             taskController.error!, 
-                             style: const TextStyle(color: Colors.red),
-                           ),
-                         ),
-                       ],
-                     ),
-                   ),
-
-                 const Expanded(
-                   child: KanbanBoard(),
-                 ),
+                if (taskController.error != null)
+                  Container(
+                    padding: TasksPageStyles.errorPadding,
+                    margin: TasksPageStyles.errorMargin,
+                    decoration: BoxDecoration(
+                      color: TasksPageStyles.errorBackground(),
+                      borderRadius: TasksPageStyles.errorRadius(),
+                    ),
+                    child: Row(
+                      children: [
+                        TasksPageStyles.errorIcon,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            taskController.error!,
+                            style: TasksPageStyles.errorText,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                const Expanded(
+                  child: KanbanBoard(),
+                ),
               ],
             ),
           ),

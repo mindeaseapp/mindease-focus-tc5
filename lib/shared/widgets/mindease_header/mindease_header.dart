@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
-
 import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header_styles.dart';
 
 enum MindEaseNavItem { dashboard, tasks, profile }
@@ -11,13 +9,10 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
   final MindEaseNavItem current;
   final ValueChanged<MindEaseNavItem> onNavigate;
 
-  /// Texto exibido no canto direito (web) e usado em Semantics
   final String userLabel;
 
-  /// Se você já tem logout em outro lugar, só passa aqui.
   final VoidCallback onLogout;
 
-  /// Widget do logo (se você tiver asset). Se não passar, usa ícone padrão.
   final Widget? logo;
 
   const MindEaseHeader({
@@ -33,31 +28,28 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize =>
       Size.fromHeight(MindEaseHeaderStyles.preferredHeight);
 
-  bool _isMobile(BuildContext context) => AppSizes.isMobile(context);
+  bool _isMobileByWidth(BuildContext context) {
+    final w = MediaQuery.sizeOf(context).width;
+    return w < 600;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = _isMobile(context);
+    final isMobile = _isMobileByWidth(context);
 
     return AppBar(
-      // ✅ REMOVE o botão de voltar automático (seta do header)
       automaticallyImplyLeading: false,
-
       toolbarHeight: MindEaseHeaderStyles.toolbarHeight(context),
       elevation: MindEaseHeaderStyles.elevation,
       centerTitle: MindEaseHeaderStyles.centerTitle,
       backgroundColor: MindEaseHeaderStyles.backgroundColor(context),
       surfaceTintColor: MindEaseHeaderStyles.surfaceTintColor,
+      titleSpacing: isMobile ? 0 : MindEaseHeaderStyles.titleSpacing,
 
-      // mantém seu espaçamento padrão
-      titleSpacing: MindEaseHeaderStyles.titleSpacing,
-
-      // ✅ MOBILE: Brand no title
-      // ✅ WEB: Brand + Nav + Usuário (tudo dentro do title)
       title: isMobile
           ? _BrandTitle(
               logo: logo,
-              label: 'MindEase',
+              label: '',
             )
           : Row(
               children: [
@@ -65,69 +57,50 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
                   logo: logo,
                   label: 'MindEase',
                 ),
+
                 Expanded(
                   child: Center(
-                    child: _WebNavBar(
-                      current: current,
-                      onNavigate: onNavigate,
+                    child: ClipRect(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.center,
+                        child: _WebNavBar(
+                          current: current,
+                          onNavigate: onNavigate,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                _UserMenu(
-                  userLabel: userLabel,
-                  onNavigate: onNavigate,
-                  onLogout: onLogout,
+
+                ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: MindEaseHeaderStyles.userMaxWidth,
+                  ),
+                  child: _UserMenu(
+                    userLabel: userLabel,
+                    onNavigate: onNavigate,
+                    onLogout: onLogout,
+                  ),
                 ),
+
                 MindEaseHeaderStyles.rightGap,
               ],
             ),
 
-      // ✅ MOBILE: ícone do usuário nas actions
-      // ✅ WEB: vazio (já está no title)
       actions: isMobile
           ? <Widget>[
-              IconButton(
-                tooltip: 'Abrir opções do usuário',
-                onPressed: () => _openUserMenu(context),
-                icon: const Icon(Icons.account_circle_outlined),
+              Builder(
+                builder: (ctx) => IconButton(
+                  tooltip: 'Abrir menu',
+                  onPressed: () => Scaffold.of(ctx).openDrawer(),
+                  icon: const Icon(Icons.menu),
+                ),
               ),
               MindEaseHeaderStyles.mobileActionsGap,
             ]
           : const <Widget>[],
     );
-  }
-
-  void _openUserMenu(BuildContext context) {
-    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox?;
-    if (overlay == null) return;
-
-    final box = context.findRenderObject() as RenderBox?;
-    if (box == null) return;
-
-    final topRight = box.localToGlobal(
-      Offset(box.size.width, 0),
-      ancestor: overlay,
-    );
-
-    showMenu<String>(
-      context: context,
-      position: RelativeRect.fromLTRB(
-        topRight.dx,
-        topRight.dy + AppSizes.appBarHeightFor(context),
-        AppSpacing.md,
-        0,
-      ),
-      items: const [
-        PopupMenuItem(value: 'profile', child: Text('Perfil')),
-        PopupMenuItem(value: 'logout', child: Text('Sair')),
-      ],
-    ).then((value) {
-      if (value == 'profile') {
-        onNavigate(MindEaseNavItem.profile);
-      } else if (value == 'logout') {
-        onLogout();
-      }
-    });
   }
 }
 
@@ -139,10 +112,12 @@ class _BrandTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasLabel = label.trim().isNotEmpty;
+
     return Semantics(
       container: true,
       header: true,
-      label: 'Cabeçalho do app: $label',
+      label: 'Cabeçalho do app: MindEase',
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -158,11 +133,13 @@ class _BrandTitle extends StatelessWidget {
                   ),
             ),
           ),
-          MindEaseHeaderStyles.brandGap,
-          Text(
-            label,
-            style: MindEaseHeaderStyles.brandTextStyle(context),
-          ),
+          if (hasLabel) ...[
+            MindEaseHeaderStyles.brandGap,
+            Text(
+              label,
+              style: MindEaseHeaderStyles.brandTextStyle(context),
+            ),
+          ],
         ],
       ),
     );
@@ -296,6 +273,7 @@ class _UserMenu extends StatelessWidget {
           child: Padding(
             padding: MindEaseHeaderStyles.userPadding,
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   Icons.account_circle,
@@ -303,9 +281,13 @@ class _UserMenu extends StatelessWidget {
                   color: MindEaseHeaderStyles.userIconColor(context),
                 ),
                 const SizedBox(width: AppSpacing.sm),
-                Text(
-                  userLabel,
-                  style: MindEaseHeaderStyles.userLabelStyle(context),
+                Flexible(
+                  child: Text(
+                    userLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: MindEaseHeaderStyles.userLabelStyle(context),
+                  ),
                 ),
               ],
             ),

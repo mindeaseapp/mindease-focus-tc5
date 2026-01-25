@@ -5,6 +5,7 @@ import 'package:mindease_focus/features/auth/presentation/controllers/task_contr
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/models/task_model.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/kanban_column.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/new_task_dialog.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/kanban_board_styles.dart';
 
 class KanbanBoard extends StatefulWidget {
   const KanbanBoard({super.key});
@@ -14,55 +15,32 @@ class KanbanBoard extends StatefulWidget {
 }
 
 class _KanbanBoardState extends State<KanbanBoard> {
-  
-  final List<Map<String, dynamic>> _columns = [
-    {
-      'id': TaskStatus.todo,
-      'title': 'A Fazer',
-      'icon': Icons.circle_outlined,
-      'color': Colors.grey.shade600,
-      'bgColor': Colors.grey.shade50,
-    },
-    {
-      'id': TaskStatus.inProgress,
-      'title': 'Em Andamento',
-      'icon': Icons.pending_outlined,
-      'color': Colors.blue.shade600,
-      'bgColor': Colors.blue.shade50,
-    },
-    {
-      'id': TaskStatus.done,
-      'title': 'Concluído',
-      'icon': Icons.check_circle_outline,
-      'color': Colors.green.shade600,
-      'bgColor': Colors.green.shade50,
-    },
-  ];
+  final List<Map<String, dynamic>> _columns = KanbanBoardStyles.columns;
 
   void _handleAddTask(String title, String description, TaskStatus status) {
     context.read<TaskController>().addTask(
-      title, 
-      description, 
-      status: status, 
-    ); 
-    
+          title,
+          description,
+          status: status,
+        );
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Salvando tarefa em "${_getStatusText(status)}"...'),
-        backgroundColor: Colors.blue.shade600,
-        duration: const Duration(seconds: 1),
+        backgroundColor: KanbanBoardStyles.savingSnackBg(),
+        duration: KanbanBoardStyles.snackDuration,
       ),
     );
   }
 
   void _handleDeleteTask(String taskId) {
     context.read<TaskController>().deleteTask(taskId);
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Tarefa removida'),
-        backgroundColor: Colors.red.shade600,
-        duration: const Duration(seconds: 1),
+        backgroundColor: KanbanBoardStyles.deleteSnackBg(),
+        duration: KanbanBoardStyles.snackDuration,
       ),
     );
   }
@@ -71,7 +49,6 @@ class _KanbanBoardState extends State<KanbanBoard> {
     context.read<TaskController>().updateStatus(task.id, newStatus);
   }
 
-  // Helper para obter texto do status
   String _getStatusText(TaskStatus status) {
     switch (status) {
       case TaskStatus.todo:
@@ -86,13 +63,13 @@ class _KanbanBoardState extends State<KanbanBoard> {
   @override
   Widget build(BuildContext context) {
     final taskController = context.watch<TaskController>();
-    final tasks = taskController.tasks; 
+    final tasks = taskController.tasks;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHeader(),
-        const SizedBox(height: 24),
+        KanbanBoardStyles.gap24,
         Expanded(
           child: _buildColumns(tasks),
         ),
@@ -105,7 +82,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
   Widget _buildHeader() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (constraints.maxWidth < 600) {
+        if (constraints.maxWidth < KanbanBoardStyles.headerMobileBreakpoint) {
           return _buildHeaderMobile();
         }
         return _buildHeaderDesktop();
@@ -118,7 +95,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHeaderTitle(),
-        const SizedBox(height: 16),
+        KanbanBoardStyles.gap16,
         SizedBox(width: double.infinity, child: _buildAddTaskButton()),
       ],
     );
@@ -140,16 +117,12 @@ class _KanbanBoardState extends State<KanbanBoard> {
       children: [
         const Text(
           'Quadro Kanban',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          style: KanbanBoardStyles.headerTitle,
         ),
-        const SizedBox(height: 4),
+        KanbanBoardStyles.gap4h,
         Text(
           'Organize suas tarefas de forma visual',
-          style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+          style: KanbanBoardStyles.headerSubtitle(),
         ),
       ],
     );
@@ -165,11 +138,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
       },
       icon: const Icon(Icons.add),
       label: const Text('Nova Tarefa'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue.shade600,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      ),
+      style: KanbanBoardStyles.addTaskButtonStyle(),
     );
   }
 
@@ -178,7 +147,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
   Widget _buildColumns(List<Task> tasks) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (constraints.maxWidth < 900) {
+        if (constraints.maxWidth < KanbanBoardStyles.columnsMobileBreakpoint) {
           return _buildMobileLayout(tasks);
         }
         return _buildDesktopLayout(tasks);
@@ -186,32 +155,29 @@ class _KanbanBoardState extends State<KanbanBoard> {
     );
   }
 
-  // ✅ NOVO: Layout Desktop com Linhas Verticais
   Widget _buildDesktopLayout(List<Task> tasks) {
-    List<Widget> children = [];
+    final List<Widget> children = [];
 
     for (int i = 0; i < _columns.length; i++) {
       final columnData = _columns[i];
 
-      // Adiciona a coluna
       children.add(
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: KanbanBoardStyles.desktopColumnPadding,
             child: _buildColumn(columnData, tasks),
           ),
         ),
       );
 
-      // Adiciona o divisor se não for a última
       if (i < _columns.length - 1) {
         children.add(
           VerticalDivider(
-            width: 1,
-            thickness: 1,
-            color: Colors.grey.shade300,
-            indent: 16,
-            endIndent: 16,
+            width: KanbanBoardStyles.dividerWidth,
+            thickness: KanbanBoardStyles.dividerThickness,
+            color: KanbanBoardStyles.dividerColor(),
+            indent: KanbanBoardStyles.dividerIndent,
+            endIndent: KanbanBoardStyles.dividerEndIndent,
           ),
         );
       }
@@ -229,29 +195,29 @@ class _KanbanBoardState extends State<KanbanBoard> {
         children: [
           ..._columns.map((column) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: KanbanBoardStyles.mobileColumnBottomPadding,
               child: SizedBox(
-                height: 300, 
+                height: KanbanBoardStyles.mobileColumnHeight,
                 child: _buildColumn(column, tasks),
               ),
             );
           }),
           Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.only(top: 8),
+            padding: KanbanBoardStyles.tipPadding,
+            margin: KanbanBoardStyles.tipMargin,
             decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              border: Border.all(color: Colors.blue.shade200),
-              borderRadius: BorderRadius.circular(12),
+              color: KanbanBoardStyles.tipBg(),
+              border: Border.all(color: KanbanBoardStyles.tipBorder()),
+              borderRadius: KanbanBoardStyles.tipRadius(),
             ),
             child: Row(
               children: [
-                Icon(Icons.info_outline, color: Colors.blue.shade700),
-                const SizedBox(width: 12),
+                Icon(Icons.info_outline, color: KanbanBoardStyles.tipIconColor()),
+                KanbanBoardStyles.gap12w,
                 Expanded(
                   child: Text(
                     '💡 Dica: Pressione e segure uma tarefa para arrastá-la',
-                    style: TextStyle(fontSize: 13, color: Colors.blue.shade900),
+                    style: KanbanBoardStyles.tipTextStyle(),
                   ),
                 ),
               ],
