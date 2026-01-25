@@ -1,6 +1,7 @@
-
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/tasks/pomodoro_widget_styles.dart';
+
 
 class PomodoroWidget extends StatefulWidget {
   const PomodoroWidget({super.key});
@@ -10,11 +11,11 @@ class PomodoroWidget extends StatefulWidget {
 }
 
 class _PomodoroWidgetState extends State<PomodoroWidget> {
-  int seconds = 1500;
+  int seconds = PomodoroWidgetStyles.initialSeconds;
   Timer? timer;
 
   void start() {
-    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+    timer = Timer.periodic(PomodoroWidgetStyles.tick, (_) {
       setState(() => seconds--);
     });
   }
@@ -23,8 +24,11 @@ class _PomodoroWidgetState extends State<PomodoroWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('Foco: ${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}'),
-        ElevatedButton(onPressed: start, child: const Text('Iniciar Foco')),
+        Text(PomodoroWidgetStyles.timeLabel(seconds)),
+        ElevatedButton(
+          onPressed: start,
+          child: const Text(PomodoroWidgetStyles.buttonLabel),
+        ),
       ],
     );
   }

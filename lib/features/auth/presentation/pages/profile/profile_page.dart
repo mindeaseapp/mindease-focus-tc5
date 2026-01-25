@@ -21,7 +21,7 @@ import 'package:mindease_focus/features/auth/presentation/pages/profile/widgets/
 import 'package:mindease_focus/features/auth/presentation/widgets/settings_tile.dart';
 import 'package:mindease_focus/features/auth/presentation/widgets/settings_section_card.dart';
 
-// Identidade real (seu caminho novo)
+// Identidade real
 import 'package:mindease_focus/features/auth/presentation/pages/profile/widgets/cards/profile_identity_tile/profile_identity_tile.dart';
 
 // Layout/Tokens
@@ -29,11 +29,11 @@ import 'package:mindease_focus/shared/layout/centered_constrained.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 
-// Header + Drawer (seu)
+// Header + Drawer
 import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header.dart';
 import 'package:mindease_focus/shared/widgets/mindease_drawer/mindease_drawer.dart';
 
-// Styles separados (seu)
+// Styles
 import 'package:mindease_focus/features/auth/presentation/pages/profile/profile_styles.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -60,10 +60,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Seus controllers
+    // Controllers
     final prefs = context.watch<ProfilePreferencesController>();
 
-    // Marcelo: Auth real
+    // Auth
     final authController = context.watch<AuthController>();
     final userEntity = authController.user;
 
@@ -81,7 +81,6 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     }
 
-    // Logout: limpa estado + vai pro login
     void logout() {
       context.read<AuthController>().logout();
 
@@ -123,22 +122,25 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // --- Cabeçalho da Página ---
-                  Center(
+                  // --- Cabeçalho da Página (✅ MOBILE à esquerda / DESKTOP centro) ---
+                  Align(
+                    alignment: ProfilePageStyles.headerAlignment(context),
                     child: Column(
+                      crossAxisAlignment:
+                          ProfilePageStyles.headerCrossAxisAlignment(context),
                       children: [
                         Semantics(
                           header: true,
                           child: Text(
                             widget.viewModel.pageTitle,
-                            textAlign: ProfilePageStyles.headerTextAlign,
+                            textAlign: ProfilePageStyles.headerTextAlign(context),
                             style: ProfilePageStyles.titleStyle(context),
                           ),
                         ),
                         AppSpacing.gapXs,
                         Text(
                           widget.viewModel.pageSubtitle,
-                          textAlign: ProfilePageStyles.headerTextAlign,
+                          textAlign: ProfilePageStyles.headerTextAlign(context),
                           style: ProfilePageStyles.subtitleStyle(context),
                         ),
                       ],
@@ -172,7 +174,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     title: 'Informações Pessoais',
                     children: [
                       for (final section in widget.viewModel.sections)
-                        for (final tile in section.tiles) SettingsTile(data: tile),
+                        for (final tile in section.tiles)
+                          SettingsTile(data: tile),
                     ],
                   ),
 

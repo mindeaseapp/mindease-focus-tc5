@@ -27,7 +27,7 @@ class MindEaseDrawer extends StatelessWidget {
       child: SafeArea(
         child: Column(
           children: [
-            // ✅ topo: logo + MindEase + botão X
+            // ✅ topo: só logo + botão X (SEM texto MindEase)
             Padding(
               padding: MindEaseDrawerStyles.topPadding,
               child: Row(
@@ -43,11 +43,6 @@ class MindEaseDrawer extends StatelessWidget {
                             color: MindEaseDrawerStyles.brandIconColor(context),
                           ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Text(
-                    'MindEase',
-                    style: MindEaseDrawerStyles.brandTextStyle(context),
                   ),
                   const Spacer(),
                   IconButton(
@@ -94,7 +89,6 @@ class MindEaseDrawer extends StatelessWidget {
 
             const SizedBox(height: AppSpacing.sm),
 
-            // ✅ "Sair" vermelho
             Semantics(
               button: true,
               label: 'Sair da conta',

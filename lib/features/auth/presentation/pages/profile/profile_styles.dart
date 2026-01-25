@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 
 class ProfilePageStyles {
-  // ===== Layout =====
   static EdgeInsets contentPadding(BuildContext context) {
     return EdgeInsets.symmetric(
       horizontal: AppSpacing.pagePadding(context),
@@ -12,9 +12,20 @@ class ProfilePageStyles {
 
   static const ScrollPhysics scrollPhysics = AlwaysScrollableScrollPhysics();
 
-  static const TextAlign headerTextAlign = TextAlign.center;
+  static bool _isMobileByWidth(BuildContext context) =>
+      MediaQuery.sizeOf(context).width < 600;
 
-  // ===== Text Styles (vem do Theme) =====
+  static TextAlign headerTextAlign(BuildContext context) =>
+      _isMobileByWidth(context) ? TextAlign.start : TextAlign.center;
+
+  static CrossAxisAlignment headerCrossAxisAlignment(BuildContext context) =>
+      _isMobileByWidth(context)
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.center;
+
+  static Alignment headerAlignment(BuildContext context) =>
+      _isMobileByWidth(context) ? Alignment.centerLeft : Alignment.center;
+
   static TextStyle? titleStyle(BuildContext context) =>
       Theme.of(context).textTheme.headlineLarge;
 
