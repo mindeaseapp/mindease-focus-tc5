@@ -13,7 +13,7 @@ import 'package:mindease_focus/features/auth/presentation/controllers/theme_cont
 import 'package:mindease_focus/features/auth/domain/entities/user_entity.dart';
 
 // =========================================================
-// MOCKS PARA O QUE REALMENTE PRECISA
+// MOCKS
 // =========================================================
 
 class MockAuthController extends ChangeNotifier implements AuthController {
@@ -28,8 +28,6 @@ class MockAuthController extends ChangeNotifier implements AuthController {
   dynamic noSuchMethod(Invocation i) => super.noSuchMethod(i);
 }
 
-// Mock do ThemeController (se o seu Header/Drawer acessar getters específicos,
-// implemente aqui também)
 class MockThemeController extends ChangeNotifier implements ThemeController {
   @override
   dynamic noSuchMethod(Invocation i) => super.noSuchMethod(i);
@@ -39,10 +37,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUpAll(() async {
-    // 1) Hack SharedPreferences
     SharedPreferences.setMockInitialValues({});
 
-    // 2) Hack Supabase (Try/Catch caso já tenha sido iniciado)
     try {
       await Supabase.initialize(url: 'https://fake.com', anonKey: 'fake');
     } catch (_) {}
@@ -54,11 +50,15 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(1200, 3000));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    // 2) Ignorar somente overflow
+    // 2) Ignorar somente overflow, mas RESTAURAR no tearDown
+    final originalOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails details) {
-      if (details.exception.toString().contains('overflow')) return;
+      if (details.exception.toString().toLowerCase().contains('overflow')) {
+        return;
+      }
       FlutterError.dumpErrorToConsole(details);
     };
+    addTearDown(() => FlutterError.onError = originalOnError);
 
     final dummyViewModel = ProfileViewModel(
       pageTitle: 'Perfil',
@@ -73,11 +73,9 @@ void main() {
           ChangeNotifierProvider<AuthController>(
             create: (_) => MockAuthController(),
           ),
-
           ChangeNotifierProvider<ProfilePreferencesController>(
             create: (_) => ProfilePreferencesController(),
           ),
-
           ChangeNotifierProvider<ThemeController>(
             create: (_) => MockThemeController(),
           ),
@@ -88,8 +86,21 @@ void main() {
       ),
     );
 
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    expect(find.text('Perfil'), findsOneWidget);
+    // ✅ Agora existem 2 "Perfil" (header + título), então:
+    expect(find.text('Perfil'), findsAtLeastNWidgets(1));
+
+    // ✅ Garante que o TÍTULO da página (headlineLarge) existe 1 vez
+    final titleFinder = find.byWidgetPredicate((w) {
+      if (w is! Text) return false;
+      if (w.data != 'Perfil') return false;
+
+      // headlineLarge na prática vira algo como size ~32
+      final size = w.style?.fontSize;
+      return size != null && size >= 28;
+    });
+
+    expect(titleFinder, findsOneWidget);
   });
 }
