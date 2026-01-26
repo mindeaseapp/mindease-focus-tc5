@@ -14,6 +14,7 @@ class KanbanColumn extends StatelessWidget {
   final List<Task> allTasks;
   final void Function(Task task, TaskStatus newStatus) onTaskMoved;
   final void Function(String taskId) onTaskDeleted;
+  final Future<void> Function(Task task) onTaskEdited;
 
   const KanbanColumn({
     super.key,
@@ -25,24 +26,19 @@ class KanbanColumn extends StatelessWidget {
     required this.allTasks,
     required this.onTaskMoved,
     required this.onTaskDeleted,
+    required this.onTaskEdited,
   });
 
-  List<Task> get columnTasks {
-    return allTasks.where((task) => task.status == status).toList();
-  }
+  List<Task> get columnTasks =>
+      allTasks.where((task) => task.status == status).toList();
 
   @override
   Widget build(BuildContext context) {
     return DragTarget<Task>(
-      onWillAcceptWithDetails: (details) {
-        final task = details.data;
-        return task.status != status;
-      },
+      onWillAcceptWithDetails: (details) => details.data.status != status,
       onAcceptWithDetails: (details) {
         final task = details.data;
-        if (task.status != status) {
-          onTaskMoved(task, status);
-        }
+        if (task.status != status) onTaskMoved(task, status);
       },
       builder: (context, candidateData, rejectedData) {
         final isHovered = candidateData.isNotEmpty;
@@ -64,11 +60,9 @@ class KanbanColumn extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildColumnHeader(),
+              _buildColumnHeader(context),
               KanbanColumnStyles.gap8h,
-              Expanded(
-                child: _buildTasksList(context),
-              ),
+              Expanded(child: _buildTasksList(context)),
             ],
           ),
         );
@@ -76,7 +70,7 @@ class KanbanColumn extends StatelessWidget {
     );
   }
 
-  Widget _buildColumnHeader() {
+  Widget _buildColumnHeader(BuildContext context) {
     return Container(
       padding: KanbanColumnStyles.headerPadding,
       decoration: BoxDecoration(
@@ -90,21 +84,22 @@ class KanbanColumn extends StatelessWidget {
             children: [
               Icon(icon, color: color, size: KanbanColumnStyles.headerIconSize),
               KanbanColumnStyles.headerGap8,
-              Text(
-                title,
-                style: KanbanColumnStyles.headerTitle,
-              ),
+              Text(title, style: KanbanColumnStyles.headerTitleStyle(context)),
             ],
           ),
           Container(
             padding: KanbanColumnStyles.counterPadding,
             decoration: BoxDecoration(
-              color: KanbanColumnStyles.counterBg,
+              color: KanbanColumnStyles.counterBg(context),
               borderRadius: KanbanColumnStyles.counterRadius(),
+              border: Border.all(
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.65),
+                width: 1,
+              ),
             ),
             child: Text(
               '${columnTasks.length}',
-              style: KanbanColumnStyles.counterText,
+              style: KanbanColumnStyles.counterTextStyle(context),
             ),
           ),
         ],
@@ -113,16 +108,11 @@ class KanbanColumn extends StatelessWidget {
   }
 
   Widget _buildTasksList(BuildContext context) {
-    if (columnTasks.isEmpty) {
-      return _buildEmptyState();
-    }
+    if (columnTasks.isEmpty) return _buildEmptyState(context);
 
     return ListView.builder(
       itemCount: columnTasks.length,
-      itemBuilder: (context, index) {
-        final task = columnTasks[index];
-        return _buildDraggableTask(task);
-      },
+      itemBuilder: (context, index) => _buildDraggableTask(columnTasks[index]),
     );
   }
 
@@ -136,6 +126,7 @@ class KanbanColumn extends StatelessWidget {
           opacity: KanbanColumnStyles.dragFeedbackOpacity,
           child: TaskCard(
             task: task,
+            onEdit: () {},
             onDelete: (_) {},
           ),
         ),
@@ -146,6 +137,7 @@ class KanbanColumn extends StatelessWidget {
       opacity: KanbanColumnStyles.childWhenDraggingOpacity,
       child: TaskCard(
         task: task,
+        onEdit: () {},
         onDelete: (_) {},
       ),
     );
@@ -154,39 +146,37 @@ class KanbanColumn extends StatelessWidget {
       padding: KanbanColumnStyles.taskBottomPadding,
       child: TaskCard(
         task: task,
+        onEdit: () => onTaskEdited(task),
         onDelete: onTaskDeleted,
       ),
     );
 
-    if (kIsWeb) {
-      return Draggable<Task>(
-        data: task,
-        feedback: feedback,
-        childWhenDragging: childWhenDragging,
-        child: child,
-      );
-    }
-
-    return LongPressDraggable<Task>(
-      data: task,
-      feedback: feedback,
-      childWhenDragging: childWhenDragging,
-      child: child,
-    );
+    return kIsWeb
+        ? Draggable<Task>(
+            data: task,
+            feedback: feedback,
+            childWhenDragging: childWhenDragging,
+            child: child,
+          )
+        : LongPressDraggable<Task>(
+            data: task,
+            feedback: feedback,
+            childWhenDragging: childWhenDragging,
+            child: child,
+          );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Container(
         padding: KanbanColumnStyles.emptyPadding,
         decoration: BoxDecoration(
           border: Border.all(
-            color: KanbanColumnStyles.emptyBorderColor(),
+            color: KanbanColumnStyles.emptyBorderColor(context),
             width: KanbanColumnStyles.emptyBorderWidth,
-            style: BorderStyle.solid,
           ),
           borderRadius: KanbanColumnStyles.emptyRadius(),
-          color: KanbanColumnStyles.emptyBg(),
+          color: KanbanColumnStyles.emptyBg(context),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -194,14 +184,15 @@ class KanbanColumn extends StatelessWidget {
             Icon(
               Icons.inbox_outlined,
               size: KanbanColumnStyles.emptyIconSize,
-              color: KanbanColumnStyles.emptyIconColor(),
+              color: KanbanColumnStyles.emptyIconColor(context),
             ),
             KanbanColumnStyles.emptyGap8,
             Text(
               'Nenhuma tarefa',
               style: TextStyle(
                 fontSize: 14,
-                color: KanbanColumnStyles.emptyTextColor(),
+                color: KanbanColumnStyles.emptyTextColor(context),
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],

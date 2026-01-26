@@ -65,24 +65,38 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          _mode == PomodoroMode.focus
-              ? '🎉 Tempo de foco concluído!'
-              : '✨ Pausa concluída!',
-        ),
-        content: Text(
-          _mode == PomodoroMode.focus
-              ? 'Hora de fazer uma pausa!'
-              : 'Pronto para focar novamente?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+      builder: (context) {
+        final theme = Theme.of(context);
+
+        return AlertDialog(
+          backgroundColor: theme.colorScheme.surface,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          title: Text(
+            _mode == PomodoroMode.focus
+                ? '🎉 Tempo de foco concluído!'
+                : '✨ Pausa concluída!',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: theme.colorScheme.onSurface,
+            ),
           ),
-        ],
-      ),
+          content: Text(
+            _mode == PomodoroMode.focus
+                ? 'Hora de fazer uma pausa!'
+                : 'Pronto para focar novamente?',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.80),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -111,15 +125,18 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
 
   @override
   Widget build(BuildContext context) {
+    final styles = PomodoroTimerStyles(context);
+
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: PomodoroTimerStyles.maxWidth),
         child: Card(
           elevation: 0,
+          color: Theme.of(context).colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(PomodoroTimerStyles.cardRadius),
             side: BorderSide(
-              color: PomodoroTimerStyles.borderColor(context),
+              color: styles.borderColor,
               width: 1,
             ),
           ),
@@ -129,20 +146,20 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: PomodoroTimerStyles.gradientColors(),
+                colors: styles.gradientColors,
               ),
             ),
             padding: const EdgeInsets.all(PomodoroTimerStyles.padding),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildHeader(),
+                _buildHeader(styles),
                 const SizedBox(height: 18),
-                _buildTimerCircle(),
+                _buildTimerCircle(styles),
                 const SizedBox(height: 18),
-                _buildControls(),
+                _buildControls(styles),
                 const SizedBox(height: 14),
-                _buildInfo(),
+                _buildInfo(styles),
               ],
             ),
           ),
@@ -152,7 +169,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
   }
 
   /// Header fixo: "Timer" / "Pomodoro" à esquerda, toggle sempre ao lado.
-  Widget _buildHeader() {
+  Widget _buildHeader(PomodoroTimerStyles styles) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -165,17 +182,17 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
                 padding: const EdgeInsets.only(top: PomodoroTimerStyles.headerIconTop),
                 child: Icon(
                   Icons.timer_outlined,
-                  color: PomodoroTimerStyles.primary(),
+                  color: styles.primary,
                   size: PomodoroTimerStyles.headerIconSize,
                 ),
               ),
               const SizedBox(width: 8),
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Timer', style: PomodoroTimerStyles.headerTitle),
-                  SizedBox(height: 2),
-                  Text('Pomodoro', style: PomodoroTimerStyles.headerTitle),
+                  Text('Timer', style: styles.headerTitle),
+                  const SizedBox(height: 2),
+                  Text('Pomodoro', style: styles.headerTitle),
                 ],
               ),
             ],
@@ -196,7 +213,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  Widget _buildTimerCircle() {
+  Widget _buildTimerCircle(PomodoroTimerStyles styles) {
     final label = _mode == PomodoroMode.focus ? 'Tempo de Foco' : 'Tempo de Pausa';
 
     return SizedBox(
@@ -212,15 +229,16 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
             ),
             painter: CircleProgressPainter(
               progress: _progress,
-              color: PomodoroTimerStyles.primary(),
+              color: styles.primary,
+              ringBg: styles.ringBg,
             ),
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(_formatTime(_timeLeft), style: PomodoroTimerStyles.timeText),
+              Text(_formatTime(_timeLeft), style: styles.timeText),
               const SizedBox(height: 6),
-              Text(label, style: PomodoroTimerStyles.subLabel()),
+              Text(label, style: styles.subLabel),
             ],
           ),
         ],
@@ -228,7 +246,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  Widget _buildControls() {
+  Widget _buildControls(PomodoroTimerStyles styles) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -239,13 +257,13 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
             width: PomodoroTimerStyles.resetSize,
             height: PomodoroTimerStyles.resetSize,
             decoration: BoxDecoration(
-              color: PomodoroTimerStyles.chipBg(),
+              color: styles.chipBg,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.black12),
+              border: Border.all(color: styles.outline),
             ),
             child: Icon(
               Icons.refresh,
-              color: Colors.grey.shade700,
+              color: styles.iconMuted,
               size: PomodoroTimerStyles.resetIconSize,
             ),
           ),
@@ -260,20 +278,20 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
               size: PomodoroTimerStyles.actionIconSize,
             ),
             label: Text(_isRunning ? 'Pausar' : 'Iniciar'),
-            style: PomodoroTimerStyles.actionButtonStyle(),
+            style: styles.actionButtonStyle(),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildInfo() {
+  Widget _buildInfo(PomodoroTimerStyles styles) {
     return Text(
       _mode == PomodoroMode.focus
           ? '25 minutos de foco intenso, depois 5 minutos\nde pausa'
           : '5 minutos de descanso para recarregar\nas energias',
       textAlign: TextAlign.center,
-      style: PomodoroTimerStyles.info(),
+      style: styles.info,
     );
   }
 }
@@ -289,6 +307,8 @@ class _SegmentedMode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final styles = PomodoroTimerStyles(context);
+
     Widget item(String label, PomodoroMode value) {
       final selected = mode == value;
 
@@ -301,10 +321,10 @@ class _SegmentedMode extends StatelessWidget {
           padding: PomodoroTimerStyles.segItemPadding,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? PomodoroTimerStyles.primary() : Colors.transparent,
+            color: selected ? styles.primary : Colors.transparent,
             borderRadius: PomodoroTimerStyles.segItemRadius(),
           ),
-          child: Text(label, style: PomodoroTimerStyles.segText(selected: selected)),
+          child: Text(label, style: styles.segText(selected: selected)),
         ),
       );
     }
@@ -312,9 +332,9 @@ class _SegmentedMode extends StatelessWidget {
     return Container(
       padding: PomodoroTimerStyles.segOuterPadding,
       decoration: BoxDecoration(
-        color: PomodoroTimerStyles.chipBg(),
+        color: styles.chipBg,
         borderRadius: PomodoroTimerStyles.segRadius(),
-        border: Border.all(color: Colors.black12),
+        border: Border.all(color: styles.outline),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -330,10 +350,12 @@ class _SegmentedMode extends StatelessWidget {
 class CircleProgressPainter extends CustomPainter {
   final double progress;
   final Color color;
+  final Color ringBg;
 
   const CircleProgressPainter({
     required this.progress,
     required this.color,
+    required this.ringBg,
   });
 
   @override
@@ -342,7 +364,7 @@ class CircleProgressPainter extends CustomPainter {
     final radius = size.width / 2 - 14;
 
     final bg = Paint()
-      ..color = PomodoroTimerStyles.ringBg()
+      ..color = ringBg
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8;
 
@@ -368,6 +390,8 @@ class CircleProgressPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CircleProgressPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.color != color;
+    return oldDelegate.progress != progress ||
+        oldDelegate.color != color ||
+        oldDelegate.ringBg != ringBg;
   }
 }

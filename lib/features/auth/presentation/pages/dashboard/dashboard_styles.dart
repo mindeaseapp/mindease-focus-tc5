@@ -1,3 +1,4 @@
+// dashboard_styles.dart
 import 'package:flutter/material.dart';
 
 import 'package:mindease_focus/shared/tokens/app_opacity.dart';
@@ -220,8 +221,10 @@ class DashboardPageStyles {
   static BorderRadius taskTileRadius() =>
       BorderRadius.circular(AppSizes.cardBorderRadiusSm + 6);
 
-  static EdgeInsets taskTilePadding() =>
-      const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg);
+  static EdgeInsets taskTilePadding() => const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.lg,
+      );
 
   static Color pillBg(DashboardTaskPillKind kind) {
     switch (kind) {
@@ -260,9 +263,26 @@ class DashboardPageStyles {
 
   static BorderRadius pillRadius() => BorderRadius.circular(999);
 
-  static Color tipBg(BuildContext context) => Colors.purple.shade50;
+  // =========================================================
+  // ✅ AQUI ESTÁ A CORREÇÃO DO CARD "Dica do Dia" (dark ok)
+  // =========================================================
 
-  static Color tipBorder(BuildContext context) => Colors.purple.shade200;
+  static Color tipBg(BuildContext context) {
+    final theme = Theme.of(context);
+    final base = theme.colorScheme.surface;
+    final tint = theme.colorScheme.secondary;
+
+    final alpha = theme.brightness == Brightness.dark ? 0.18 : 0.08;
+    return Color.alphaBlend(tint.withValues(alpha: alpha), base);
+  }
+
+  static Color tipBorder(BuildContext context) {
+    final theme = Theme.of(context);
+    final tint = theme.colorScheme.secondary;
+
+    final alpha = theme.brightness == Brightness.dark ? 0.40 : 0.25;
+    return tint.withValues(alpha: alpha);
+  }
 
   static TextStyle tipTitleStyle(BuildContext context) {
     final theme = Theme.of(context);

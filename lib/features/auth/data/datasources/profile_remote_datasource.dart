@@ -18,19 +18,27 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           .from('preferencias_perfil')
           .select()
           .eq('user_id', userId)
-          .single();
+          .maybeSingle();
+
+      if (response == null) {
+        return UserPreferencesModel.defaults(userId);
+      }
 
       return UserPreferencesModel.fromJson(response);
-    } catch (e) {
-      // Se der erro (ex: não existe ainda), retornamos o default.
+    } on PostgrestException catch (_) {
+      return UserPreferencesModel.defaults(userId);
+    } catch (_) {
       return UserPreferencesModel.defaults(userId);
     }
   }
 
   @override
   Future<void> updatePreferences(UserPreferencesModel preferences) async {
-    await supabaseClient
-        .from('preferencias_perfil')
-        .upsert(preferences.toJson());
+    final data = preferences.toJson();
+
+    await supabaseClient.from('preferencias_perfil').upsert(
+      data,
+      onConflict: 'user_id',
+    );
   }
 }

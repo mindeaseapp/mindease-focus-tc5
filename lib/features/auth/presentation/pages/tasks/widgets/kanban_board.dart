@@ -5,6 +5,7 @@ import 'package:mindease_focus/features/auth/presentation/controllers/task_contr
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/models/task_model.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/kanban_column.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/new_task_dialog.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/edit_task_dialog.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/kanban_board_styles.dart';
 
 class KanbanBoard extends StatefulWidget {
@@ -15,19 +16,13 @@ class KanbanBoard extends StatefulWidget {
 }
 
 class _KanbanBoardState extends State<KanbanBoard> {
-  final List<Map<String, dynamic>> _columns = KanbanBoardStyles.columns;
-
   void _handleAddTask(String title, String description, TaskStatus status) {
-    context.read<TaskController>().addTask(
-          title,
-          description,
-          status: status,
-        );
+    context.read<TaskController>().addTask(title, description, status: status);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Salvando tarefa em "${_getStatusText(status)}"...'),
-        backgroundColor: KanbanBoardStyles.savingSnackBg(),
+        backgroundColor: KanbanBoardStyles.savingSnackBg(context),
         duration: KanbanBoardStyles.snackDuration,
       ),
     );
@@ -39,7 +34,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Tarefa removida'),
-        backgroundColor: KanbanBoardStyles.deleteSnackBg(),
+        backgroundColor: KanbanBoardStyles.deleteSnackBg(context),
         duration: KanbanBoardStyles.snackDuration,
       ),
     );
@@ -47,6 +42,38 @@ class _KanbanBoardState extends State<KanbanBoard> {
 
   void _handleTaskMoved(Task task, TaskStatus newStatus) {
     context.read<TaskController>().updateStatus(task.id, newStatus);
+  }
+
+  Future<void> _handleEditTask(Task task) async {
+    final controller = context.read<TaskController>();
+
+    final saved = await showEditTaskDialog(
+      context: context,
+      task: task,
+      onSave: (title, description, status) async {
+        final ok = await controller.updateTask(
+          task.id,
+          title: title,
+          description: description,
+          status: status,
+        );
+        if (!ok) {
+          throw Exception(controller.error ?? 'Erro ao editar tarefa');
+        }
+      },
+    );
+
+    if (!mounted) return;
+
+    if (saved) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Tarefa atualizada ✅'),
+          backgroundColor: KanbanBoardStyles.savingSnackBg(context),
+          duration: KanbanBoardStyles.snackDuration,
+        ),
+      );
+    }
   }
 
   String _getStatusText(TaskStatus status) {
@@ -64,167 +91,115 @@ class _KanbanBoardState extends State<KanbanBoard> {
   Widget build(BuildContext context) {
     final taskController = context.watch<TaskController>();
     final tasks = taskController.tasks;
+    final columns = KanbanBoardStyles.columns(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildHeader(),
+        _buildHeader(context),
         KanbanBoardStyles.gap24,
-        Expanded(
-          child: _buildColumns(tasks),
-        ),
+        Expanded(child: _buildColumns(context, tasks, columns)),
       ],
     );
   }
 
-  // === HEADER ===
-
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < KanbanBoardStyles.headerMobileBreakpoint) {
-          return _buildHeaderMobile();
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeaderTitle(context),
+              KanbanBoardStyles.gap16,
+              SizedBox(width: double.infinity, child: _buildAddTaskButton(context)),
+            ],
+          );
         }
-        return _buildHeaderDesktop();
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildHeaderTitle(context),
+            _buildAddTaskButton(context),
+          ],
+        );
       },
     );
   }
 
-  Widget _buildHeaderMobile() {
+  Widget _buildHeaderTitle(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildHeaderTitle(),
-        KanbanBoardStyles.gap16,
-        SizedBox(width: double.infinity, child: _buildAddTaskButton()),
-      ],
-    );
-  }
-
-  Widget _buildHeaderDesktop() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildHeaderTitle(),
-        _buildAddTaskButton(),
-      ],
-    );
-  }
-
-  Widget _buildHeaderTitle() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Quadro Kanban',
-          style: KanbanBoardStyles.headerTitle,
-        ),
+        Text('Quadro Kanban', style: KanbanBoardStyles.headerTitleStyle(context)),
         KanbanBoardStyles.gap4h,
         Text(
           'Organize suas tarefas de forma visual',
-          style: KanbanBoardStyles.headerSubtitle(),
+          style: KanbanBoardStyles.headerSubtitleStyle(context),
         ),
       ],
     );
   }
 
-  Widget _buildAddTaskButton() {
+  Widget _buildAddTaskButton(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () {
-        showNewTaskDialog(
-          context: context,
-          onAddTask: _handleAddTask,
-        );
+        showNewTaskDialog(context: context, onAddTask: _handleAddTask);
       },
       icon: const Icon(Icons.add),
       label: const Text('Nova Tarefa'),
-      style: KanbanBoardStyles.addTaskButtonStyle(),
+      style: KanbanBoardStyles.addTaskButtonStyle(context),
     );
   }
 
-  // === COLUNAS ===
-
-  Widget _buildColumns(List<Task> tasks) {
+  Widget _buildColumns(
+    BuildContext context,
+    List<Task> tasks,
+    List<Map<String, dynamic>> columns,
+  ) {
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < KanbanBoardStyles.columnsMobileBreakpoint) {
-          return _buildMobileLayout(tasks);
-        }
-        return _buildDesktopLayout(tasks);
-      },
-    );
-  }
-
-  Widget _buildDesktopLayout(List<Task> tasks) {
-    final List<Widget> children = [];
-
-    for (int i = 0; i < _columns.length; i++) {
-      final columnData = _columns[i];
-
-      children.add(
-        Expanded(
-          child: Padding(
-            padding: KanbanBoardStyles.desktopColumnPadding,
-            child: _buildColumn(columnData, tasks),
-          ),
-        ),
-      );
-
-      if (i < _columns.length - 1) {
-        children.add(
-          VerticalDivider(
-            width: KanbanBoardStyles.dividerWidth,
-            thickness: KanbanBoardStyles.dividerThickness,
-            color: KanbanBoardStyles.dividerColor(),
-            indent: KanbanBoardStyles.dividerIndent,
-            endIndent: KanbanBoardStyles.dividerEndIndent,
-          ),
-        );
-      }
-    }
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: children,
-    );
-  }
-
-  Widget _buildMobileLayout(List<Task> tasks) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          ..._columns.map((column) {
-            return Padding(
-              padding: KanbanBoardStyles.mobileColumnBottomPadding,
-              child: SizedBox(
-                height: KanbanBoardStyles.mobileColumnHeight,
-                child: _buildColumn(column, tasks),
-              ),
-            );
-          }),
-          Container(
-            padding: KanbanBoardStyles.tipPadding,
-            margin: KanbanBoardStyles.tipMargin,
-            decoration: BoxDecoration(
-              color: KanbanBoardStyles.tipBg(),
-              border: Border.all(color: KanbanBoardStyles.tipBorder()),
-              borderRadius: KanbanBoardStyles.tipRadius(),
-            ),
-            child: Row(
+          return SingleChildScrollView(
+            child: Column(
               children: [
-                Icon(Icons.info_outline, color: KanbanBoardStyles.tipIconColor()),
-                KanbanBoardStyles.gap12w,
-                Expanded(
-                  child: Text(
-                    '💡 Dica: Pressione e segure uma tarefa para arrastá-la',
-                    style: KanbanBoardStyles.tipTextStyle(),
-                  ),
-                ),
+                ...columns.map((column) => Padding(
+                      padding: KanbanBoardStyles.mobileColumnBottomPadding,
+                      child: SizedBox(
+                        height: KanbanBoardStyles.mobileColumnHeight,
+                        child: _buildColumn(column, tasks),
+                      ),
+                    )),
               ],
             ),
-          ),
-        ],
-      ),
+          );
+        }
+
+        final children = <Widget>[];
+        for (int i = 0; i < columns.length; i++) {
+          final columnData = columns[i];
+          children.add(
+            Expanded(
+              child: Padding(
+                padding: KanbanBoardStyles.desktopColumnPadding,
+                child: _buildColumn(columnData, tasks),
+              ),
+            ),
+          );
+          if (i < columns.length - 1) {
+            children.add(
+              VerticalDivider(
+                width: KanbanBoardStyles.dividerWidth,
+                thickness: KanbanBoardStyles.dividerThickness,
+                color: KanbanBoardStyles.dividerColor(context),
+                indent: KanbanBoardStyles.dividerIndent,
+                endIndent: KanbanBoardStyles.dividerEndIndent,
+              ),
+            );
+          }
+        }
+        return Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: children);
+      },
     );
   }
 
@@ -238,6 +213,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
       allTasks: allTasks,
       onTaskMoved: _handleTaskMoved,
       onTaskDeleted: _handleDeleteTask,
+      onTaskEdited: _handleEditTask,
     );
   }
 }

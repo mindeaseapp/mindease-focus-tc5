@@ -4,11 +4,13 @@ import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/ta
 
 class TaskCard extends StatelessWidget {
   final Task task;
+  final VoidCallback onEdit;
   final void Function(String id) onDelete;
 
   const TaskCard({
     super.key,
     required this.task,
+    required this.onEdit,
     required this.onDelete,
   });
 
@@ -18,6 +20,10 @@ class TaskCard extends StatelessWidget {
       elevation: TaskCardStyles.elevation,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(TaskCardStyles.radius),
+        side: BorderSide(
+          color: Theme.of(context).dividerColor.withValues(alpha: 0.65),
+          width: 1,
+        ),
       ),
       child: Padding(
         padding: TaskCardStyles.padding,
@@ -25,49 +31,47 @@ class TaskCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Icon(
+                  Icons.drag_indicator,
+                  color: TaskCardStyles.dragIconColor(context),
+                  size: TaskCardStyles.dragIconSize,
+                ),
+                TaskCardStyles.gap8,
                 Expanded(
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.drag_indicator,
-                        color: TaskCardStyles.dragIconColor(),
-                        size: TaskCardStyles.dragIconSize,
-                      ),
-                      TaskCardStyles.gap8,
-                      Expanded(
-                        child: Text(
-                          task.title,
-                          style: TaskCardStyles.titleText,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    task.title,
+                    style: TaskCardStyles.titleText(context),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 IconButton(
+                  icon: const Icon(Icons.edit_outlined),
+                  color: TaskCardStyles.editColor(context),
+                  iconSize: TaskCardStyles.editIconSize,
+                  onPressed: onEdit,
+                  tooltip: 'Editar tarefa',
+                ),
+                IconButton(
                   icon: const Icon(Icons.delete_outline),
-                  color: TaskCardStyles.deleteColor(),
+                  color: TaskCardStyles.deleteColor(context),
                   iconSize: TaskCardStyles.deleteIconSize,
                   onPressed: () => onDelete(task.id),
                   tooltip: 'Deletar tarefa',
                 ),
               ],
             ),
-
             if (task.description != null && task.description!.isNotEmpty) ...[
               TaskCardStyles.h8,
               Text(
                 task.description!,
-                style: TaskCardStyles.descriptionText(),
+                style: TaskCardStyles.descriptionText(context),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
             ],
-
             if (task.timeSpent != null && task.timeSpent!.isNotEmpty) ...[
               TaskCardStyles.h12,
               Row(
@@ -75,12 +79,12 @@ class TaskCard extends StatelessWidget {
                   Icon(
                     Icons.access_time,
                     size: TaskCardStyles.timeIconSize,
-                    color: TaskCardStyles.timeColor(),
+                    color: TaskCardStyles.timeColor(context),
                   ),
                   TaskCardStyles.w4,
                   Text(
                     '${task.timeSpent} de foco',
-                    style: TaskCardStyles.timeText(),
+                    style: TaskCardStyles.timeText(context),
                   ),
                 ],
               ),
