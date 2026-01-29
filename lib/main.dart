@@ -18,6 +18,7 @@ import 'package:mindease_focus/features/auth/data/repositories/task_repository.d
 import 'package:mindease_focus/features/auth/presentation/controllers/task_controller.dart';
 
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/pomodoro_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +47,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => AuthController()),
 
         ChangeNotifierProvider(create: (_) => FocusModeController()),
+
+        ChangeNotifierProvider(create: (_) => PomodoroController()),
 
         ChangeNotifierProvider(
           create: (_) {

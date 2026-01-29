@@ -1,10 +1,9 @@
-import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/pomodoro_timer_styles.dart';
-
-enum PomodoroMode { focus, break_ }
+import 'package:mindease_focus/features/auth/presentation/controllers/pomodoro_controller.dart';
 
 class PomodoroTimer extends StatefulWidget {
   const PomodoroTimer({super.key});
@@ -14,55 +13,12 @@ class PomodoroTimer extends StatefulWidget {
 }
 
 class _PomodoroTimerState extends State<PomodoroTimer> {
-  static const int _focusTime = 25 * 60;
-  static const int _breakTime = 5 * 60;
+  bool _dialogShown = false;
+  int _lastTimeLeft = -1;
 
-  PomodoroMode _mode = PomodoroMode.focus;
-  int _timeLeft = _focusTime;
-  bool _isRunning = false;
-
-  Timer? _timer;
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  int get _totalTime => _mode == PomodoroMode.focus ? _focusTime : _breakTime;
-
-  double get _progress => (_totalTime - _timeLeft) / _totalTime;
-
-  void _toggleTimer() {
-    setState(() => _isRunning = !_isRunning);
-
-    if (_isRunning) {
-      _startTimer();
-    } else {
-      _timer?.cancel();
-    }
-  }
-
-  void _startTimer() {
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
-
-      setState(() {
-        if (_timeLeft > 0) {
-          _timeLeft--;
-        } else {
-          _timer?.cancel();
-          _isRunning = false;
-          _onTimerComplete();
-        }
-      });
-    });
-  }
-
-  void _onTimerComplete() {
-    if (!mounted) return;
-
+  void _onTimerComplete(BuildContext context, PomodoroMode mode) {
+    if (_dialogShown) return;
+    _dialogShown = true;
     showDialog(
       context: context,
       builder: (context) {
@@ -73,7 +29,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
           surfaceTintColor: Colors.transparent,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           title: Text(
-            _mode == PomodoroMode.focus
+            mode == PomodoroMode.focus
                 ? '🎉 Tempo de foco concluído!'
                 : '✨ Pausa concluída!',
             style: theme.textTheme.titleMedium?.copyWith(
@@ -82,7 +38,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
             ),
           ),
           content: Text(
-            _mode == PomodoroMode.focus
+            mode == PomodoroMode.focus
                 ? 'Hora de fazer uma pausa!'
                 : 'Pronto para focar novamente?',
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -100,32 +56,27 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  void _resetTimer() {
-    _timer?.cancel();
-    setState(() {
-      _isRunning = false;
-      _timeLeft = _totalTime;
-    });
-  }
-
-  void _switchMode(PomodoroMode newMode) {
-    _timer?.cancel();
-    setState(() {
-      _mode = newMode;
-      _isRunning = false;
-      _timeLeft = _totalTime;
-    });
-  }
-
-  String _formatTime(int seconds) {
-    final m = seconds ~/ 60;
-    final s = seconds % 60;
-    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
-  }
-
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<PomodoroController>();
     final styles = PomodoroTimerStyles(context);
+
+    // Resetar a flag quando o timer for reiniciado
+    if (controller.timeLeft != _lastTimeLeft) {
+      _lastTimeLeft = controller.timeLeft;
+      if (controller.timeLeft > 0) {
+        _dialogShown = false;
+      }
+    }
+
+    // Mostrar dialog quando o timer completar
+    if (controller.timeLeft == 0 && !controller.isRunning) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (controller.timeLeft == 0) {
+          _onTimerComplete(context, controller.mode);
+        }
+      });
+    }
 
     return Center(
       child: ConstrainedBox(
@@ -153,13 +104,13 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildHeader(styles),
+                _buildHeader(styles, controller),
                 const SizedBox(height: 18),
-                _buildTimerCircle(styles),
+                _buildTimerCircle(styles, controller),
                 const SizedBox(height: 18),
-                _buildControls(styles),
+                _buildControls(styles, controller),
                 const SizedBox(height: 14),
-                _buildInfo(styles),
+                _buildInfo(styles, controller),
               ],
             ),
           ),
@@ -169,7 +120,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
   }
 
   /// Header fixo: "Timer" / "Pomodoro" à esquerda, toggle sempre ao lado.
-  Widget _buildHeader(PomodoroTimerStyles styles) {
+  Widget _buildHeader(PomodoroTimerStyles styles, PomodoroController controller) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -204,8 +155,8 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
           child: FittedBox(
             fit: BoxFit.scaleDown,
             child: _SegmentedMode(
-              mode: _mode,
-              onChanged: _switchMode,
+              mode: controller.mode,
+              onChanged: controller.switchMode,
             ),
           ),
         ),
@@ -213,8 +164,8 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  Widget _buildTimerCircle(PomodoroTimerStyles styles) {
-    final label = _mode == PomodoroMode.focus ? 'Tempo de Foco' : 'Tempo de Pausa';
+  Widget _buildTimerCircle(PomodoroTimerStyles styles, PomodoroController controller) {
+    final label = controller.mode == PomodoroMode.focus ? 'Tempo de Foco' : 'Tempo de Pausa';
 
     return SizedBox(
       width: PomodoroTimerStyles.circleSize,
@@ -228,7 +179,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
               PomodoroTimerStyles.circleSize,
             ),
             painter: CircleProgressPainter(
-              progress: _progress,
+              progress: controller.progress,
               color: styles.primary,
               ringBg: styles.ringBg,
             ),
@@ -236,7 +187,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(_formatTime(_timeLeft), style: styles.timeText),
+              Text(controller.formattedTime, style: styles.timeText),
               const SizedBox(height: 6),
               Text(label, style: styles.subLabel),
             ],
@@ -246,12 +197,12 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  Widget _buildControls(PomodoroTimerStyles styles) {
+  Widget _buildControls(PomodoroTimerStyles styles, PomodoroController controller) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         InkWell(
-          onTap: _resetTimer,
+          onTap: controller.resetTimer,
           borderRadius: BorderRadius.circular(999),
           child: Container(
             width: PomodoroTimerStyles.resetSize,
@@ -272,12 +223,12 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
         SizedBox(
           height: PomodoroTimerStyles.actionHeight,
           child: ElevatedButton.icon(
-            onPressed: _toggleTimer,
+            onPressed: controller.toggleTimer,
             icon: Icon(
-              _isRunning ? Icons.pause : Icons.play_arrow,
+              controller.isRunning ? Icons.pause : Icons.play_arrow,
               size: PomodoroTimerStyles.actionIconSize,
             ),
-            label: Text(_isRunning ? 'Pausar' : 'Iniciar'),
+            label: Text(controller.isRunning ? 'Pausar' : 'Iniciar'),
             style: styles.actionButtonStyle(),
           ),
         ),
@@ -285,9 +236,9 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  Widget _buildInfo(PomodoroTimerStyles styles) {
+  Widget _buildInfo(PomodoroTimerStyles styles, PomodoroController controller) {
     return Text(
-      _mode == PomodoroMode.focus
+      controller.mode == PomodoroMode.focus
           ? '25 minutos de foco intenso, depois 5 minutos\nde pausa'
           : '5 minutos de descanso para recarregar\nas energias',
       textAlign: TextAlign.center,
