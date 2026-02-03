@@ -15,6 +15,8 @@ import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode
 
 import 'package:mindease_focus/features/auth/presentation/pages/dashboard/dashboard_styles.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/profile/widgets/cards/modal/welcome_modal.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/task_controller.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/tasks/models/task_model.dart';
 
 class DashboardRouteArgs {
   final bool showWelcome;
@@ -35,6 +37,10 @@ class _DashboardPageState extends State<DashboardPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _handleWelcomeModal();
+    // Carrega as tarefas sempre que a página é montada (após o frame para evitar erro de build)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TaskController>().loadTasks();
+    });
   }
 
   void _handleWelcomeModal() {
@@ -76,13 +82,13 @@ class _DashboardPageState extends State<DashboardPage> {
         case MindEaseNavItem.dashboard:
           return;
         case MindEaseNavItem.tasks:
-          Navigator.of(context).pushReplacementNamed(
+          Navigator.of(context).pushNamed(
             AppRoutes.tasks,
             arguments: 1,
           );
           return;
         case MindEaseNavItem.profile:
-          Navigator.of(context).pushReplacementNamed(AppRoutes.profile);
+          Navigator.of(context).pushNamed(AppRoutes.profile);
           return;
       }
     }
@@ -119,26 +125,33 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
     ];
 
-    final recentTasks = <_RecentTaskData>[
-      const _RecentTaskData(
-        title: 'Estudar React Hooks',
-        pill: DashboardTaskPillKind.done,
-        pillLabel: 'concluída',
-        meta: '2h de foco',
-      ),
-      const _RecentTaskData(
-        title: 'Revisar projeto final',
-        pill: DashboardTaskPillKind.inProgress,
-        pillLabel: 'em andamento',
-        meta: '1h 30m de foco',
-      ),
-      const _RecentTaskData(
-        title: 'Ler capítulo 5 - Algoritmos',
-        pill: DashboardTaskPillKind.pending,
-        pillLabel: 'pendente',
-        meta: '',
-      ),
-    ];
+    final taskController = context.watch<TaskController>();
+    final recentTasks = taskController.tasks.take(3).map((task) {
+      DashboardTaskPillKind pillKind;
+      String pillLabel;
+
+      switch (task.status) {
+        case TaskStatus.done:
+          pillKind = DashboardTaskPillKind.done;
+          pillLabel = 'concluída';
+          break;
+        case TaskStatus.inProgress:
+          pillKind = DashboardTaskPillKind.inProgress;
+          pillLabel = 'em andamento';
+          break;
+        case TaskStatus.todo:
+          pillKind = DashboardTaskPillKind.pending;
+          pillLabel = 'pendente';
+          break;
+      }
+
+      return _RecentTaskData(
+        title: task.title,
+        pill: pillKind,
+        pillLabel: pillLabel,
+        meta: task.timeSpent ?? '',
+      );
+    }).toList();
 
     return Scaffold(
       appBar: MindEaseHeader(
@@ -192,7 +205,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ],
 
                   _FocusModeBanner(
-                    onConfigure: () => Navigator.of(context).pushReplacementNamed(
+                    onConfigure: () => Navigator.of(context).pushNamed(
                       AppRoutes.tasks,
                       arguments: 0,
                     ),
@@ -202,7 +215,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   if (!isFocusMode) ...[
                     _RecentTasksCard(
                       tasks: recentTasks,
-                      onSeeAll: () => Navigator.of(context).pushReplacementNamed(
+                      onSeeAll: () => Navigator.of(context).pushNamed(
                         AppRoutes.tasks,
                         arguments: 1,
                       ),
@@ -466,10 +479,19 @@ class _RecentTasksCard extends StatelessWidget {
               ],
             ),
             AppSpacing.gapMd,
-            for (int i = 0; i < tasks.length; i++) ...[
-              _RecentTaskTile(data: tasks[i]),
-              if (i < tasks.length - 1) AppSpacing.gapMd,
-            ],
+            if (tasks.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                child: Text(
+                  'Não há tarefas cadastradas',
+                  style: DashboardPageStyles.metricSubtitleStyle(context),
+                ),
+              )
+            else
+              for (int i = 0; i < tasks.length; i++) ...[
+                _RecentTaskTile(data: tasks[i]),
+                if (i < tasks.length - 1) AppSpacing.gapMd,
+              ],
           ],
         ),
       ),
