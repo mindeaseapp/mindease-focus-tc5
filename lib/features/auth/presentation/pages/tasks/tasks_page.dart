@@ -43,12 +43,12 @@ class TasksPage extends StatelessWidget {
     void goTo(MindEaseNavItem item) {
       switch (item) {
         case MindEaseNavItem.dashboard:
-          Navigator.of(context).pushReplacementNamed(AppRoutes.dashboard);
+          Navigator.of(context).popUntil((route) => route.settings.name == AppRoutes.dashboard);
           break;
         case MindEaseNavItem.tasks:
           break;
         case MindEaseNavItem.profile:
-          Navigator.of(context).pushReplacementNamed(AppRoutes.profile);
+          Navigator.of(context).pushNamed(AppRoutes.profile);
           break;
       }
     }

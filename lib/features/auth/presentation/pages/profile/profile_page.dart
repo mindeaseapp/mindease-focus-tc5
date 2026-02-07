@@ -94,13 +94,12 @@ class _ProfilePageState extends State<ProfilePage> {
     void goTo(MindEaseNavItem item) {
       switch (item) {
         case MindEaseNavItem.dashboard:
-          Navigator.of(context).pushReplacementNamed(AppRoutes.dashboard);
+          Navigator.of(context).popUntil((route) => route.settings.name == AppRoutes.dashboard);
           return;
         case MindEaseNavItem.tasks:
-          Navigator.of(context).pushReplacementNamed(AppRoutes.tasks);
+          Navigator.of(context).pushNamed(AppRoutes.tasks);
           return;
         case MindEaseNavItem.profile:
-          Navigator.of(context).pushReplacementNamed(AppRoutes.profile);
           return;
       }
     }
