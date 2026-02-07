@@ -6,6 +6,7 @@ import 'package:mindease_focus/features/auth/presentation/pages/tasks/tasks_page
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/task_controller.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/pomodoro_controller.dart';
 
 import 'package:mindease_focus/features/auth/domain/entities/user_entity.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/models/task_model.dart';
@@ -109,6 +110,59 @@ class FakeTaskController extends ChangeNotifier implements TaskController {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+class FakePomodoroController extends ChangeNotifier implements PomodoroController {
+  PomodoroMode _mode = PomodoroMode.focus;
+  int _timeLeft = 25 * 60;
+  bool _isRunning = false;
+
+  @override
+  PomodoroMode get mode => _mode;
+
+  @override
+  int get timeLeft => _timeLeft;
+
+  @override
+  bool get isRunning => _isRunning;
+
+  @override
+  int get totalTime => _mode == PomodoroMode.focus ? 25 * 60 : 5 * 60;
+
+  @override
+  double get progress => (totalTime - _timeLeft) / totalTime;
+
+  @override
+  String get formattedTime => '25:00';
+
+  @override
+  void toggleTimer() {
+    _isRunning = !_isRunning;
+    notifyListeners();
+  }
+
+  @override
+  void resetTimer() {
+    _isRunning = false;
+    _timeLeft = totalTime;
+    notifyListeners();
+  }
+
+  @override
+  void switchMode(PomodoroMode newMode) {
+    _mode = newMode;
+    _timeLeft = totalTime;
+    notifyListeners();
+  }
+
+  @override
+  void onTimerComplete() {
+     _isRunning = false;
+     notifyListeners();
+  }
+  
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -127,6 +181,9 @@ void main() {
           ),
           ChangeNotifierProvider<TaskController>.value(
             value: FakeTaskController(),
+          ),
+          ChangeNotifierProvider<PomodoroController>.value(
+            value: FakePomodoroController(),
           ),
         ],
         child: const MaterialApp(
