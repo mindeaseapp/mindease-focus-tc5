@@ -6,25 +6,22 @@ class TaskCard extends StatelessWidget {
   final Task task;
   final VoidCallback onEdit;
   final void Function(String id) onDelete;
+  final bool highContrast;
 
   const TaskCard({
     super.key,
     required this.task,
     required this.onEdit,
     required this.onDelete,
+    this.highContrast = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: TaskCardStyles.elevation,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(TaskCardStyles.radius),
-        side: BorderSide(
-          color: Theme.of(context).dividerColor.withValues(alpha: 0.65),
-          width: 1,
-        ),
-      ),
+      shape: TaskCardStyles.cardShape(context, highContrast: highContrast),
+      color: TaskCardStyles.cardBg(context, highContrast: highContrast),
       child: Padding(
         padding: TaskCardStyles.padding,
         child: Column(

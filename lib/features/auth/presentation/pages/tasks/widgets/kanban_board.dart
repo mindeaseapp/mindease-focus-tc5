@@ -9,7 +9,14 @@ import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/ed
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/kanban_board_styles.dart';
 
 class KanbanBoard extends StatefulWidget {
-  const KanbanBoard({super.key});
+  final bool highContrast;
+  final bool hideDistractions;
+
+  const KanbanBoard({
+    super.key,
+    this.highContrast = false,
+    this.hideDistractions = false,
+  });
 
   @override
   State<KanbanBoard> createState() => _KanbanBoardState();
@@ -132,11 +139,13 @@ class _KanbanBoardState extends State<KanbanBoard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Quadro Kanban', style: KanbanBoardStyles.headerTitleStyle(context)),
-        KanbanBoardStyles.gap4h,
-        Text(
-          'Organize suas tarefas de forma visual',
-          style: KanbanBoardStyles.headerSubtitleStyle(context),
-        ),
+        if (!widget.hideDistractions) ...[
+          KanbanBoardStyles.gap4h,
+          Text(
+            'Organize suas tarefas de forma visual',
+            style: KanbanBoardStyles.headerSubtitleStyle(context),
+          ),
+        ],
       ],
     );
   }
@@ -214,6 +223,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
       onTaskMoved: _handleTaskMoved,
       onTaskDeleted: _handleDeleteTask,
       onTaskEdited: _handleEditTask,
+      highContrast: widget.highContrast,
     );
   }
 }

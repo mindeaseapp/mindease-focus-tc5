@@ -6,7 +6,14 @@ import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/po
 import 'package:mindease_focus/features/auth/presentation/controllers/pomodoro_controller.dart';
 
 class PomodoroTimer extends StatefulWidget {
-  const PomodoroTimer({super.key});
+  final bool highContrast;
+  final bool hideDistractions;
+
+  const PomodoroTimer({
+    super.key,
+    this.highContrast = false,
+    this.hideDistractions = false,
+  });
 
   @override
   State<PomodoroTimer> createState() => _PomodoroTimerState();
@@ -61,7 +68,6 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     final controller = context.watch<PomodoroController>();
     final styles = PomodoroTimerStyles(context);
 
-    // Resetar a flag quando o timer for reiniciado
     if (controller.timeLeft != _lastTimeLeft) {
       _lastTimeLeft = controller.timeLeft;
       if (controller.timeLeft > 0) {
@@ -69,7 +75,6 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
       }
     }
 
-    // Mostrar dialog quando o timer completar
     if (controller.timeLeft == 0 && !controller.isRunning) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (controller.timeLeft == 0) {
@@ -87,8 +92,8 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(PomodoroTimerStyles.cardRadius),
             side: BorderSide(
-              color: styles.borderColor,
-              width: 1,
+              color: styles.borderColor(highContrast: widget.highContrast),
+              width: widget.highContrast ? 2 : 1,
             ),
           ),
           clipBehavior: Clip.antiAlias,
@@ -97,20 +102,22 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: styles.gradientColors,
+                colors: styles.gradientColors(highContrast: widget.highContrast),
               ),
             ),
             padding: const EdgeInsets.all(PomodoroTimerStyles.padding),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildHeader(styles, controller),
+                _buildHeader(styles, controller, widget.highContrast),
                 const SizedBox(height: 18),
-                _buildTimerCircle(styles, controller),
+                _buildTimerCircle(styles, controller, widget.highContrast),
                 const SizedBox(height: 18),
-                _buildControls(styles, controller),
-                const SizedBox(height: 14),
-                _buildInfo(styles, controller),
+                _buildControls(styles, controller, widget.highContrast),
+                if (!widget.hideDistractions) ...[
+                  const SizedBox(height: 14),
+                  _buildInfo(styles, controller, widget.highContrast),
+                ],
               ],
             ),
           ),
@@ -119,8 +126,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  /// Header fixo: "Timer" / "Pomodoro" à esquerda, toggle sempre ao lado.
-  Widget _buildHeader(PomodoroTimerStyles styles, PomodoroController controller) {
+  Widget _buildHeader(PomodoroTimerStyles styles, PomodoroController controller, bool highContrast) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -157,6 +163,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
             child: _SegmentedMode(
               mode: controller.mode,
               onChanged: controller.switchMode,
+              highContrast: highContrast,
             ),
           ),
         ),
@@ -164,7 +171,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  Widget _buildTimerCircle(PomodoroTimerStyles styles, PomodoroController controller) {
+  Widget _buildTimerCircle(PomodoroTimerStyles styles, PomodoroController controller, bool highContrast) {
     final label = controller.mode == PomodoroMode.focus ? 'Tempo de Foco' : 'Tempo de Pausa';
 
     return SizedBox(
@@ -181,7 +188,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
             painter: CircleProgressPainter(
               progress: controller.progress,
               color: styles.primary,
-              ringBg: styles.ringBg,
+              ringBg: styles.ringBg(highContrast: highContrast),
             ),
           ),
           Column(
@@ -189,7 +196,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
             children: [
               Text(controller.formattedTime, style: styles.timeText),
               const SizedBox(height: 6),
-              Text(label, style: styles.subLabel),
+              Text(label, style: styles.subLabel(highContrast: highContrast)),
             ],
           ),
         ],
@@ -197,7 +204,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  Widget _buildControls(PomodoroTimerStyles styles, PomodoroController controller) {
+  Widget _buildControls(PomodoroTimerStyles styles, PomodoroController controller, bool highContrast) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -208,7 +215,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
             width: PomodoroTimerStyles.resetSize,
             height: PomodoroTimerStyles.resetSize,
             decoration: BoxDecoration(
-              color: styles.chipBg,
+              color: styles.chipBg(highContrast: highContrast),
               shape: BoxShape.circle,
               border: Border.all(color: styles.outline),
             ),
@@ -236,13 +243,13 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  Widget _buildInfo(PomodoroTimerStyles styles, PomodoroController controller) {
+  Widget _buildInfo(PomodoroTimerStyles styles, PomodoroController controller, bool highContrast) {
     return Text(
       controller.mode == PomodoroMode.focus
           ? '25 minutos de foco intenso, depois 5 minutos\nde pausa'
           : '5 minutos de descanso para recarregar\nas energias',
       textAlign: TextAlign.center,
-      style: styles.info,
+      style: styles.info(highContrast: highContrast),
     );
   }
 }
@@ -250,10 +257,12 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
 class _SegmentedMode extends StatelessWidget {
   final PomodoroMode mode;
   final ValueChanged<PomodoroMode> onChanged;
+  final bool highContrast;
 
   const _SegmentedMode({
     required this.mode,
     required this.onChanged,
+    required this.highContrast,
   });
 
   @override
@@ -283,7 +292,7 @@ class _SegmentedMode extends StatelessWidget {
     return Container(
       padding: PomodoroTimerStyles.segOuterPadding,
       decoration: BoxDecoration(
-        color: styles.chipBg,
+        color: styles.chipBg(highContrast: highContrast),
         borderRadius: PomodoroTimerStyles.segRadius(),
         border: Border.all(color: styles.outline),
       ),

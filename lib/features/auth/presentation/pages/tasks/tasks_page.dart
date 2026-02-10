@@ -18,6 +18,8 @@ import 'package:mindease_focus/features/auth/presentation/pages/tasks/widgets/ka
 
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/tasks_page_styles.dart';
 
+import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
+
 class TasksPage extends StatelessWidget {
   const TasksPage({super.key});
 
@@ -32,6 +34,10 @@ class TasksPage extends StatelessWidget {
 
     final safeInitialIndex =
         effectiveInitialTab.clamp(0, TasksPageStyles.tabCount - 1).toInt();
+
+    final prefs = context.watch<ProfilePreferencesController>();
+    final highContrast = prefs.highContrast;
+    final hideDistractions = prefs.hideDistractions;
 
     final authController = context.watch<AuthController>();
     final userEntity = authController.user;
@@ -127,9 +133,15 @@ class TasksPage extends StatelessWidget {
                 physics: isFocusMode
                     ? const ClampingScrollPhysics()
                     : const BouncingScrollPhysics(),
-                children: const [
-                  _PomodoroTabContent(),
-                  _KanbanTabContent(),
+                children: [
+                  _PomodoroTabContent(
+                    highContrast: highContrast,
+                    hideDistractions: hideDistractions,
+                  ),
+                  _KanbanTabContent(
+                    highContrast: highContrast,
+                    hideDistractions: hideDistractions,
+                  ),
                 ],
               ),
             ),
@@ -141,7 +153,13 @@ class TasksPage extends StatelessWidget {
 }
 
 class _PomodoroTabContent extends StatelessWidget {
-  const _PomodoroTabContent();
+  final bool highContrast;
+  final bool hideDistractions;
+
+  const _PomodoroTabContent({
+    required this.highContrast,
+    required this.hideDistractions,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +182,10 @@ class _PomodoroTabContent extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const PomodoroTimer(),
+                  PomodoroTimer(
+                    highContrast: highContrast,
+                    hideDistractions: hideDistractions,
+                  ),
                 ],
               ),
             ),
@@ -176,7 +197,13 @@ class _PomodoroTabContent extends StatelessWidget {
 }
 
 class _KanbanTabContent extends StatefulWidget {
-  const _KanbanTabContent();
+  final bool highContrast;
+  final bool hideDistractions;
+
+  const _KanbanTabContent({
+    required this.highContrast,
+    this.hideDistractions = false,
+  });
 
   @override
   State<_KanbanTabContent> createState() => _KanbanTabContentState();
@@ -230,8 +257,11 @@ class _KanbanTabContentState extends State<_KanbanTabContent> {
                       ],
                     ),
                   ),
-                const Expanded(
-                  child: KanbanBoard(),
+                Expanded(
+                  child: KanbanBoard(
+                    highContrast: widget.highContrast,
+                    hideDistractions: widget.hideDistractions,
+                  ),
                 ),
               ],
             ),

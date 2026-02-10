@@ -5,6 +5,32 @@ class TaskCardStyles {
   static const double radius = 12;
   static const EdgeInsets padding = EdgeInsets.all(16);
 
+  static ShapeBorder cardShape(BuildContext context, {bool highContrast = false}) {
+    if (highContrast) {
+      return RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(radius),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
+      );
+    }
+    return RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(radius),
+      side: BorderSide(
+        color: Theme.of(context).dividerColor.withValues(alpha: 0.65),
+        width: 1,
+      ),
+    );
+  }
+
+  static Color? cardBg(BuildContext context, {bool highContrast = false}) {
+    if (highContrast) {
+      return Theme.of(context).colorScheme.surface;
+    }
+    return null;
+  }
+
   static const SizedBox gap8 = SizedBox(width: 8);
   static const SizedBox h8 = SizedBox(height: 8);
   static const SizedBox h12 = SizedBox(height: 12);

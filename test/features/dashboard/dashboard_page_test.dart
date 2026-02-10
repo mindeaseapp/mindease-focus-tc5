@@ -11,6 +11,9 @@ import 'package:mindease_focus/features/auth/presentation/controllers/task_contr
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/models/task_model.dart';
 import 'package:mindease_focus/features/auth/data/repositories/task_repository.dart';
 
+import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/profile/models/cognitive_panel/cognitive_panel_models.dart';
+
 class FakeAuthController extends ChangeNotifier implements AuthController {
   final UserEntity _user =
       const UserEntity(id: '1', name: 'Teste User', email: 'teste@email.com');
@@ -51,7 +54,6 @@ class FakeFocusModeController extends ChangeNotifier
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-// ✅ Mock simples do TaskController
 class FakeTaskController extends ChangeNotifier implements TaskController {
   @override
   List<Task> get tasks => [
@@ -77,6 +79,31 @@ class FakeTaskController extends ChangeNotifier implements TaskController {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+
+class FakeProfilePreferencesController extends ChangeNotifier implements ProfilePreferencesController {
+  @override
+  bool hideDistractions = false;
+  @override
+  bool highContrast = false;
+  @override
+  bool darkMode = false;
+  @override
+  bool breakReminder = true;
+  @override
+  bool taskTimeAlert = true;
+  @override
+  bool smoothTransition = true;
+  @override
+  bool pushNotifications = true;
+  @override
+  bool notificationSounds = false;
+  @override
+  InterfaceComplexity get complexity => InterfaceComplexity.medium;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -94,9 +121,11 @@ void main() {
           ChangeNotifierProvider<FocusModeController>.value(
             value: FakeFocusModeController(enabled: false),
           ),
-          // ✅ Injetando o FakeTaskController
           ChangeNotifierProvider<TaskController>.value(
             value: FakeTaskController(),
+          ),
+          ChangeNotifierProvider<ProfilePreferencesController>.value(
+            value: FakeProfilePreferencesController(),
           ),
         ],
         child: const MaterialApp(
@@ -105,8 +134,6 @@ void main() {
       ),
     );
 
-    // O Dashboard chama loadTasks no addPostFrameCallback
-    // Precisamos de pump para executar o callback e depois settle para a UI
     await tester.pump(); 
     await tester.pumpAndSettle();
 
@@ -116,7 +143,6 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Tarefas Recentes'), findsOneWidget);
-    // Verifica se os dados do mock apareceram
     expect(find.text('Mock Task 1'), findsOneWidget); 
     
     expect(find.text('Dica do Dia'), findsOneWidget);

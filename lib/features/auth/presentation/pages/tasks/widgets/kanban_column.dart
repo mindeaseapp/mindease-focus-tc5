@@ -15,6 +15,7 @@ class KanbanColumn extends StatelessWidget {
   final void Function(Task task, TaskStatus newStatus) onTaskMoved;
   final void Function(String taskId) onTaskDeleted;
   final Future<void> Function(Task task) onTaskEdited;
+  final bool highContrast;
 
   const KanbanColumn({
     super.key,
@@ -27,6 +28,7 @@ class KanbanColumn extends StatelessWidget {
     required this.onTaskMoved,
     required this.onTaskDeleted,
     required this.onTaskEdited,
+    this.highContrast = false,
   });
 
   List<Task> get columnTasks =>
@@ -128,6 +130,7 @@ class KanbanColumn extends StatelessWidget {
             task: task,
             onEdit: () {},
             onDelete: (_) {},
+            highContrast: highContrast,
           ),
         ),
       ),
@@ -139,6 +142,7 @@ class KanbanColumn extends StatelessWidget {
         task: task,
         onEdit: () {},
         onDelete: (_) {},
+        highContrast: highContrast,
       ),
     );
 
@@ -148,6 +152,7 @@ class KanbanColumn extends StatelessWidget {
         task: task,
         onEdit: () => onTaskEdited(task),
         onDelete: onTaskDeleted,
+        highContrast: highContrast,
       ),
     );
 

@@ -11,6 +11,9 @@ import 'package:mindease_focus/features/auth/presentation/controllers/pomodoro_c
 import 'package:mindease_focus/features/auth/domain/entities/user_entity.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/models/task_model.dart';
 
+import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/profile/models/cognitive_panel/cognitive_panel_models.dart';
+
 
 class FakeAuthController extends ChangeNotifier implements AuthController {
   final UserEntity _user =
@@ -163,6 +166,31 @@ class FakePomodoroController extends ChangeNotifier implements PomodoroControlle
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+
+class FakeProfilePreferencesController extends ChangeNotifier implements ProfilePreferencesController {
+  @override
+  bool hideDistractions = false;
+  @override
+  bool highContrast = false;
+  @override
+  bool darkMode = false;
+  @override
+  bool breakReminder = true;
+  @override
+  bool taskTimeAlert = true;
+  @override
+  bool smoothTransition = true;
+  @override
+  bool pushNotifications = true;
+  @override
+  bool notificationSounds = false;
+  @override
+  InterfaceComplexity get complexity => InterfaceComplexity.medium;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -184,6 +212,9 @@ void main() {
           ),
           ChangeNotifierProvider<PomodoroController>.value(
             value: FakePomodoroController(),
+          ),
+          ChangeNotifierProvider<ProfilePreferencesController>.value(
+            value: FakeProfilePreferencesController(),
           ),
         ],
         child: const MaterialApp(

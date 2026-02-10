@@ -12,6 +12,7 @@ import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header.da
 
 import 'package:mindease_focus/shared/widgets/focus_mode/mindease_accessibility_fab.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
 
 import 'package:mindease_focus/features/auth/presentation/pages/dashboard/dashboard_styles.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/profile/widgets/cards/modal/welcome_modal.dart';
@@ -37,7 +38,6 @@ class _DashboardPageState extends State<DashboardPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _handleWelcomeModal();
-    // Carrega as tarefas sempre que a página é montada (após o frame para evitar erro de build)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<TaskController>().loadTasks();
     });
@@ -72,6 +72,10 @@ class _DashboardPageState extends State<DashboardPage> {
     final userEntity = authController.user;
 
     final isFocusMode = context.watch<FocusModeController>().enabled;
+
+    final prefs = context.watch<ProfilePreferencesController>();
+    final highContrast = prefs.highContrast;
+    final hideDistractions = prefs.hideDistractions;
 
     final userLabel = (userEntity.name.isNotEmpty)
         ? userEntity.name
@@ -192,15 +196,21 @@ class _DashboardPageState extends State<DashboardPage> {
                       style: DashboardPageStyles.pageTitleStyle(context),
                     ),
                   ),
-                  AppSpacing.gapSm,
-                  Text(
-                    'Bem-vindo de volta! Aqui está seu resumo de hoje.',
-                    style: DashboardPageStyles.pageSubtitleStyle(context),
-                  ),
+                  if (!hideDistractions) ...[
+                    AppSpacing.gapSm,
+                    Text(
+                      'Bem-vindo de volta! Aqui está seu resumo de hoje.',
+                      style: DashboardPageStyles.pageSubtitleStyle(context),
+                    ),
+                  ],
                   AppSpacing.gapXl,
 
                   if (!isFocusMode) ...[
-                    _MetricsGrid(metrics: metrics),
+                    _MetricsGrid(
+                      metrics: metrics,
+                      highContrast: highContrast,
+                      hideDistractions: hideDistractions,
+                    ),
                     AppSpacing.gapXl,
                   ],
 
@@ -209,19 +219,26 @@ class _DashboardPageState extends State<DashboardPage> {
                       AppRoutes.tasks,
                       arguments: 0,
                     ),
+                    hideDistractions: hideDistractions,
                   ),
                   AppSpacing.gapXl,
 
                   if (!isFocusMode) ...[
                     _RecentTasksCard(
                       tasks: recentTasks,
+                      highContrast: highContrast,
                       onSeeAll: () => Navigator.of(context).pushNamed(
                         AppRoutes.tasks,
                         arguments: 1,
                       ),
                     ),
+                    
                     AppSpacing.gapXl,
-                    const _TipOfDayCard(),
+                    _TipOfDayCard(
+                      highContrast: highContrast,
+                      hideDistractions: hideDistractions,
+                    ),
+
                     AppSpacing.gapXl,
                   ],
                 ],
@@ -252,8 +269,14 @@ class _MetricData {
 
 class _MetricsGrid extends StatelessWidget {
   final List<_MetricData> metrics;
+  final bool highContrast;
+  final bool hideDistractions;
 
-  const _MetricsGrid({required this.metrics});
+  const _MetricsGrid({
+    required this.metrics,
+    required this.highContrast,
+    required this.hideDistractions,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -270,7 +293,11 @@ class _MetricsGrid extends StatelessWidget {
             for (final metric in metrics)
               SizedBox(
                 width: cardWidth,
-                child: _MetricCard(data: metric),
+                child: _MetricCard(
+                  data: metric,
+                  highContrast: highContrast,
+                  hideDistractions: hideDistractions,
+                ),
               ),
           ],
         );
@@ -281,19 +308,26 @@ class _MetricsGrid extends StatelessWidget {
 
 class _MetricCard extends StatelessWidget {
   final _MetricData data;
+  final bool highContrast;
+  final bool hideDistractions;
 
-  const _MetricCard({required this.data});
+  const _MetricCard({
+    required this.data,
+    required this.highContrast,
+    required this.hideDistractions,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final accent = DashboardPageStyles.metricAccent(data.kind);
+    final accent = DashboardPageStyles.metricAccent(data.kind, context, highContrast: highContrast);
 
     return Semantics(
       container: true,
       label: '${data.title}. ${data.value}. ${data.subtitle}.',
       child: Card(
         elevation: DashboardPageStyles.cardElevation,
-        shape: DashboardPageStyles.cardShape(context),
+        shape: DashboardPageStyles.cardShape(context, highContrast: highContrast),
+        color: DashboardPageStyles.cardBg(context, highContrast: highContrast),
         child: Padding(
           padding: DashboardPageStyles.cardPadding(context),
           child: Column(
@@ -320,7 +354,7 @@ class _MetricCard extends StatelessWidget {
                     child: Icon(
                       data.icon,
                       size: 18,
-                      color: DashboardPageStyles.metricIconFg(),
+                      color: DashboardPageStyles.metricIconFg(context, highContrast: highContrast),
                       semanticLabel: '',
                     ),
                   ),
@@ -331,11 +365,14 @@ class _MetricCard extends StatelessWidget {
                 data.value,
                 style: DashboardPageStyles.metricValueStyle(context),
               ),
-              AppSpacing.gapXs,
-              Text(
-                data.subtitle,
-                style: DashboardPageStyles.metricSubtitleStyle(context),
-              ),
+              
+              if (!hideDistractions) ...[
+                AppSpacing.gapXs,
+                Text(
+                  data.subtitle,
+                  style: DashboardPageStyles.metricSubtitleStyle(context),
+                ),
+              ],
             ],
           ),
         ),
@@ -346,8 +383,12 @@ class _MetricCard extends StatelessWidget {
 
 class _FocusModeBanner extends StatelessWidget {
   final VoidCallback onConfigure;
+  final bool hideDistractions;
 
-  const _FocusModeBanner({required this.onConfigure});
+  const _FocusModeBanner({
+    required this.onConfigure,
+    this.hideDistractions = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -356,9 +397,11 @@ class _FocusModeBanner extends StatelessWidget {
         final isMobile = c.maxWidth < DashboardPageStyles.mobileBreakpoint;
 
         final titleText = isMobile ? 'Modo Foco\nAtivo' : 'Modo Foco Ativo';
-        final subtitleText = isMobile
-            ? 'Interface simplificada\npara máxima\nconcentração'
-            : 'Interface simplificada para máxima concentração';
+        final subtitleText = hideDistractions
+            ? ''
+            : (isMobile
+                ? 'Interface simplificada\npara máxima\nconcentração'
+                : 'Interface simplificada para máxima concentração');
 
         return Semantics(
           container: true,
@@ -391,11 +434,13 @@ class _FocusModeBanner extends StatelessWidget {
                         titleText,
                         style: DashboardPageStyles.focusBannerTitleStyle(context),
                       ),
-                      AppSpacing.gapSm,
-                      Text(
-                        subtitleText,
-                        style: DashboardPageStyles.focusBannerSubtitleStyle(context),
-                      ),
+                      if (subtitleText.isNotEmpty) ...[
+                        AppSpacing.gapSm,
+                        Text(
+                          subtitleText,
+                          style: DashboardPageStyles.focusBannerSubtitleStyle(context),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -439,17 +484,20 @@ class _RecentTaskData {
 class _RecentTasksCard extends StatelessWidget {
   final List<_RecentTaskData> tasks;
   final VoidCallback onSeeAll;
+  final bool highContrast;
 
   const _RecentTasksCard({
     required this.tasks,
     required this.onSeeAll,
+    required this.highContrast,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: DashboardPageStyles.cardElevation,
-      shape: DashboardPageStyles.cardShape(context),
+      shape: DashboardPageStyles.cardShape(context, highContrast: highContrast),
+      color: DashboardPageStyles.cardBg(context, highContrast: highContrast),
       child: Padding(
         padding: DashboardPageStyles.cardPadding(context),
         child: Column(
@@ -469,45 +517,52 @@ class _RecentTasksCard extends StatelessWidget {
                 Tooltip(
                   message: 'Ver todas as tarefas',
                   child: TextButton(
-                    onPressed: onSeeAll,
-                    child: Text(
-                      'Ver todas',
-                      style: DashboardPageStyles.sectionLinkStyle(context),
-                    ),
+                  onPressed: onSeeAll,
+                  child: Text(
+                    'Ver todas',
+                    style: DashboardPageStyles.sectionLinkStyle(context),
                   ),
                 ),
-              ],
-            ),
-            AppSpacing.gapMd,
-            if (tasks.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                child: Text(
-                  'Não há tarefas cadastradas',
-                  style: DashboardPageStyles.metricSubtitleStyle(context),
-                ),
-              )
-            else
-              for (int i = 0; i < tasks.length; i++) ...[
-                _RecentTaskTile(data: tasks[i]),
-                if (i < tasks.length - 1) AppSpacing.gapMd,
-              ],
-          ],
-        ),
+              ),
+            ],
+          ),
+          AppSpacing.gapMd,
+          if (tasks.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+              child: Text(
+                'Não há tarefas cadastradas',
+                style: DashboardPageStyles.metricSubtitleStyle(context),
+              ),
+            )
+          else
+            for (int i = 0; i < tasks.length; i++) ...[
+              _RecentTaskTile(
+                data: tasks[i],
+                highContrast: highContrast,
+              ),
+              if (i < tasks.length - 1) AppSpacing.gapMd,
+            ],
+        ],
       ),
+    ),
     );
   }
 }
 
 class _RecentTaskTile extends StatelessWidget {
   final _RecentTaskData data;
+  final bool highContrast;
 
-  const _RecentTaskTile({required this.data});
+  const _RecentTaskTile({
+    required this.data,
+    required this.highContrast,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final pillBg = DashboardPageStyles.pillBg(data.pill);
-    final pillFg = DashboardPageStyles.pillFg(data.pill);
+    final pillBg = DashboardPageStyles.pillBg(data.pill, highContrast: highContrast);
+ 
 
     return Semantics(
       container: true,
@@ -537,17 +592,24 @@ class _RecentTaskTile extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: pillBg,
                     borderRadius: DashboardPageStyles.pillRadius(),
+                    border: DashboardPageStyles.pillBorder(context, highContrast: highContrast),
                   ),
                   child: Text(
                     data.pillLabel,
-                    style: DashboardPageStyles.pillTextStyle(context, data.pill),
+                    style: DashboardPageStyles.pillTextStyle(
+                      context,
+                      data.pill,
+                      highContrast: highContrast,
+                    ),
                   ),
                 ),
                 if (data.meta.isNotEmpty)
                   Text(
                     data.meta,
                     style: DashboardPageStyles.taskMetaStyle(context).copyWith(
-                      color: pillFg.withValues(alpha: 0.75),
+                      color: highContrast
+                          ? Theme.of(context).colorScheme.onSurface 
+                          : null, 
                     ),
                   ),
               ],
@@ -560,7 +622,13 @@ class _RecentTaskTile extends StatelessWidget {
 }
 
 class _TipOfDayCard extends StatelessWidget {
-  const _TipOfDayCard();
+  final bool highContrast;
+  final bool hideDistractions;
+
+  const _TipOfDayCard({
+    this.highContrast = false,
+    this.hideDistractions = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -571,9 +639,11 @@ class _TipOfDayCard extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: DashboardPageStyles.tipBg(context),
+          color: DashboardPageStyles.tipBg(context, highContrast: highContrast),
           borderRadius: DashboardPageStyles.cardRadius,
-          border: Border.all(color: DashboardPageStyles.tipBorder(context)),
+          border: Border.all(
+            color: DashboardPageStyles.tipBorder(context, highContrast: highContrast),
+          ),
         ),
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
@@ -581,10 +651,10 @@ class _TipOfDayCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.lightbulb_outline_rounded,
                   size: DashboardPageStyles.tipIconSize,
-                  color: Colors.orange,
+                  color: highContrast ? Theme.of(context).colorScheme.onSurface : Colors.orange,
                   semanticLabel: '',
                 ),
                 const SizedBox(width: AppSpacing.sm),
@@ -596,14 +666,16 @@ class _TipOfDayCard extends StatelessWidget {
                 ),
               ],
             ),
-            AppSpacing.gapMd,
-            Text(
-              'Faça pausas regulares! O método Pomodoro sugere 5 minutos de descanso '
-              'a cada 25 minutos de trabalho focado. Isso ajuda a manter a '
-              'concentração e reduzir a fadiga mental.',
-              style: DashboardPageStyles.tipBodyStyle(context),
-              softWrap: true,
-            ),
+            if (!hideDistractions) ...[
+              AppSpacing.gapMd,
+              Text(
+                'Faça pausas regulares! O método Pomodoro sugere 5 minutos de descanso '
+                'a cada 25 minutos de trabalho focado. Isso ajuda a manter a '
+                'concentração e reduzir a fadiga mental.',
+                style: DashboardPageStyles.tipBodyStyle(context),
+                softWrap: true,
+              ),
+            ],
           ],
         ),
       ),

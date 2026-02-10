@@ -1,4 +1,3 @@
-// dashboard_styles.dart
 import 'package:flutter/material.dart';
 
 import 'package:mindease_focus/shared/tokens/app_opacity.dart';
@@ -28,8 +27,19 @@ class DashboardPageStyles {
   static BorderRadius cardRadius =
       BorderRadius.circular(AppSizes.cardBorderRadiusSm + 4);
 
-  static ShapeBorder cardShape(BuildContext context) {
+  static ShapeBorder cardShape(BuildContext context, {bool highContrast = false}) {
     final theme = Theme.of(context);
+    
+    if (highContrast) {
+      return RoundedRectangleBorder(
+        borderRadius: cardRadius,
+        side: BorderSide(
+          color: theme.colorScheme.onSurface,
+          width: 2,
+        ),
+      );
+    }
+
     return RoundedRectangleBorder(
       borderRadius: cardRadius,
       side: BorderSide(
@@ -43,6 +53,13 @@ class DashboardPageStyles {
 
   static EdgeInsets cardPadding(BuildContext context) {
     return const EdgeInsets.all(AppSpacing.lg);
+  }
+
+  static Color? cardBg(BuildContext context, {bool highContrast = false}) {
+    if (highContrast) {
+      return Theme.of(context).colorScheme.surface;
+    }
+    return null; 
   }
 
   static Color pageBg(BuildContext context) =>
@@ -152,7 +169,30 @@ class DashboardPageStyles {
     );
   }
 
-  static Color metricAccent(DashboardMetricKind kind) {
+  static Color metricAccent(DashboardMetricKind kind, BuildContext context, {bool highContrast = false}) {
+    if (highContrast) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      if (isDark) {
+        switch (kind) {
+          case DashboardMetricKind.done:
+            return Colors.greenAccent.shade200;
+          case DashboardMetricKind.focus:
+            return Colors.lightBlueAccent.shade200;
+          case DashboardMetricKind.productivity:
+            return Colors.purpleAccent.shade200;
+        }
+      } else {
+        switch (kind) {
+          case DashboardMetricKind.done:
+            return Colors.green.shade900;
+          case DashboardMetricKind.focus:
+            return Colors.blue.shade900;
+          case DashboardMetricKind.productivity:
+            return Colors.purple.shade900;
+        }
+      }
+    }
+
     switch (kind) {
       case DashboardMetricKind.done:
         return Colors.green.shade600;
@@ -163,7 +203,13 @@ class DashboardPageStyles {
     }
   }
 
-  static Color metricIconFg() => Colors.white;
+  static Color metricIconFg(BuildContext context, {bool highContrast = false}) {
+    if (highContrast) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      return isDark ? Colors.black : Colors.white;
+    }
+    return Colors.white;
+  }
 
   static BorderRadius metricIconRadius() =>
       BorderRadius.circular(AppSizes.cardBorderRadiusSm);
@@ -226,7 +272,10 @@ class DashboardPageStyles {
         vertical: AppSpacing.lg,
       );
 
-  static Color pillBg(DashboardTaskPillKind kind) {
+  static Color pillBg(DashboardTaskPillKind kind, {bool highContrast = false}) {
+    if (highContrast) {
+      return Colors.transparent;
+    }
     switch (kind) {
       case DashboardTaskPillKind.done:
         return Colors.green.shade100;
@@ -237,7 +286,17 @@ class DashboardPageStyles {
     }
   }
 
-  static Color pillFg(DashboardTaskPillKind kind) {
+  static Color pillFg(DashboardTaskPillKind kind, {bool highContrast = false}) {
+    if (highContrast) {
+      switch (kind) {
+        case DashboardTaskPillKind.done:
+          return Colors.green.shade900;
+        case DashboardTaskPillKind.inProgress:
+          return Colors.blue.shade900;
+        case DashboardTaskPillKind.pending:
+          return Colors.black; 
+      }
+    }
     switch (kind) {
       case DashboardTaskPillKind.done:
         return Colors.green.shade800;
@@ -248,13 +307,19 @@ class DashboardPageStyles {
     }
   }
 
-  static TextStyle pillTextStyle(BuildContext context, DashboardTaskPillKind kind) {
+  static TextStyle pillTextStyle(BuildContext context, DashboardTaskPillKind kind,
+      {bool highContrast = false}) {
     final theme = Theme.of(context);
     final base = theme.textTheme.labelMedium ??
         const TextStyle(fontSize: 12, fontWeight: FontWeight.w700);
+
+    final color = highContrast
+        ? theme.colorScheme.onSurface
+        : pillFg(kind, highContrast: false);
+
     return base.copyWith(
       fontWeight: FontWeight.w700,
-      color: pillFg(kind),
+      color: color,
     );
   }
 
@@ -262,13 +327,22 @@ class DashboardPageStyles {
       const EdgeInsets.symmetric(horizontal: 10, vertical: 6);
 
   static BorderRadius pillRadius() => BorderRadius.circular(999);
+  
+  static Border? pillBorder(BuildContext context, {bool highContrast = false}) {
+    if (!highContrast) return null;
+    return Border.all(
+      color: Theme.of(context).colorScheme.onSurface,
+      width: 2,
+    );
+  }
 
-  // =========================================================
-  // ✅ AQUI ESTÁ A CORREÇÃO DO CARD "Dica do Dia" (dark ok)
-  // =========================================================
-
-  static Color tipBg(BuildContext context) {
+  static Color tipBg(BuildContext context, {bool highContrast = false}) {
     final theme = Theme.of(context);
+    
+    if (highContrast) {
+      return theme.colorScheme.surface;
+    }
+
     final base = theme.colorScheme.surface;
     final tint = theme.colorScheme.secondary;
 
@@ -276,10 +350,14 @@ class DashboardPageStyles {
     return Color.alphaBlend(tint.withValues(alpha: alpha), base);
   }
 
-  static Color tipBorder(BuildContext context) {
+  static Color tipBorder(BuildContext context, {bool highContrast = false}) {
     final theme = Theme.of(context);
-    final tint = theme.colorScheme.secondary;
+    
+    if (highContrast) {
+      return theme.colorScheme.onSurface;
+    }
 
+    final tint = theme.colorScheme.secondary;
     final alpha = theme.brightness == Brightness.dark ? 0.40 : 0.25;
     return tint.withValues(alpha: alpha);
   }

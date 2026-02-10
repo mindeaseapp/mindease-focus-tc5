@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class PomodoroTimerStyles {
-  // Layout
   static const double maxWidth = 420;
   static const double cardRadius = 16;
   static const double padding = 18;
@@ -18,7 +17,6 @@ class PomodoroTimerStyles {
   static const double actionHeight = 44;
   static const double actionIconSize = 22;
 
-  // Segmented control
   static const BoxConstraints segConstraints = BoxConstraints(
     minWidth: 48,
     minHeight: 28,
@@ -30,7 +28,6 @@ class PomodoroTimerStyles {
   static BorderRadius segRadius() => BorderRadius.circular(12);
   static BorderRadius segItemRadius() => BorderRadius.circular(10);
 
-  // ===== Instance (depende do Theme) =====
 
   final BuildContext context;
   PomodoroTimerStyles(this.context);
@@ -42,31 +39,39 @@ class PomodoroTimerStyles {
 
   Color get primary => _cs.primary;
 
-  /// Borda do card
-  Color get borderColor =>
-      _cs.primary.withValues(alpha: _isDark ? 0.28 : 0.30);
+  Color borderColor({bool highContrast = false}) {
+    if (highContrast) {
+      return _cs.onSurface;
+    }
+    return _cs.primary.withValues(alpha: _isDark ? 0.28 : 0.30);
+  }
 
-  /// Borda/outline padrão (substitui black12)
   Color get outline =>
       _theme.dividerColor.withValues(alpha: _isDark ? 0.85 : 0.65);
 
-  /// Ícone “muted”
   Color get iconMuted =>
       _cs.onSurface.withValues(alpha: _isDark ? 0.70 : 0.65);
 
-  /// Fundo do “chip” (reset/segmented) — escuro no dark
-  Color get chipBg =>
-      _cs.surface.withValues(alpha: _isDark ? 0.92 : 0.95);
+  Color chipBg({bool highContrast = false}) {
+    if (highContrast) {
+      return _isDark ? Colors.black : Colors.white;
+    }
+    return _cs.surface.withValues(alpha: _isDark ? 0.92 : 0.95);
+  }
 
-  /// Fundo do anel
-  Color get ringBg =>
-      _cs.onSurface.withValues(alpha: _isDark ? 0.22 : 0.18);
+  Color ringBg({bool highContrast = false}) {
+    if (highContrast) {
+      return _cs.onSurface.withValues(alpha: 0.1);
+    }
+    return _cs.onSurface.withValues(alpha: _isDark ? 0.22 : 0.18);
+  }
 
-  /// Gradiente do container do card:
-  /// - Light: azul/roxo bem clarinho
-  /// - Dark: surface escura com tint leve (sem clarear o card)
-  List<Color> get gradientColors {
+  List<Color> gradientColors({bool highContrast = false}) {
     final surface = _cs.surface;
+
+    if (highContrast) {
+      return [surface, surface];
+    }
 
     if (_isDark) {
       final top = Color.alphaBlend(primary.withValues(alpha: 0.10), surface);
@@ -79,7 +84,6 @@ class PomodoroTimerStyles {
     return [top, bottom];
   }
 
-  // Text styles
   TextStyle get headerTitle {
     final base = _theme.textTheme.labelLarge ??
         const TextStyle(fontSize: 14, fontWeight: FontWeight.w700);
@@ -100,22 +104,26 @@ class PomodoroTimerStyles {
     );
   }
 
-  TextStyle get subLabel {
+  TextStyle subLabel({bool highContrast = false}) {
     final base = _theme.textTheme.bodySmall ??
         const TextStyle(fontSize: 12, fontWeight: FontWeight.w500);
     return base.copyWith(
       fontSize: 12,
-      color: _cs.onSurface.withValues(alpha: 0.70),
+      color: highContrast
+          ? _cs.onSurface
+          : _cs.onSurface.withValues(alpha: 0.70),
       height: 1.2,
     );
   }
 
-  TextStyle get info {
+  TextStyle info({bool highContrast = false}) {
     final base = _theme.textTheme.bodySmall ??
         const TextStyle(fontSize: 12, fontWeight: FontWeight.w500);
     return base.copyWith(
       fontSize: 12,
-      color: _cs.onSurface.withValues(alpha: 0.70),
+      color: highContrast
+          ? _cs.onSurface
+          : _cs.onSurface.withValues(alpha: 0.70),
       height: 1.35,
       fontWeight: FontWeight.w600,
     );
@@ -134,7 +142,6 @@ class PomodoroTimerStyles {
     );
   }
 
-  // Buttons
   ButtonStyle actionButtonStyle() => ElevatedButton.styleFrom(
         backgroundColor: primary,
         foregroundColor: _cs.onPrimary,
