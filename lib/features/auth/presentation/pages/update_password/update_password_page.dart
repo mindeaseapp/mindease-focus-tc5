@@ -77,10 +77,13 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              'Criar Nova Senha', 
-                              style: UpdatePasswordStyles.title,
-                              textAlign: TextAlign.center,
+                            Semantics(
+                              header: true,
+                              child: Text(
+                                'Criar Nova Senha', 
+                                style: UpdatePasswordStyles.title,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                             AppSpacing.gapMd,
                             Text(
@@ -99,6 +102,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                                 labelText: 'Nova Senha',
                                 prefixIcon: const Icon(Icons.lock_outline),
                                 suffixIcon: IconButton(
+                                  tooltip: _obscureText ? 'Mostrar senha' : 'Ocultar senha',
                                   icon: Icon(_obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined),
                                   onPressed: () => setState(() => _obscureText = !_obscureText),
                                 ),

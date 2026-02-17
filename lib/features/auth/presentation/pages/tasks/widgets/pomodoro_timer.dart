@@ -211,21 +211,25 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        InkWell(
-          onTap: controller.resetTimer,
-          borderRadius: BorderRadius.circular(999),
-          child: Container(
-            width: PomodoroTimerStyles.resetSize,
-            height: PomodoroTimerStyles.resetSize,
-            decoration: BoxDecoration(
-              color: styles.chipBg(highContrast: highContrast),
-              shape: BoxShape.circle,
-              border: Border.all(color: styles.outline),
-            ),
-            child: Icon(
-              Icons.refresh,
-              color: styles.iconMuted,
-              size: PomodoroTimerStyles.resetIconSize,
+        Semantics(
+          button: true,
+          label: 'Reiniciar cronômetro',
+          child: InkWell(
+            onTap: controller.resetTimer,
+            borderRadius: BorderRadius.circular(999),
+            child: Container(
+              width: PomodoroTimerStyles.resetSize,
+              height: PomodoroTimerStyles.resetSize,
+              decoration: BoxDecoration(
+                color: styles.chipBg(highContrast: highContrast),
+                shape: BoxShape.circle,
+                border: Border.all(color: styles.outline),
+              ),
+              child: Icon(
+                Icons.refresh,
+                color: styles.iconMuted,
+                size: PomodoroTimerStyles.resetIconSize,
+              ),
             ),
           ),
         ),
@@ -275,19 +279,25 @@ class _SegmentedMode extends StatelessWidget {
     Widget item(String label, PomodoroMode value) {
       final selected = mode == value;
 
-      return InkWell(
-        onTap: () => onChanged(value),
-        borderRadius: PomodoroTimerStyles.segItemRadius(),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 140),
-          constraints: PomodoroTimerStyles.segConstraints,
-          padding: PomodoroTimerStyles.segItemPadding,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? styles.primary : Colors.transparent,
-            borderRadius: PomodoroTimerStyles.segItemRadius(),
+      return Semantics(
+        button: true,
+        selected: selected,
+        label: 'Modo $label',
+        hint: selected ? 'Selecionado' : 'Toque para selecionar',
+        child: InkWell(
+          onTap: () => onChanged(value),
+          borderRadius: PomodoroTimerStyles.segItemRadius(),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 140),
+            constraints: PomodoroTimerStyles.segConstraints,
+            padding: PomodoroTimerStyles.segItemPadding,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: selected ? styles.primary : Colors.transparent,
+              borderRadius: PomodoroTimerStyles.segItemRadius(),
+            ),
+            child: Text(label, style: styles.segText(selected: selected)),
           ),
-          child: Text(label, style: styles.segText(selected: selected)),
         ),
       );
     }

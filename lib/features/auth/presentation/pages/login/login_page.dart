@@ -254,16 +254,17 @@ class _LoginPageState extends State<LoginPage> {
               decoration: InputDecoration(
                 labelText: 'Senha',
                 prefixIcon: const Icon(Icons.lock_outline),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
+                  suffixIcon: IconButton(
+                    tooltip: _obscurePassword ? 'Mostrar senha' : 'Ocultar senha',
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                    ),
+                    onPressed: controller.isLoading
+                        ? null
+                        : () => setState(() => _obscurePassword = !_obscurePassword),
                   ),
-                  onPressed: controller.isLoading
-                      ? null
-                      : () => setState(() => _obscurePassword = !_obscurePassword),
-                ),
               ),
             ),
 
@@ -314,13 +315,17 @@ class _LoginPageState extends State<LoginPage> {
                     'Não tem uma conta?',
                     style: LoginStyles.noAccountText,
                   ),
-                  GestureDetector(
-                    onTap: controller.isLoading
-                        ? null
-                        : () => Navigator.pushNamed(context, '/register'),
-                    child: Text(
-                      'Cadastre-se',
-                      style: LoginStyles.signUpLink,
+                  Semantics(
+                    button: true,
+                    label: 'Ir para tela de cadastro',
+                    child: GestureDetector(
+                      onTap: controller.isLoading
+                          ? null
+                          : () => Navigator.pushNamed(context, '/register'),
+                      child: Text(
+                        'Cadastre-se',
+                        style: LoginStyles.signUpLink,
+                      ),
                     ),
                   ),
                 ],

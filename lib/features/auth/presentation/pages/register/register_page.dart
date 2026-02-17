@@ -383,32 +383,36 @@ class _RegisterPageState extends State<RegisterPage> {
               ? 'Termos aceitos' 
               : 'Marque para aceitar os termos',
             checked: _acceptedTerms,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Semantics(
-                  excludeSemantics: true,
-                  child: Checkbox(
-                    value: _acceptedTerms,
-                    onChanged: (value) {
-                      setState(() => _acceptedTerms = value ?? false);
-                      _updateFormValidity();
-                    },
+            onTap: () {
+              setState(() => _acceptedTerms = !_acceptedTerms);
+              _updateFormValidity();
+            },
+            child: InkWell(
+              onTap: () {
+                setState(() => _acceptedTerms = !_acceptedTerms);
+                _updateFormValidity();
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Semantics(
+                    excludeSemantics: true,
+                    child: Checkbox(
+                      value: _acceptedTerms,
+                      onChanged: (value) {
+                        setState(() => _acceptedTerms = value ?? false);
+                        _updateFormValidity();
+                      },
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() => _acceptedTerms = !_acceptedTerms);
-                      _updateFormValidity();
-                    },
-                    child: const Text(
+                  const Expanded(
+                    child: Text(
                       'Eu aceito os termos de uso e a política de privacidade',
                       style: AppTypography.bodySmall,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 

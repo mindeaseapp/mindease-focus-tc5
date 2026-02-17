@@ -73,38 +73,42 @@ class KanbanColumn extends StatelessWidget {
   }
 
   Widget _buildColumnHeader(BuildContext context) {
-    return Container(
-      padding: KanbanColumnStyles.headerPadding,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: KanbanColumnStyles.headerRadius(),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: KanbanColumnStyles.headerIconSize),
-              KanbanColumnStyles.headerGap8,
-              Text(title, style: KanbanColumnStyles.headerTitleStyle(context)),
-            ],
-          ),
-          Container(
-            padding: KanbanColumnStyles.counterPadding,
-            decoration: BoxDecoration(
-              color: KanbanColumnStyles.counterBg(context),
-              borderRadius: KanbanColumnStyles.counterRadius(),
-              border: Border.all(
-                color: Theme.of(context).dividerColor.withValues(alpha: 0.65),
-                width: 1,
+    return Semantics(
+      header: true,
+      label: 'Coluna $title. ${columnTasks.length} tarefas.',
+      child: Container(
+        padding: KanbanColumnStyles.headerPadding,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: KanbanColumnStyles.headerRadius(),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: color, size: KanbanColumnStyles.headerIconSize),
+                KanbanColumnStyles.headerGap8,
+                Text(title, style: KanbanColumnStyles.headerTitleStyle(context)),
+              ],
+            ),
+            Container(
+              padding: KanbanColumnStyles.counterPadding,
+              decoration: BoxDecoration(
+                color: KanbanColumnStyles.counterBg(context),
+                borderRadius: KanbanColumnStyles.counterRadius(),
+                border: Border.all(
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.65),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                '${columnTasks.length}',
+                style: KanbanColumnStyles.counterTextStyle(context),
               ),
             ),
-            child: Text(
-              '${columnTasks.length}',
-              style: KanbanColumnStyles.counterTextStyle(context),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

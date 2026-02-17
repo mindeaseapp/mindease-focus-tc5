@@ -39,10 +39,13 @@ class NotFoundPage extends StatelessWidget {
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 NotFoundStyles.gap16,
-                Text(
-                  'Oops! Não encontrei essa página.',
-                  textAlign: TextAlign.center,
-                  style: NotFoundStyles.titleTextStyle(context),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    'Oops! Não encontrei essa página.',
+                    textAlign: TextAlign.center,
+                    style: NotFoundStyles.titleTextStyle(context),
+                  ),
                 ),
                 NotFoundStyles.gap8,
                 Text(

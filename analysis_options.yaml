@@ -12,3 +12,9 @@ linter:
     avoid_print: true
     prefer_const_constructors: true
     always_use_package_imports: true
+
+    # A11y & Consistency Rules
+    # avoid_redundant_argument_values: true # Clean code
+    # use_key_in_widget_constructors: true # Performance/Testing
+    # use_full_hex_values_for_flutter_colors: true # Design consistency
+
