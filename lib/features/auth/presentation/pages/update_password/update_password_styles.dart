@@ -18,4 +18,16 @@ class UpdatePasswordStyles {
 
   // Padding padrão do card
   static const EdgeInsets cardPadding = EdgeInsets.all(AppSpacing.xl);
+
+  // Dimensions
+  static const double desktopContentWidth = 420; // Consistent with other auth pages
+
+  // Colors
+  static const Color successColor = Colors.green;
+  static const Color errorColor = Colors.red;
+
+  // Loading
+  static const double loadingIconSize = 20;
+  static const double loadingStrokeWidth = 2;
+  static const Color loadingColor = Colors.white;
 }

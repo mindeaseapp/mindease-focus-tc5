@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mindease_focus/shared/tokens/app_colors.dart';
-import 'package:mindease_focus/shared/tokens/app_opacity.dart';
-import 'package:mindease_focus/shared/tokens/app_sizes.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/profile/widgets/cards/profile_identity_tile/profile_identity_tile_styles.dart';
 
 class ProfileIdentityTile extends StatelessWidget {
   final String name;
@@ -28,7 +26,7 @@ class ProfileIdentityTile extends StatelessWidget {
         hint: interactive ? 'Toque para abrir informações pessoais.' : null,
         onTap: interactive ? onTap : null,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: AppSizes.minTapArea),
+          constraints: const BoxConstraints(minHeight: ProfileIdentityTileStyles.minHeight),
           child: ListTile(
             contentPadding: EdgeInsets.zero,
             leading: const ExcludeSemantics(
@@ -67,22 +65,16 @@ class _AvatarGradientIcon extends StatelessWidget {
       label: semanticsLabel,
       image: true,
       child: Container(
-        width: 44,
-        height: 44,
+        width: ProfileIdentityTileStyles.avatarSize,
+        height: ProfileIdentityTileStyles.avatarSize,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: const LinearGradient(
-            colors: [AppColors.gradientStart, AppColors.gradientEnd],
+            colors: ProfileIdentityTileStyles.avatarGradient,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withValues(alpha: AppOpacity.soft),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          boxShadow: ProfileIdentityTileStyles.avatarShadow(context),
         ),
-        child: const Icon(Icons.person, color: Colors.white),
+        child: ProfileIdentityTileStyles.avatarIcon,
       ),
     );
   }

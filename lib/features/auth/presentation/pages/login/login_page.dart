@@ -7,9 +7,6 @@ import 'package:mindease_focus/shared/layout/flex_grid.dart';
 import 'package:mindease_focus/shared/widgets/gradient_panel/gradient_panel.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
-import 'package:mindease_focus/shared/tokens/app_colors.dart';
-import 'package:mindease_focus/shared/tokens/app_typography.dart';
-import 'package:mindease_focus/shared/tokens/app_opacity.dart';
 
 import 'package:mindease_focus/features/auth/domain/validators/email_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
@@ -119,11 +116,8 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(AppSpacing.sm),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: AppOpacity.medium),
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                      ),
+                      padding: LoginStyles.brandIconPadding,
+                      decoration: LoginStyles.brandIconDecoration(context),
                       child: const Icon(
                         Icons.psychology_outlined,
                         color: Colors.white,
@@ -173,11 +167,8 @@ class _LoginPageState extends State<LoginPage> {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(AppSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: AppOpacity.medium),
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                  ),
+                  padding: LoginStyles.brandIconPadding,
+                  decoration: LoginStyles.brandIconDecoration(context),
                   child: const Icon(
                     Icons.psychology_outlined,
                     color: Colors.white,
@@ -205,7 +196,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       right: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420),
+          constraints: LoginStyles.desktopCardConstraints,
           child: Card(
             child: _buildForm(controller),
           ),
@@ -231,10 +222,7 @@ class _LoginPageState extends State<LoginPage> {
             AppSpacing.gapSm,
             Text(
               'Entre com suas credenciais para continuar',
-              style: AppTypography.bodySmall.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: AppTypography.medium,
-              ),
+              style: LoginStyles.formSubtitle,
             ),
             AppSpacing.gapLg,
 
@@ -324,9 +312,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Text(
                     'Não tem uma conta?',
-                    style: AppTypography.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                    style: LoginStyles.noAccountText,
                   ),
                   GestureDetector(
                     onTap: controller.isLoading
@@ -334,10 +320,7 @@ class _LoginPageState extends State<LoginPage> {
                         : () => Navigator.pushNamed(context, '/register'),
                     child: Text(
                       'Cadastre-se',
-                      style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: AppTypography.semiBold,
-                      ),
+                      style: LoginStyles.signUpLink,
                     ),
                   ),
                 ],

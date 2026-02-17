@@ -26,31 +26,34 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
   void _onTimerComplete(BuildContext context, PomodoroMode mode) {
     if (_dialogShown) return;
     _dialogShown = true;
+    
+
+    // Actually consistent with build method, we can instantiate it here.
+
     showDialog(
       context: context,
       builder: (context) {
-        final theme = Theme.of(context);
+        // Re-instantiate styles with dialog context to be safe with theme access, 
+        // though typically outer context is fine for theme.
+        // Let's use the styles instance created above if possible, but context is different in builder.
+        // Actually, let's just use PomodoroTimerStyles(context) inside the builder to be safe.
+        final dialogStyles = PomodoroTimerStyles(context);
 
         return AlertDialog(
-          backgroundColor: theme.colorScheme.surface,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           surfaceTintColor: Colors.transparent,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: PomodoroTimerStyles.dialogShape,
           title: Text(
             mode == PomodoroMode.focus
                 ? '🎉 Tempo de foco concluído!'
                 : '✨ Pausa concluída!',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w800,
-              color: theme.colorScheme.onSurface,
-            ),
+            style: dialogStyles.dialogTitle,
           ),
           content: Text(
             mode == PomodoroMode.focus
                 ? 'Hora de fazer uma pausa!'
                 : 'Pronto para focar novamente?',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.80),
-            ),
+            style: dialogStyles.dialogContent,
           ),
           actions: [
             TextButton(

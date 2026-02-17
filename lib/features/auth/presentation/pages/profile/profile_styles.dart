@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 
 class ProfilePageStyles {
@@ -11,9 +12,10 @@ class ProfilePageStyles {
   }
 
   static const ScrollPhysics scrollPhysics = AlwaysScrollableScrollPhysics();
+  static const double logoutButtonHeight = 50;
 
   static bool _isMobileByWidth(BuildContext context) =>
-      MediaQuery.sizeOf(context).width < 600;
+      MediaQuery.sizeOf(context).width < AppSizes.breakpointMobile;
 
   static TextAlign headerTextAlign(BuildContext context) =>
       _isMobileByWidth(context) ? TextAlign.start : TextAlign.center;
@@ -31,4 +33,11 @@ class ProfilePageStyles {
 
   static TextStyle? subtitleStyle(BuildContext context) =>
       Theme.of(context).textTheme.bodySmall;
+
+  static ButtonStyle logoutButtonStyle() {
+    return OutlinedButton.styleFrom(
+      foregroundColor: Colors.red,
+      side: const BorderSide(color: Colors.red),
+    );
+  }
 }

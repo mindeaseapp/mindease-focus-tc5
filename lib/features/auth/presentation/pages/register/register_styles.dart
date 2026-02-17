@@ -23,4 +23,17 @@ class RegisterStyles {
   );
 
   static const double cardPadding = AppSpacing.xl;
+
+  // Dimensions
+  static const double mobileBreakpoint = 768; // Or use AppSizes.breakpointTablet if appropriate, but 768 is specific here.
+  static const double desktopContentWidth = 420; // AppSizes.maxContentWidth
+
+  // Colors
+  static const Color successColor = Colors.green;
+  static const Color errorColor = Colors.red;
+
+  // Loading
+  static const double loadingIconSize = 24;
+  static const double loadingStrokeWidth = 2;
+  static const Color loadingColor = Colors.white;
 }

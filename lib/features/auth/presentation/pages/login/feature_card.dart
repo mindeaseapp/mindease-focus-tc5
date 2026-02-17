@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:mindease_focus/shared/tokens/app_colors.dart';
-import 'package:mindease_focus/shared/tokens/app_opacity.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
-import 'package:mindease_focus/shared/tokens/app_typography.dart';
-import 'package:mindease_focus/shared/tokens/app_sizes.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/login/login_styles.dart';
 
-/// Card para exibir features do MindEase/// Card para exibir features do MindEase
+/// Card para exibir features do MindEase
 class FeatureCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -24,51 +21,29 @@ class FeatureCard extends StatelessWidget {
     // mas possa crescer se o texto precisar de mais espaço.
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        minHeight: AppSizes.featureCardMinHeight,
+        minHeight: FeatureCardStyles.minHeight,
       ),
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.lg,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.textOnPrimary.withValues(
-            alpha: AppOpacity.soft,
-          ),
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-          border: Border.all(
-            color: AppColors.textOnPrimary.withValues(
-              alpha: AppOpacity.medium,
-            ),
-            width: 1,
-          ),
-        ),
+        padding: FeatureCardStyles.contentPadding,
+        decoration: FeatureCardStyles.cardDecoration(context),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min, // Importante para não forçar expansão desnecessária
           children: [
             Container(
-              padding: const EdgeInsets.all(AppSpacing.sm),
-              decoration: BoxDecoration(
-                color: AppColors.textOnPrimary.withValues(
-                  alpha: AppOpacity.medium,
-                ),
-                borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-              ),
+              padding: FeatureCardStyles.iconPadding,
+              decoration: FeatureCardStyles.iconDecoration(context),
               child: Icon(
                 icon,
-                color: AppColors.textOnPrimary,
-                size: AppSizes.iconLG,
+                color: FeatureCardStyles.iconColor,
+                size: FeatureCardStyles.iconSize,
               ),
             ),
             AppSpacing.gapSm,
             Text(
               title,
               textAlign: TextAlign.center,
-              style: AppTypography.bodySmall.copyWith(
-                color: AppColors.textOnPrimary,
-                fontWeight: AppTypography.medium,
-              ),
+              style: FeatureCardStyles.title,
             ),
           ],
         ),
@@ -118,7 +93,7 @@ class FeatureCardsRow extends StatelessWidget {
 
   Widget _buildResponsiveBox(bool isMobile, Widget child) {
     return SizedBox(
-      width: isMobile ? double.infinity : AppSizes.featureCardWidth,
+      width: isMobile ? double.infinity : FeatureCardStyles.responsiveWidth,
       child: child,
     );
   }

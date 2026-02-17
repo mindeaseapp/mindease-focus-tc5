@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/cognitive_panel_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/profile/models/cognitive_panel/cognitive_panel_models.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/profile/widgets/cards/cognitive_panel/cognitive_panel_styles.dart';
 import 'package:mindease_focus/features/auth/presentation/widgets/app_card.dart';
 import 'package:mindease_focus/features/auth/presentation/widgets/section_header.dart';
-import 'package:mindease_focus/shared/tokens/app_sizes.dart';
+
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 
 class CognitivePanelCard extends StatelessWidget {
@@ -14,42 +15,14 @@ class CognitivePanelCard extends StatelessWidget {
     required this.controller,
   });
 
-  // =========================
-  // ✅ Helpers (só deste card)
-  // =========================
-
-  double _spacingFactor(ElementSpacing s) {
-    switch (s) {
-      case ElementSpacing.low:
-        return 0.90;
-      case ElementSpacing.medium:
-        return 1.00;
-      case ElementSpacing.high:
-        return 1.20;
-    }
-  }
-
-  double _fontFactor(FontSizePreference f) {
-    switch (f) {
-      case FontSizePreference.small:
-        return 0.92;
-      case FontSizePreference.normal:
-        return 1.00;
-      case FontSizePreference.large:
-        return 1.15;
-    }
-  }
-
-  Widget _vGap(double base, double factor) => SizedBox(height: base * factor);
-
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
         // ✅ fatores calculados pelo estado atual do painel
-        final spacingFactor = _spacingFactor(controller.spacing);
-        final fontFactor = _fontFactor(controller.fontSize);
+        final spacingFactor = CognitivePanelStyles.spacingFactor(controller.spacing);
+        final fontFactor = CognitivePanelStyles.fontFactor(controller.fontSize);
 
         // ✅ aplica escala de fonte só nesse card (não mexe no app todo)
         return MediaQuery(
@@ -65,21 +38,21 @@ class CognitivePanelCard extends StatelessWidget {
                   icon: Icons.psychology_outlined,
                   title: 'Painel Cognitivo',
                 ),
-                _vGap(AppSpacing.md, spacingFactor),
+                CognitivePanelStyles.vGap(CognitivePanelStyles.sectionSpacing, spacingFactor),
 
                 const _FieldLabel(text: 'Nível de Complexidade da Interface'),
-                _vGap(AppSpacing.xs, spacingFactor),
+                CognitivePanelStyles.vGap(CognitivePanelStyles.fieldLabelSpacing, spacingFactor),
                 _ComplexityDropdown(controller: controller),
 
-                _vGap(AppSpacing.md, spacingFactor),
+                CognitivePanelStyles.vGap(CognitivePanelStyles.sectionSpacing, spacingFactor),
                 const _FieldLabel(text: 'Modo de Exibição'),
-                _vGap(AppSpacing.xs, spacingFactor),
+                CognitivePanelStyles.vGap(CognitivePanelStyles.fieldLabelSpacing, spacingFactor),
                 _DisplayModeDropdown(
                   controller: controller,
                   complexity: controller.complexity,
                 ),
 
-                _vGap(AppSpacing.md, spacingFactor),
+                CognitivePanelStyles.vGap(CognitivePanelStyles.sectionSpacing, spacingFactor),
                 _SliderBlock(
                   label: 'Espaçamento entre Elementos',
                   valueLabel: controller.spacingLabel,
@@ -91,7 +64,7 @@ class CognitivePanelCard extends StatelessWidget {
                   internalSpacingFactor: spacingFactor,
                 ),
 
-                _vGap(AppSpacing.md, spacingFactor),
+                CognitivePanelStyles.vGap(CognitivePanelStyles.sectionSpacing, spacingFactor),
                 _SliderBlock(
                   label: 'Tamanho da Fonte',
                   valueLabel: controller.fontSizeLabel,
@@ -121,7 +94,7 @@ class _FieldLabel extends StatelessWidget {
       header: true,
       child: Text(
         text,
-        style: Theme.of(context).textTheme.labelLarge,
+        style: CognitivePanelStyles.fieldLabelStyle(context),
       ),
     );
   }
@@ -236,18 +209,18 @@ class _SliderBlock extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: Theme.of(context).textTheme.labelLarge,
+                  style: CognitivePanelStyles.sliderLabelStyle(context),
                 ),
               ),
               Text(
                 valueLabel,
-                style: Theme.of(context).textTheme.bodySmall,
+                style: CognitivePanelStyles.sliderValueStyle(context),
               ),
             ],
           ),
           SizedBox(height: AppSpacing.xs * internalSpacingFactor),
           ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: AppSizes.minTapArea),
+            constraints: CognitivePanelStyles.sliderConstraints,
             child: Slider(
               min: 0,
               max: max,

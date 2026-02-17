@@ -153,4 +153,22 @@ class PomodoroTimerStyles {
         ),
         elevation: 0,
       );
+
+  // Dialog
+  static final ShapeBorder dialogShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(cardRadius),
+  );
+
+  TextStyle get dialogTitle =>
+      _theme.textTheme.titleMedium?.copyWith(
+        fontWeight: FontWeight.w800,
+        color: _cs.onSurface,
+      ) ??
+      const TextStyle();
+
+  TextStyle get dialogContent =>
+      _theme.textTheme.bodyMedium?.copyWith(
+        color: _cs.onSurface.withValues(alpha: 0.80),
+      ) ??
+      const TextStyle();
 }

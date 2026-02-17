@@ -7,7 +7,6 @@ import 'package:mindease_focus/features/auth/presentation/controllers/auth_contr
 import 'package:mindease_focus/features/auth/presentation/controllers/task_controller.dart';
 
 import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header.dart';
-import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header_styles.dart';
 import 'package:mindease_focus/shared/widgets/mindease_drawer/mindease_drawer.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 
@@ -70,17 +69,8 @@ class TasksPage extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     final tabBarBackgroundColor = TasksPageStyles.tabBarBackgroundColor(context);
-
-    Color selectedItemColor;
-    Color unselectedItemColor;
-
-    if (isDarkMode) {
-      selectedItemColor = Colors.white;
-      unselectedItemColor = Colors.white60;
-    } else {
-      selectedItemColor = MindEaseHeaderStyles.navFg(context, selected: true);
-      unselectedItemColor = MindEaseHeaderStyles.navFg(context, selected: false);
-    }
+    final selectedItemColor = TasksPageStyles.tabSelectedItemColor(context, isDarkMode: isDarkMode);
+    final unselectedItemColor = TasksPageStyles.tabUnselectedItemColor(context, isDarkMode: isDarkMode);
 
     return DefaultTabController(
       length: TasksPageStyles.tabCount,
@@ -117,11 +107,11 @@ class TasksPage extends StatelessWidget {
                   indicatorWeight: TasksPageStyles.tabIndicatorWeight,
                   tabs: const [
                     Tab(
-                      icon: Icon(Icons.timer_outlined),
+                      icon: Icon(Icons.timer_outlined, size: TasksPageStyles.tabIconSize),
                       text: 'Foco',
                     ),
                     Tab(
-                      icon: Icon(Icons.view_kanban_outlined),
+                      icon: Icon(Icons.view_kanban_outlined, size: TasksPageStyles.tabIconSize),
                       text: 'Tarefas',
                     ),
                   ],
@@ -176,12 +166,12 @@ class _PomodoroTabContent extends StatelessWidget {
                 children: [
                   Semantics(
                     header: true,
-                    child: const Text(
+                    child: Text(
                       'Seu tempo de foco',
                       style: TasksPageStyles.pomodoroTitleText,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: TasksPageStyles.pomodoroTitleSpacing),
                   PomodoroTimer(
                     highContrast: highContrast,
                     hideDistractions: hideDistractions,
@@ -247,7 +237,7 @@ class _KanbanTabContentState extends State<_KanbanTabContent> {
                     child: Row(
                       children: [
                         TasksPageStyles.errorIcon,
-                        const SizedBox(width: 12),
+                        const SizedBox(width: TasksPageStyles.errorIconGap),
                         Expanded(
                           child: Text(
                             taskController.error!,

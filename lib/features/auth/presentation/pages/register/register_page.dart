@@ -47,7 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _acceptedTerms = false;
   bool _isFormValid = false;
 
-  bool get _isMobile => MediaQuery.of(context).size.width < 768;
+  bool get _isMobile => MediaQuery.of(context).size.width < RegisterStyles.mobileBreakpoint;
 
   @override
   void initState() {
@@ -88,7 +88,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Conta criada com sucesso!'),
-            backgroundColor: Colors.green,
+            backgroundColor: RegisterStyles.successColor,
           ),
         );
         Navigator.pushReplacementNamed(context, '/login');
@@ -96,7 +96,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_registerController.errorMessage ?? 'Erro desconhecido.'),
-            backgroundColor: Colors.red,
+            backgroundColor: RegisterStyles.errorColor,
           ),
         );
       }
@@ -202,7 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       right: Center(
         child: SizedBox(
-          width: 420,
+          width: RegisterStyles.desktopContentWidth,
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(RegisterStyles.cardPadding),
@@ -430,10 +430,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     : _submit,
                 child: _registerController.isLoading
                     ? const SizedBox(
-                        width: 24,
-                        height: 24,
+                        width: RegisterStyles.loadingIconSize,
+                        height: RegisterStyles.loadingIconSize,
                         child: CircularProgressIndicator(
-                            color: Colors.white, strokeWidth: 2),
+                            color: RegisterStyles.loadingColor, strokeWidth: RegisterStyles.loadingStrokeWidth),
                       )
                     : const Text('Criar conta'),
               ),

@@ -41,7 +41,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Link expirado ou inválido. Faça login novamente.'),
-            backgroundColor: Colors.red,
+            backgroundColor: UpdatePasswordStyles.errorColor,
           ),
         );
       }
@@ -68,7 +68,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(AppSpacing.lg),
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 400),
+                  constraints: const BoxConstraints(maxWidth: UpdatePasswordStyles.desktopContentWidth),
                   child: Card(
                     child: Padding(
                       padding: UpdatePasswordStyles.cardPadding,
@@ -131,9 +131,11 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                                     : () => _submit(context, controller),
                                 child: controller.isLoading
                                     ? const SizedBox(
-                                        width: 20, 
-                                        height: 20, 
-                                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                        width: UpdatePasswordStyles.loadingIconSize, 
+                                        height: UpdatePasswordStyles.loadingIconSize, 
+                                        child: CircularProgressIndicator(
+                                            color: UpdatePasswordStyles.loadingColor, 
+                                            strokeWidth: UpdatePasswordStyles.loadingStrokeWidth),
                                       )
                                     : const Text('Redefinir e Ir para Login'),
                               ),
@@ -189,7 +191,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(controller.errorMessage!),
-          backgroundColor: Colors.red,
+          backgroundColor: UpdatePasswordStyles.errorColor,
         ),
       );
     }

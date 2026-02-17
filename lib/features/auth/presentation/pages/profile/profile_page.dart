@@ -217,13 +217,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   // 7) Botão logout
                   SizedBox(
-                    height: 50,
+                    height: ProfilePageStyles.logoutButtonHeight,
                     child: OutlinedButton.icon(
                       onPressed: logout,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.red,
-                        side: const BorderSide(color: Colors.red),
-                      ),
+                      style: ProfilePageStyles.logoutButtonStyle(),
                       icon: const Icon(Icons.logout_rounded),
                       label: const Text('Sair da Conta'),
                     ),

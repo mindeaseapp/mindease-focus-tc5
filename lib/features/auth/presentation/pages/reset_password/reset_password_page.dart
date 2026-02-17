@@ -23,7 +23,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   bool _isSubmitting = false;
   bool _isFormValid = false;
 
-  bool get _isMobile => MediaQuery.of(context).size.width < 768;
+  bool get _isMobile => MediaQuery.of(context).size.width < ResetPasswordStyles.mobileBreakpoint;
 
   @override
   void initState() {
@@ -154,7 +154,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       ),
       right: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420),
+          constraints: const BoxConstraints(maxWidth: ResetPasswordStyles.desktopContentWidth),
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(ResetPasswordStyles.cardPadding),
@@ -221,11 +221,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     ? Semantics(
                         label: 'Carregando',
                         child: const SizedBox(
-                          width: 20,
-                          height: 20,
+                          width: ResetPasswordStyles.loadingIconSize,
+                          height: ResetPasswordStyles.loadingIconSize,
                           child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
+                            strokeWidth: ResetPasswordStyles.loadingStrokeWidth,
+                            color: ResetPasswordStyles.loadingColor,
                             semanticsLabel: 'Enviando instruções',
                           ),
                         ),
