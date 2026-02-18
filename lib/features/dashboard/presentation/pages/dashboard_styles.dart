@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:mindease_focus/shared/tokens/app_opacity.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
+import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 enum DashboardMetricKind { done, focus, productivity }
 enum DashboardTaskPillKind { done, inProgress, pending }
 
 class DashboardPageStyles {
-  static const double maxWidth = 1200;
-  static const double mobileBreakpoint = 600;
-  static const double metricsWideBreakpoint = 900;
+  static const double maxWidth = AppSizes.maxPageWidth;
+  static const double mobileBreakpoint = AppSizes.breakpointMobile;
+  static const double metricsWideBreakpoint = AppSizes.breakpointTablet;
 
   static bool isMobileByWidth(BuildContext context) =>
       MediaQuery.sizeOf(context).width < mobileBreakpoint;
@@ -25,7 +26,7 @@ class DashboardPageStyles {
   static const ScrollPhysics scrollPhysics = AlwaysScrollableScrollPhysics();
 
   static BorderRadius cardRadius =
-      BorderRadius.circular(AppSizes.cardBorderRadiusSm + 4);
+      BorderRadius.circular(AppSizes.cardBorderRadiusSm + AppSpacing.xs);
 
   static ShapeBorder cardShape(BuildContext context, {bool highContrast = false}) {
     final theme = Theme.of(context);
@@ -49,7 +50,7 @@ class DashboardPageStyles {
     );
   }
 
-  static const double cardElevation = 0;
+  static const double cardElevation = AppSizes.cardElevationNone;
 
   static EdgeInsets cardPadding(BuildContext context) {
     return const EdgeInsets.all(AppSpacing.lg);
@@ -71,9 +72,9 @@ class DashboardPageStyles {
   static TextStyle pageTitleStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.headlineLarge ??
-        const TextStyle(fontSize: 32, fontWeight: FontWeight.w800);
+        AppTypography.displaySmall.copyWith(fontWeight: AppTypography.bold);
     return base.copyWith(
-      fontWeight: FontWeight.w800,
+      fontWeight: AppTypography.bold,
       color: theme.colorScheme.onSurface,
       height: 1.05,
     );
@@ -82,9 +83,9 @@ class DashboardPageStyles {
   static TextStyle pageSubtitleStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.bodyMedium ??
-        const TextStyle(fontSize: 14, fontWeight: FontWeight.w400);
+        AppTypography.bodySmall.copyWith(fontWeight: AppTypography.regular);
     return base.copyWith(
-      color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
+      color: theme.colorScheme.onSurface.withValues(alpha: AppOpacity.strong),
       height: 1.4,
     );
   }
@@ -92,19 +93,19 @@ class DashboardPageStyles {
   static TextStyle metricTitleStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.labelLarge ??
-        const TextStyle(fontSize: 14, fontWeight: FontWeight.w600);
+        AppTypography.label.copyWith(fontWeight: AppTypography.semiBold);
     return base.copyWith(
-      fontWeight: FontWeight.w600,
-      color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
+      fontWeight: AppTypography.semiBold,
+      color: theme.colorScheme.onSurface.withValues(alpha: AppOpacity.strong),
     );
   }
 
   static TextStyle metricValueStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.headlineMedium ??
-        const TextStyle(fontSize: 32, fontWeight: FontWeight.w800);
+        AppTypography.displaySmall.copyWith(fontWeight: AppTypography.bold);
     return base.copyWith(
-      fontWeight: FontWeight.w800,
+      fontWeight: AppTypography.bold,
       color: theme.colorScheme.onSurface,
       height: 1.05,
     );
@@ -113,18 +114,18 @@ class DashboardPageStyles {
   static TextStyle metricSubtitleStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.bodySmall ??
-        const TextStyle(fontSize: 12, fontWeight: FontWeight.w400);
+        AppTypography.labelSmall.copyWith(fontWeight: AppTypography.regular);
     return base.copyWith(
-      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+      color: theme.colorScheme.onSurface.withValues(alpha: AppOpacity.strong),
     );
   }
 
   static TextStyle sectionTitleStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.titleMedium ??
-        const TextStyle(fontSize: 18, fontWeight: FontWeight.w800);
+        AppTypography.h4.copyWith(fontWeight: AppTypography.bold);
     return base.copyWith(
-      fontWeight: FontWeight.w800,
+      fontWeight: AppTypography.bold,
       color: theme.colorScheme.onSurface,
     );
   }
@@ -132,9 +133,9 @@ class DashboardPageStyles {
   static TextStyle sectionLinkStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.labelLarge ??
-        const TextStyle(fontSize: 14, fontWeight: FontWeight.w700);
+        AppTypography.label.copyWith(fontWeight: AppTypography.bold);
     return base.copyWith(
-      fontWeight: FontWeight.w700,
+      fontWeight: AppTypography.bold,
       color: theme.colorScheme.primary,
     );
   }
@@ -142,9 +143,9 @@ class DashboardPageStyles {
   static TextStyle taskTitleStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.titleSmall ??
-        const TextStyle(fontSize: 16, fontWeight: FontWeight.w800);
+        AppTypography.titleMedium.copyWith(fontWeight: AppTypography.bold);
     return base.copyWith(
-      fontWeight: FontWeight.w800,
+      fontWeight: AppTypography.bold,
       color: theme.colorScheme.onSurface,
     );
   }
@@ -152,19 +153,19 @@ class DashboardPageStyles {
   static TextStyle taskMetaStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.bodySmall ??
-        const TextStyle(fontSize: 12, fontWeight: FontWeight.w500);
+        AppTypography.labelSmall.copyWith(fontWeight: AppTypography.semiBold);
     return base.copyWith(
-      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-      fontWeight: FontWeight.w600,
+      color: theme.colorScheme.onSurface.withValues(alpha: AppOpacity.strong),
+      fontWeight: AppTypography.semiBold,
     );
   }
 
   static TextStyle tipBodyStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.bodyMedium ??
-        const TextStyle(fontSize: 14, fontWeight: FontWeight.w400);
+        AppTypography.bodySmall.copyWith(fontWeight: AppTypography.regular);
     return base.copyWith(
-      color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
+      color: theme.colorScheme.onSurface.withValues(alpha: AppOpacity.strong),
       height: 1.45,
     );
   }
@@ -214,7 +215,7 @@ class DashboardPageStyles {
   static BorderRadius metricIconRadius() =>
       BorderRadius.circular(AppSizes.cardBorderRadiusSm);
 
-  static const double metricIconBox = 34;
+  static const double metricIconBox = AppSizes.iconLG + AppSpacing.xxs;
 
   static BorderRadius focusBannerRadius() => cardRadius;
 
@@ -231,9 +232,9 @@ class DashboardPageStyles {
   static TextStyle focusBannerTitleStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.titleMedium ??
-        const TextStyle(fontSize: 18, fontWeight: FontWeight.w900);
+        AppTypography.h4.copyWith(fontWeight: AppTypography.bold);
     return base.copyWith(
-      fontWeight: FontWeight.w900,
+      fontWeight: AppTypography.bold,
       color: theme.colorScheme.onSurface,
     );
   }
@@ -241,14 +242,14 @@ class DashboardPageStyles {
   static TextStyle focusBannerSubtitleStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.bodyMedium ??
-        const TextStyle(fontSize: 14, fontWeight: FontWeight.w400);
+        AppTypography.bodySmall.copyWith(fontWeight: AppTypography.regular);
     return base.copyWith(
-      color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
+      color: theme.colorScheme.onSurface.withValues(alpha: AppOpacity.strong),
       height: 1.35,
     );
   }
 
-  static const double focusBannerIconSize = 22;
+  static const double focusBannerIconSize = AppSizes.appBarIconSize - AppSpacing.xxs;
 
   static Color focusBannerIconColor(BuildContext context) =>
       Theme.of(context).colorScheme.primary;
@@ -257,15 +258,15 @@ class DashboardPageStyles {
       const EdgeInsets.all(AppSpacing.lg);
 
   static EdgeInsets focusBannerButtonPadding() =>
-      const EdgeInsets.symmetric(horizontal: 22, vertical: 16);
+      const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md);
 
   static Color taskTileBg(BuildContext context) {
     final theme = Theme.of(context);
-    return theme.colorScheme.surface.withValues(alpha: 0.55);
+    return theme.colorScheme.surface.withValues(alpha: AppOpacity.strong);
   }
 
   static BorderRadius taskTileRadius() =>
-      BorderRadius.circular(AppSizes.cardBorderRadiusSm + 6);
+      BorderRadius.circular(AppSizes.cardBorderRadiusSm + AppSpacing.sm);
 
   static EdgeInsets taskTilePadding() => const EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,
@@ -324,7 +325,7 @@ class DashboardPageStyles {
   }
 
   static EdgeInsets pillPadding() =>
-      const EdgeInsets.symmetric(horizontal: 10, vertical: 6);
+      const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs);
 
   static BorderRadius pillRadius() => BorderRadius.circular(999);
   
@@ -365,16 +366,16 @@ class DashboardPageStyles {
   static TextStyle tipTitleStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.titleMedium ??
-        const TextStyle(fontSize: 18, fontWeight: FontWeight.w900);
+        AppTypography.h4.copyWith(fontWeight: AppTypography.bold);
     return base.copyWith(
-      fontWeight: FontWeight.w900,
+      fontWeight: AppTypography.bold,
       color: theme.colorScheme.onSurface,
     );
   }
 
-  static const double tipIconSize = 18;
+  static const double tipIconSize = AppSizes.appBarIconSize - AppSpacing.xxs;
 
-  static const double tipBodyMaxWidthWide = 760;
+  static const double tipBodyMaxWidthWide = metricsWideBreakpoint;
 
   static double tipBodyMaxWidthFor(double availableWidth) {
     if (availableWidth >= metricsWideBreakpoint) return tipBodyMaxWidthWide;

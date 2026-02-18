@@ -7,12 +7,12 @@ class ProfilePageStyles {
   static EdgeInsets contentPadding(BuildContext context) {
     return EdgeInsets.symmetric(
       horizontal: AppSpacing.pagePadding(context),
-      vertical: AppSpacing.xl,
+      vertical: AppSpacing.lg,
     );
   }
 
   static const ScrollPhysics scrollPhysics = AlwaysScrollableScrollPhysics();
-  static const double logoutButtonHeight = 50;
+  static const double logoutButtonHeight = AppSizes.buttonHeight;
 
   static bool _isMobileByWidth(BuildContext context) =>
       MediaQuery.sizeOf(context).width < AppSizes.breakpointMobile;

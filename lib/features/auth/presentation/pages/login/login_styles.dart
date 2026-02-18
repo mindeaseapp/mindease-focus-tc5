@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:mindease_focus/shared/tokens/app_colors.dart';
 import 'package:mindease_focus/shared/tokens/app_opacity.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
@@ -21,7 +20,7 @@ class LoginStyles {
   );
 
   static final TextStyle description = AppTypography.body.copyWith(
-    color: AppColors.textOnPrimary.withValues(alpha: 0.85),
+    color: AppColors.textOnPrimary.withValues(alpha: AppOpacity.strong),
   );
 
   static final TextStyle formSubtitle = AppTypography.bodySmall.copyWith(
@@ -43,7 +42,7 @@ class LoginStyles {
   static const double iconContainerRadius = AppSpacing.radiusSm;
   static const double iconContainerPadding = AppSpacing.sm;
   static const EdgeInsets brandIconPadding = EdgeInsets.all(iconContainerPadding);
-  static const BoxConstraints desktopCardConstraints = BoxConstraints(maxWidth: 420);
+  static const BoxConstraints desktopCardConstraints = BoxConstraints(maxWidth: AppSizes.maxContentWidth);
   
   // Decorations
   static BoxDecoration brandIconDecoration(BuildContext context) {

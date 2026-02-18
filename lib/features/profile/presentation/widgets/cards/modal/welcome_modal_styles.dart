@@ -1,37 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:mindease_focus/shared/tokens/app_opacity.dart';
+import 'package:mindease_focus/shared/tokens/app_sizes.dart';
+import 'package:mindease_focus/shared/tokens/app_spacing.dart';
+import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class WelcomeModalStyles {
-  static const EdgeInsets dialogInsetPadding = EdgeInsets.all(24);
-  static const double dialogMaxWidth = 860;
-  static const double dialogRadius = 20;
+  static const EdgeInsets dialogInsetPadding = EdgeInsets.all(AppSpacing.lg);
+  static const double dialogMaxWidth = AppSizes.maxProfileWidth;
+  static const double dialogRadius = AppSizes.dialogBorderRadius;
 
-  static const EdgeInsets contentPadding = EdgeInsets.all(24);
+  static const EdgeInsets contentPadding = EdgeInsets.all(AppSpacing.lg);
 
-  static const double headerIconBox = 44;
-  static const double headerIconSize = 22;
+  static const double headerIconBox = AppSizes.avatarMD + AppSpacing.xs;
+  static const double headerIconSize = AppSizes.appBarIconSize - AppSpacing.xxs;
 
-  static const double cardGap = 16;
-  static const double cardsBreakpoint = 720;
+  static const double cardGap = AppSpacing.md;
+  static const double cardsBreakpoint = AppSizes.breakpointTablet;
 
-  static const EdgeInsets featureCardPadding = EdgeInsets.all(16);
-  static const double featureCardRadius = 14;
-  static const double featureCardBorderWidth = 1.2;
+  static const EdgeInsets featureCardPadding = EdgeInsets.all(AppSpacing.md);
+  static const double featureCardRadius = AppSizes.cardBorderRadiusSm;
+  static const double featureCardBorderWidth = 1.0;
 
-  static const EdgeInsets tipPadding = EdgeInsets.all(16);
-  static const double tipRadius = 14;
+  static const EdgeInsets tipPadding = EdgeInsets.all(AppSpacing.md);
+  static const double tipRadius = AppSizes.cardBorderRadiusSm;
 
-  static const double ctaWidth = 220;
-  static const double ctaHeight = 44;
-  static const double ctaRadius = 12;
+  static const double ctaWidth = AppSpacing.massive * 2.5;
+  static const double ctaHeight = AppSizes.buttonHeight;
+  static const double ctaRadius = AppSizes.cardBorderRadiusSm;
 
   static TextStyle? titleStyle(ThemeData theme) =>
-      theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800);
+      theme.textTheme.titleLarge?.copyWith(fontWeight: AppTypography.bold);
 
   static TextStyle? subtitleStyle(ThemeData theme) =>
       theme.textTheme.bodyMedium?.copyWith(color: theme.hintColor);
 
   static TextStyle? featureTitleStyle(ThemeData theme) =>
-      theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800);
+      theme.textTheme.titleMedium?.copyWith(fontWeight: AppTypography.bold);
 
   static TextStyle? featureDescStyle(ThemeData theme) =>
       theme.textTheme.bodySmall?.copyWith(height: 1.25);
@@ -52,13 +56,13 @@ class WelcomeModalStyles {
 
   static BoxDecoration headerIconDecoration(ThemeData theme) => BoxDecoration(
         color: theme.colorScheme.primary,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSizes.cardBorderRadiusSm),
       );
 
   static BoxDecoration tipDecoration(ThemeData theme) => BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.6),
+        color: theme.colorScheme.surface.withValues(alpha: AppOpacity.strong),
         borderRadius: tipBorderRadius(),
-        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.6)),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: AppOpacity.strong)),
       );
 
   static double featureCardWidth(double maxWidth) {

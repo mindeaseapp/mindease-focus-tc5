@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:mindease_focus/features/routes.dart';
+import 'package:mindease_focus/core/navigation/routes.dart';
 
 // Controllers
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';

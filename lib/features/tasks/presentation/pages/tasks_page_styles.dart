@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_focus/shared/tokens/app_colors.dart';
+import 'package:mindease_focus/shared/tokens/app_opacity.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
@@ -22,13 +23,13 @@ class TasksPageStyles {
 
   static Color tabUnselectedItemColor(BuildContext context, {bool isDarkMode = false}) {
      if (isDarkMode) return Colors.white60;
-     return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6);
+     return Theme.of(context).colorScheme.onSurface.withValues(alpha: AppOpacity.strong);
   }
 
   // Pomodoro Tab
-  static const EdgeInsets pomodoroPadding = EdgeInsets.all(AppSpacing.xl);
-  static const double pomodoroMaxWidth = 600;
-  static const double pomodoroTitleSpacing = AppSpacing.xl;
+  static const EdgeInsets pomodoroPadding = EdgeInsets.all(AppSpacing.lg);
+  static const double pomodoroMaxWidth = AppSizes.breakpointMobile;
+  static const double pomodoroTitleSpacing = AppSpacing.lg;
 
   static final TextStyle pomodoroTitleText = AppTypography.titleMedium.copyWith(
     color: AppColors.textSecondary,
@@ -36,7 +37,7 @@ class TasksPageStyles {
   );
 
   // Kanban Tab
-  static const double mobileBreakpoint = 600;
+  static const double mobileBreakpoint = AppSizes.breakpointMobile;
 
   static EdgeInsets kanbanPadding({required bool isMobile}) =>
       EdgeInsets.all(isMobile ? AppSpacing.md : AppSpacing.xl);

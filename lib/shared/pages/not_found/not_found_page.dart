@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:mindease_focus/features/routes.dart';
+import 'package:mindease_focus/core/navigation/routes.dart';
 import 'package:mindease_focus/shared/pages/not_found/not_found_styles.dart';
 
 class NotFoundPage extends StatelessWidget {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:mindease_focus/features/routes.dart';
+import 'package:mindease_focus/core/navigation/routes.dart';
 import 'package:mindease_focus/shared/tokens/app_theme.dart';
 
 import 'package:mindease_focus/core/di/provider_setup.dart'; // Centralized DI

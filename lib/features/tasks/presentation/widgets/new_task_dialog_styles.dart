@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:mindease_focus/shared/tokens/app_sizes.dart';
+import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 
 class NewTaskDialogStyles {
   // Dialog
   static const String title = 'Criar Nova Tarefa';
-  static const double contentWidth = 500;
+  static const double contentWidth = AppSizes.dialogWidthDesktop;
 
   // Spacing
-  static const SizedBox gap16 = SizedBox(height: 16);
+  static const SizedBox gap16 = AppSpacing.gapMd;
 
   // Fields - Title
   static const InputDecoration titleDecoration = InputDecoration(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_focus/shared/tokens/app_colors.dart';
+import 'package:mindease_focus/shared/tokens/app_opacity.dart';
+import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
@@ -15,7 +17,7 @@ class ResetPasswordStyles {
   );
 
   static final TextStyle description = AppTypography.body.copyWith(
-    color: AppColors.textOnPrimary.withValues(alpha: 0.85),
+    color: AppColors.textOnPrimary.withValues(alpha: AppOpacity.strong),
   );
 
   static final TextStyle helper = AppTypography.bodySmall.copyWith(
@@ -25,15 +27,15 @@ class ResetPasswordStyles {
   static const double cardPadding = AppSpacing.cardPadding;
 
   // Dimensions
-  static const double mobileBreakpoint = 768; // Consistent with other auth pages if needed, or use AppSizes
-  static const double desktopContentWidth = 420;
+  static const double mobileBreakpoint = AppSizes.breakpointTablet;
+  static const double desktopContentWidth = AppSizes.maxContentWidth;
 
   // Colors
   static const Color successColor = Colors.green;
   static const Color errorColor = Colors.red;
 
   // Loading
-  static const double loadingIconSize = 20;
-  static const double loadingStrokeWidth = 2;
+  static const double loadingIconSize = AppSizes.iconSM;
+  static const double loadingStrokeWidth = AppSpacing.xxs;
   static const Color loadingColor = Colors.white;
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mindease_focus/shared/tokens/app_sizes.dart';
+import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 
 class EditTaskDialogStyles {
   static const String title = 'Editar Tarefa';
-  static const double contentWidth = 500;
+  static const double contentWidth = AppSizes.dialogWidthDesktop;
 
-  static const SizedBox gap16 = SizedBox(height: 16);
+  static const SizedBox gap16 = AppSpacing.gapMd;
 
   static const InputDecoration titleDecoration = InputDecoration(
     labelText: 'Título da Tarefa',

@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
+import 'package:mindease_focus/shared/tokens/app_opacity.dart';
+import 'package:mindease_focus/shared/tokens/app_sizes.dart';
+import 'package:mindease_focus/shared/tokens/app_spacing.dart';
+import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class KanbanBoardStyles {
   // Breakpoints
-  static const double headerMobileBreakpoint = 600;
-  static const double columnsMobileBreakpoint = 900;
+  static const double headerMobileBreakpoint = AppSizes.breakpointMobile;
+  static const double columnsMobileBreakpoint = AppSizes.breakpointTablet;
 
   // Spacing
-  static const SizedBox gap24 = SizedBox(height: 24);
-  static const SizedBox gap16 = SizedBox(height: 16);
-  static const SizedBox gap12w = SizedBox(width: 12);
-  static const SizedBox gap4h = SizedBox(height: 4);
+  static const SizedBox gap24 = AppSpacing.gapLg;
+  static const SizedBox gap16 = AppSpacing.gapMd;
+  static const SizedBox gap12w = SizedBox(width: AppSpacing.md - AppSpacing.xs);
+  static const SizedBox gap4h = AppSpacing.gapXs;
 
   static bool _isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
@@ -32,10 +36,10 @@ class KanbanBoardStyles {
   static TextStyle headerTitleStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.headlineSmall ??
-        const TextStyle(fontSize: 24, fontWeight: FontWeight.w800);
+        AppTypography.h2.copyWith(fontWeight: AppTypography.bold);
 
     return base.copyWith(
-      fontWeight: FontWeight.w800,
+      fontWeight: AppTypography.bold,
       color: theme.colorScheme.onSurface,
       height: 1.1,
     );
@@ -44,10 +48,10 @@ class KanbanBoardStyles {
   static TextStyle headerSubtitleStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.bodyMedium ??
-        const TextStyle(fontSize: 14, fontWeight: FontWeight.w400);
+        AppTypography.label.copyWith(fontWeight: AppTypography.regular);
 
     return base.copyWith(
-      color: theme.colorScheme.onSurface.withValues(alpha: 0.70),
+      color: theme.colorScheme.onSurface.withValues(alpha: AppOpacity.strong),
       height: 1.35,
     );
   }
@@ -58,7 +62,7 @@ class KanbanBoardStyles {
     return ElevatedButton.styleFrom(
       backgroundColor: theme.colorScheme.primary,
       foregroundColor: theme.colorScheme.onPrimary,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
       elevation: 0,
       shape: const StadiumBorder(),
     );
@@ -66,7 +70,7 @@ class KanbanBoardStyles {
 
   // Desktop column padding
   static const EdgeInsets desktopColumnPadding =
-      EdgeInsets.symmetric(horizontal: 12);
+      EdgeInsets.symmetric(horizontal: AppSpacing.md - AppSpacing.xs);
 
   // Desktop divider
   static double dividerWidth = 1;
@@ -75,12 +79,12 @@ class KanbanBoardStyles {
   static Color dividerColor(BuildContext context) =>
       Theme.of(context).dividerColor;
 
-  static const double dividerIndent = 16;
-  static const double dividerEndIndent = 16;
+  static const double dividerIndent = AppSpacing.md;
+  static const double dividerEndIndent = AppSpacing.md;
 
   // Mobile column
   static const EdgeInsets mobileColumnBottomPadding =
-      EdgeInsets.only(bottom: 16);
+      EdgeInsets.only(bottom: AppSpacing.md);
 
   static const double mobileColumnHeight = 300;
 
@@ -88,7 +92,7 @@ class KanbanBoardStyles {
   static const EdgeInsets tipPadding = EdgeInsets.all(16);
   static const EdgeInsets tipMargin = EdgeInsets.only(top: 8);
 
-  static BorderRadius tipRadius() => BorderRadius.circular(12);
+  static BorderRadius tipRadius() => BorderRadius.circular(AppSizes.cardBorderRadiusSm);
 
   static Color tipBg(BuildContext context) {
     final theme = Theme.of(context);
@@ -115,12 +119,12 @@ class KanbanBoardStyles {
   static TextStyle tipTextStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.bodySmall ??
-        const TextStyle(fontSize: 13, fontWeight: FontWeight.w500);
+        AppTypography.labelSmall.copyWith(fontWeight: AppTypography.semiBold);
 
     return base.copyWith(
       color: tipTextColor(context),
       height: 1.35,
-      fontWeight: FontWeight.w600,
+      fontWeight: AppTypography.semiBold,
     );
   }
 

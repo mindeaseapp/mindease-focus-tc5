@@ -1,32 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:mindease_focus/shared/tokens/app_opacity.dart';
+import 'package:mindease_focus/shared/tokens/app_sizes.dart';
+import 'package:mindease_focus/shared/tokens/app_spacing.dart';
+import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class PomodoroTimerStyles {
-  static const double maxWidth = 420;
-  static const double cardRadius = 16;
-  static const double padding = 18;
+  static const double maxWidth = AppSizes.maxContentWidth;
+  static const double cardRadius = AppSizes.cardBorderRadius;
+  static const double padding = AppSpacing.md + AppSpacing.xxs;
 
   static const double headerIconSize = 18;
   static const double headerIconTop = 2;
   static const double headerRightTop = 1;
 
-  static const double circleSize = 210;
+  static const double circleSize = AppSpacing.massive + AppSpacing.massive + AppSpacing.xxxl;
 
-  static const double resetSize = 44;
-  static const double resetIconSize = 22;
+  static const double resetSize = AppSizes.buttonHeightSm + AppSpacing.xs;
+  static const double resetIconSize = AppSizes.iconMD - AppSpacing.xxs;
 
-  static const double actionHeight = 44;
-  static const double actionIconSize = 22;
+  static const double actionHeight = AppSizes.buttonHeightSm + AppSpacing.xs;
+  static const double actionIconSize = AppSizes.iconMD - AppSpacing.xxs;
 
   static const BoxConstraints segConstraints = BoxConstraints(
-    minWidth: 48,
-    minHeight: 28,
+    minWidth: AppSpacing.xxxl,
+    minHeight: AppSpacing.lg + AppSpacing.xs,
   );
 
-  static const EdgeInsets segItemPadding = EdgeInsets.symmetric(horizontal: 10);
-  static const EdgeInsets segOuterPadding = EdgeInsets.all(3);
+  static const EdgeInsets segItemPadding = EdgeInsets.symmetric(horizontal: AppSpacing.sm + AppSpacing.xxs);
+  static const EdgeInsets segOuterPadding = EdgeInsets.all(AppSpacing.xxs + 1);
 
-  static BorderRadius segRadius() => BorderRadius.circular(12);
-  static BorderRadius segItemRadius() => BorderRadius.circular(10);
+  static BorderRadius segRadius() => BorderRadius.circular(AppSizes.cardBorderRadiusSm);
+  static BorderRadius segItemRadius() => BorderRadius.circular(AppSpacing.sm + AppSpacing.xxs);
 
 
   final BuildContext context;
@@ -43,14 +47,14 @@ class PomodoroTimerStyles {
     if (highContrast) {
       return _cs.onSurface;
     }
-    return _cs.primary.withValues(alpha: _isDark ? 0.28 : 0.30);
+    return _cs.primary.withValues(alpha: _isDark ? AppOpacity.disabled : AppOpacity.strong);
   }
 
   Color get outline =>
-      _theme.dividerColor.withValues(alpha: _isDark ? 0.85 : 0.65);
+      _theme.dividerColor.withValues(alpha: _isDark ? AppOpacity.strong + AppOpacity.soft : AppOpacity.strong);
 
   Color get iconMuted =>
-      _cs.onSurface.withValues(alpha: _isDark ? 0.70 : 0.65);
+      _cs.onSurface.withValues(alpha: _isDark ? AppOpacity.strong + AppOpacity.soft : AppOpacity.strong);
 
   Color chipBg({bool highContrast = false}) {
     if (highContrast) {
@@ -61,9 +65,9 @@ class PomodoroTimerStyles {
 
   Color ringBg({bool highContrast = false}) {
     if (highContrast) {
-      return _cs.onSurface.withValues(alpha: 0.1);
+      return _cs.onSurface.withValues(alpha: AppOpacity.soft);
     }
-    return _cs.onSurface.withValues(alpha: _isDark ? 0.22 : 0.18);
+    return _cs.onSurface.withValues(alpha: _isDark ? AppOpacity.medium : AppOpacity.soft + AppOpacity.subtle);
   }
 
   List<Color> gradientColors({bool highContrast = false}) {
@@ -74,13 +78,13 @@ class PomodoroTimerStyles {
     }
 
     if (_isDark) {
-      final top = Color.alphaBlend(primary.withValues(alpha: 0.10), surface);
-      final bottom = Color.alphaBlend(_cs.secondary.withValues(alpha: 0.08), surface);
+      final top = Color.alphaBlend(primary.withValues(alpha: AppOpacity.soft), surface);
+      final bottom = Color.alphaBlend(_cs.secondary.withValues(alpha: AppOpacity.soft - AppOpacity.subtle), surface);
       return [top, bottom];
     }
 
-    final top = Color.alphaBlend(primary.withValues(alpha: 0.08), surface);
-    final bottom = Color.alphaBlend(_cs.secondary.withValues(alpha: 0.08), surface);
+    final top = Color.alphaBlend(primary.withValues(alpha: AppOpacity.soft - AppOpacity.subtle), surface);
+    final bottom = Color.alphaBlend(_cs.secondary.withValues(alpha: AppOpacity.soft - AppOpacity.subtle), surface);
     return [top, bottom];
   }
 
@@ -88,17 +92,17 @@ class PomodoroTimerStyles {
     final base = _theme.textTheme.labelLarge ??
         const TextStyle(fontSize: 14, fontWeight: FontWeight.w700);
     return base.copyWith(
-      fontWeight: FontWeight.w800,
-      color: _cs.onSurface.withValues(alpha: 0.90),
+      fontWeight: AppTypography.bold,
+      color: _cs.onSurface.withValues(alpha: AppOpacity.strong + AppOpacity.soft),
     );
   }
 
   TextStyle get timeText {
     final base = _theme.textTheme.displaySmall ??
-        const TextStyle(fontSize: 44, fontWeight: FontWeight.w800);
+        AppTypography.displayLarge.copyWith(fontWeight: AppTypography.bold);
     return base.copyWith(
-      fontSize: 44,
-      fontWeight: FontWeight.w900,
+      fontSize: AppTypography.displayLarge.fontSize,
+      fontWeight: AppTypography.bold,
       color: _cs.onSurface,
       height: 1.05,
     );
@@ -106,39 +110,39 @@ class PomodoroTimerStyles {
 
   TextStyle subLabel({bool highContrast = false}) {
     final base = _theme.textTheme.bodySmall ??
-        const TextStyle(fontSize: 12, fontWeight: FontWeight.w500);
+        AppTypography.labelSmall.copyWith(fontWeight: AppTypography.medium);
     return base.copyWith(
-      fontSize: 12,
+      fontSize: AppTypography.labelSmall.fontSize,
       color: highContrast
           ? _cs.onSurface
-          : _cs.onSurface.withValues(alpha: 0.70),
+          : _cs.onSurface.withValues(alpha: AppOpacity.strong),
       height: 1.2,
     );
   }
 
   TextStyle info({bool highContrast = false}) {
     final base = _theme.textTheme.bodySmall ??
-        const TextStyle(fontSize: 12, fontWeight: FontWeight.w500);
+        AppTypography.labelSmall.copyWith(fontWeight: AppTypography.medium);
     return base.copyWith(
-      fontSize: 12,
+      fontSize: AppTypography.labelSmall.fontSize,
       color: highContrast
           ? _cs.onSurface
-          : _cs.onSurface.withValues(alpha: 0.70),
+          : _cs.onSurface.withValues(alpha: AppOpacity.strong),
       height: 1.35,
-      fontWeight: FontWeight.w600,
+      fontWeight: AppTypography.semiBold,
     );
   }
 
   TextStyle segText({required bool selected}) {
     final base = _theme.textTheme.labelMedium ??
-        const TextStyle(fontSize: 12, fontWeight: FontWeight.w700);
+        AppTypography.labelSmall.copyWith(fontWeight: AppTypography.bold);
 
     return base.copyWith(
-      fontSize: 12,
-      fontWeight: FontWeight.w800,
+      fontSize: AppTypography.labelSmall.fontSize,
+      fontWeight: AppTypography.bold,
       color: selected
           ? _cs.onPrimary
-          : _cs.onSurface.withValues(alpha: 0.90),
+          : _cs.onSurface.withValues(alpha: AppOpacity.strong + AppOpacity.soft),
     );
   }
 
@@ -146,10 +150,9 @@ class PomodoroTimerStyles {
         backgroundColor: primary,
         foregroundColor: _cs.onPrimary,
         shape: const StadiumBorder(),
-        padding: const EdgeInsets.symmetric(horizontal: 18),
-        textStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w800,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md + AppSpacing.xxs),
+        textStyle: AppTypography.labelLarge.copyWith(
+          fontWeight: AppTypography.bold,
         ),
         elevation: 0,
       );
@@ -161,14 +164,14 @@ class PomodoroTimerStyles {
 
   TextStyle get dialogTitle =>
       _theme.textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.w800,
+        fontWeight: AppTypography.bold,
         color: _cs.onSurface,
       ) ??
       const TextStyle();
 
   TextStyle get dialogContent =>
       _theme.textTheme.bodyMedium?.copyWith(
-        color: _cs.onSurface.withValues(alpha: 0.80),
+        color: _cs.onSurface.withValues(alpha: AppOpacity.strong),
       ) ??
       const TextStyle();
 }

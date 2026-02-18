@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_focus/shared/tokens/app_colors.dart';
-import 'package:mindease_focus/shared/tokens/app_typography.dart';
+import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
+import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class UpdatePasswordStyles {
   // Título principal (Corrigido para h1)
@@ -20,14 +21,14 @@ class UpdatePasswordStyles {
   static const EdgeInsets cardPadding = EdgeInsets.all(AppSpacing.xl);
 
   // Dimensions
-  static const double desktopContentWidth = 420; // Consistent with other auth pages
+  static const double desktopContentWidth = AppSizes.maxContentWidth;
 
   // Colors
   static const Color successColor = Colors.green;
   static const Color errorColor = Colors.red;
 
   // Loading
-  static const double loadingIconSize = 20;
-  static const double loadingStrokeWidth = 2;
+  static const double loadingIconSize = AppSizes.iconSM;
+  static const double loadingStrokeWidth = AppSpacing.xxs;
   static const Color loadingColor = Colors.white;
 }
