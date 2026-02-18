@@ -12,10 +12,10 @@ import 'package:mindease_focus/features/auth/presentation/pages/update_password/
 // ==============================
 // APP
 // ==============================
-import 'package:mindease_focus/features/auth/presentation/pages/dashboard/dashboard_page.dart';
-import 'package:mindease_focus/features/auth/presentation/pages/profile/profile_page.dart';
-import 'package:mindease_focus/features/auth/presentation/pages/profile/models/profile_view/profile_view_model.dart';
-import 'package:mindease_focus/features/auth/presentation/pages/tasks/tasks_page.dart';
+import 'package:mindease_focus/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:mindease_focus/features/profile/presentation/pages/profile_page.dart';
+import 'package:mindease_focus/features/profile/domain/models/profile_view/profile_view_model.dart';
+import 'package:mindease_focus/features/tasks/presentation/pages/tasks_page.dart';
 
 // ==============================
 // SHARED

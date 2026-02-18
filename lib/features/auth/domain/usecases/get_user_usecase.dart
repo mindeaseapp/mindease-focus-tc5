@@ -1,5 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart'; // Import necessário apenas para tipagem do retorno do repo atual
-import 'package:mindease_focus/features/auth/domain/entities/user_entity.dart';
+import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
 import 'package:mindease_focus/features/auth/data/repositories/auth_repository.dart';
 
 class GetUserUseCase {

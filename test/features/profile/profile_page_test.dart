@@ -4,13 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:mindease_focus/features/auth/presentation/pages/profile/profile_page.dart';
-import 'package:mindease_focus/features/auth/presentation/pages/profile/models/profile_view/profile_view_model.dart';
+import 'package:mindease_focus/features/profile/presentation/pages/profile_page.dart';
+import 'package:mindease_focus/features/profile/domain/models/profile_view/profile_view_model.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/theme_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
-import 'package:mindease_focus/features/auth/domain/entities/user_entity.dart';
+import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
 
 
 class MockAuthController extends ChangeNotifier implements AuthController {

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:mindease_focus/features/auth/data/repositories/profile_repository.dart';
-import 'package:mindease_focus/features/auth/presentation/pages/profile/models/user_preferences/user_preferences_model.dart';
-import 'package:mindease_focus/features/auth/presentation/pages/profile/models/cognitive_panel/cognitive_panel_models.dart';
+import 'package:mindease_focus/features/profile/data/repositories/profile_repository.dart';
+import 'package:mindease_focus/features/profile/domain/models/user_preferences/user_preferences_model.dart';
+import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfilePreferencesController extends ChangeNotifier {

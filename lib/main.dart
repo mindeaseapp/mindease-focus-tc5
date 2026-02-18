@@ -6,19 +6,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mindease_focus/features/routes.dart';
 import 'package:mindease_focus/shared/tokens/app_theme.dart';
 
+import 'package:mindease_focus/core/di/provider_setup.dart'; // Centralized DI
+
 import 'package:mindease_focus/features/auth/presentation/controllers/theme_controller.dart';
-// ✅ Profile Integration (Refatorado)
-import 'package:mindease_focus/features/auth/data/datasources/profile_remote_datasource.dart';
-import 'package:mindease_focus/features/auth/data/repositories/profile_repository.dart';
-import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart'; // Keep this import for the controller itself
+import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
-
-import 'package:mindease_focus/features/auth/data/datasources/task_remote_datasource.dart';
-import 'package:mindease_focus/features/auth/data/repositories/task_repository.dart';
-import 'package:mindease_focus/features/auth/presentation/controllers/task_controller.dart';
-
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
-import 'package:mindease_focus/features/auth/presentation/controllers/pomodoro_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,33 +24,7 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ThemeController()),
-        
-        // ✅ INJEÇÃO DO PROFILE PREFERENCES CONTROLLER (REFATORADO)
-        ChangeNotifierProvider(create: (_) {
-          final supabase = Supabase.instance.client;
-          final remoteDataSource = ProfileRemoteDataSourceImpl(supabase);
-          final repository = ProfileRepository(remoteDataSource);
-          
-          return ProfilePreferencesController(
-            repository: repository,
-          );
-        }),
-
-        ChangeNotifierProvider(create: (_) => AuthController()),
-
-        ChangeNotifierProvider(create: (_) => FocusModeController()),
-
-        ChangeNotifierProvider(create: (_) => PomodoroController()),
-
-        ChangeNotifierProvider(
-          create: (_) {
-            final supabase = Supabase.instance.client;
-            final dataSource = TaskRemoteDataSourceImpl(supabase);
-            final repository = TaskRepository(dataSource);
-            return TaskController(repository: repository);
-          },
-        ),
+        ...providers,
       ],
       child: const MindEaseApp(),
     ),

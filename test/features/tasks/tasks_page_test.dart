@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import 'package:mindease_focus/features/auth/presentation/pages/tasks/tasks_page.dart';
+import 'package:mindease_focus/features/tasks/presentation/pages/tasks_page.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
-import 'package:mindease_focus/features/auth/presentation/controllers/task_controller.dart';
+import 'package:mindease_focus/features/tasks/presentation/controllers/task_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/pomodoro_controller.dart';
 
-import 'package:mindease_focus/features/auth/domain/entities/user_entity.dart';
-import 'package:mindease_focus/features/auth/presentation/pages/tasks/models/task_model.dart';
+import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
+import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
 
 import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
-import 'package:mindease_focus/features/auth/presentation/pages/profile/models/cognitive_panel/cognitive_panel_models.dart';
+import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 
 
 class FakeAuthController extends ChangeNotifier implements AuthController {
