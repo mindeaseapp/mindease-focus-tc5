@@ -15,7 +15,7 @@ dependencies:
   # 🖼 SVG (opcional, mas já configurado)
   flutter_svg: ^2.2.3
   supabase_flutter: ^2.0.0
-  flutter_dotenv: ^6.0.0
+
 
 dev_dependencies:
   flutter_test:
@@ -29,7 +29,7 @@ flutter:
   # 📂 Assets
   assets:
     - assets/fonts/
-    - .env
+
 
   # 🔤 Fontes — Inter
   fonts:
