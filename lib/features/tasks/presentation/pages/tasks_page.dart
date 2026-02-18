@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:mindease_focus/core/navigation/navigation_service.dart';
 
-import 'package:mindease_focus/core/navigation/routes.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/tasks/presentation/controllers/task_controller.dart';
 
@@ -17,7 +17,7 @@ import 'package:mindease_focus/features/tasks/presentation/widgets/kanban_board.
 
 import 'package:mindease_focus/features/tasks/presentation/pages/tasks_page_styles.dart';
 
-import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
+import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 
 class TasksPage extends StatelessWidget {
   const TasksPage({super.key});
@@ -41,26 +41,26 @@ class TasksPage extends StatelessWidget {
     final authController = context.watch<AuthController>();
     final userLabel = authController.user.displayName;
 
+    final navigationService = context.watch<NavigationService>();
+
     void goTo(MindEaseNavItem item) {
       if (item == MindEaseNavItem.tasks) return;
       
-      final routeName = item == MindEaseNavItem.dashboard 
-          ? AppRoutes.dashboard 
-          : AppRoutes.profile;
-          
-      if (item == MindEaseNavItem.dashboard) {
-        Navigator.of(context).popUntil((route) => route.settings.name == AppRoutes.dashboard);
-      } else {
-        Navigator.of(context).pushNamed(routeName);
+      switch (item) {
+        case MindEaseNavItem.dashboard:
+          navigationService.goToDashboard();
+          break;
+        case MindEaseNavItem.profile:
+          navigationService.goToProfile();
+          break;
+        default:
+          break;
       }
     }
 
     void logout() {
-      context.read<AuthController>().logout();
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        AppRoutes.login,
-        (_) => false,
-      );
+      authController.logout();
+      navigationService.goToLogin();
     }
 
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;

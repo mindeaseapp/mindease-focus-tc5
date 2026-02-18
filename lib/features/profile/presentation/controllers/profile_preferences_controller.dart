@@ -1,19 +1,23 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:mindease_focus/features/profile/data/repositories/profile_repository.dart';
 import 'package:mindease_focus/features/profile/domain/models/user_preferences/user_preferences_model.dart';
 import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
+import 'package:mindease_focus/features/profile/domain/usecases/get_preferences_usecase.dart';
+import 'package:mindease_focus/features/profile/domain/usecases/update_preferences_usecase.dart';
 
 class ProfilePreferencesController extends ChangeNotifier {
-  final ProfileRepository? repository;
+  final GetPreferencesUseCase _getPreferencesUseCase;
+  final UpdatePreferencesUseCase _updatePreferencesUseCase;
   
   // Debounce para evitar excesso de writes
   Timer? _debounceTimer;
   String? _currentUserId;
 
   ProfilePreferencesController({
-    this.repository,
-  });
+    required GetPreferencesUseCase getPreferencesUseCase,
+    required UpdatePreferencesUseCase updatePreferencesUseCase,
+  })  : _getPreferencesUseCase = getPreferencesUseCase,
+        _updatePreferencesUseCase = updatePreferencesUseCase;
 
   // ==========================
   // Modo Foco
@@ -36,7 +40,7 @@ class ProfilePreferencesController extends ChangeNotifier {
   bool notificationSounds = false;
 
   // ==========================
-  // ✅ Complexidade atual (sincroniza com CognitivePanelController)
+  // ✅ Complexidade atual
   // ==========================
   InterfaceComplexity _complexity = InterfaceComplexity.medium;
   InterfaceComplexity get complexity => _complexity;
@@ -45,11 +49,10 @@ class ProfilePreferencesController extends ChangeNotifier {
   // Initialization
   // ==========================
   Future<void> loadPreferences(String userId) async {
-    if (repository == null) return;
     _currentUserId = userId;
 
     try {
-      final prefs = await repository!.getPreferences(userId);
+      final prefs = await _getPreferencesUseCase(userId);
       
       hideDistractions = prefs.hideDistractions;
       highContrast = prefs.highContrast;
@@ -68,7 +71,7 @@ class ProfilePreferencesController extends ChangeNotifier {
   }
 
   void _scheduleSave() {
-    if (repository == null || _currentUserId == null) return;
+    if (_currentUserId == null) return;
 
     if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
     
@@ -86,13 +89,12 @@ class ProfilePreferencesController extends ChangeNotifier {
         complexity: _complexity,
       );
       
-      repository!.updatePreferences(prefs).catchError((e) {
+      _updatePreferencesUseCase(prefs).catchError((e) {
         debugPrint('Error saving preferences: $e');
       });
     });
   }  
 
-  /// ✅ Chame isso sempre que o usuário trocar a complexidade no Painel Cognitivo
   void applyComplexity(InterfaceComplexity value) {
     if (_complexity == value) return;
     _complexity = value;
@@ -103,7 +105,6 @@ class ProfilePreferencesController extends ChangeNotifier {
   }
 
   void _enforceAfterComplexityChange() {
-    // ---- Alertas Cognitivos
     final allowedAlerts = _complexity.allowedCognitiveAlerts;
 
     if (!allowedAlerts.contains(CognitiveAlertSetting.breakReminder)) {
@@ -119,7 +120,6 @@ class ProfilePreferencesController extends ChangeNotifier {
           _complexity.defaultCognitiveAlertValue(CognitiveAlertSetting.smoothTransition);
     }
 
-    // ---- Notificações
     final allowedNotifs = _complexity.allowedNotifications;
 
     if (!allowedNotifs.contains(NotificationSetting.pushNotifications)) {
@@ -133,22 +133,17 @@ class ProfilePreferencesController extends ChangeNotifier {
       );
     }
 
-    // ---- Dependência: sem push => sem som
     if (!pushNotifications && notificationSounds) {
       notificationSounds = false;
     }
   }
 
   void _enforceDependencies() {
-    // Dependência: sem push => sem som
     if (!pushNotifications && notificationSounds) {
       notificationSounds = false;
     }
   }
 
-  // ==========================
-  // Setters (mantive seu padrão)
-  // ==========================
   void setHideDistractions(bool v) {
     hideDistractions = v;
     notifyListeners();
@@ -168,9 +163,7 @@ class ProfilePreferencesController extends ChangeNotifier {
   }
 
   void setBreakReminder(bool v) {
-    // ✅ trava se a complexidade não permitir (extra proteção)
     if (!_complexity.allowedCognitiveAlerts.contains(CognitiveAlertSetting.breakReminder)) return;
-
     breakReminder = v;
     notifyListeners();
     _scheduleSave();
@@ -178,7 +171,6 @@ class ProfilePreferencesController extends ChangeNotifier {
 
   void setTaskTimeAlert(bool v) {
     if (!_complexity.allowedCognitiveAlerts.contains(CognitiveAlertSetting.taskTimeAlert)) return;
-
     taskTimeAlert = v;
     notifyListeners();
     _scheduleSave();
@@ -186,7 +178,6 @@ class ProfilePreferencesController extends ChangeNotifier {
 
   void setSmoothTransition(bool v) {
     if (!_complexity.allowedCognitiveAlerts.contains(CognitiveAlertSetting.smoothTransition)) return;
-
     smoothTransition = v;
     notifyListeners();
     _scheduleSave();
@@ -194,7 +185,6 @@ class ProfilePreferencesController extends ChangeNotifier {
 
   void setPushNotifications(bool v) {
     if (!_complexity.allowedNotifications.contains(NotificationSetting.pushNotifications)) return;
-
     pushNotifications = v;
     _enforceDependencies();
     notifyListeners();
@@ -202,12 +192,8 @@ class ProfilePreferencesController extends ChangeNotifier {
   }
 
   void setNotificationSounds(bool v) {
-    // ✅ só pode se:
-    // - for permitido na complexidade
-    // - push estiver ON
     if (!_complexity.allowedNotifications.contains(NotificationSetting.notificationSounds)) return;
     if (!pushNotifications) return;
-
     notificationSounds = v;
     notifyListeners();
     _scheduleSave();

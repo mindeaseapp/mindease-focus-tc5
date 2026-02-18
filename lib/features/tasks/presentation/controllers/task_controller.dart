@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:mindease_focus/features/tasks/data/repositories/task_repository.dart';
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
+import 'package:mindease_focus/features/tasks/domain/usecases/load_tasks_usecase.dart';
+import 'package:mindease_focus/features/tasks/domain/usecases/add_task_usecase.dart';
+import 'package:mindease_focus/features/tasks/domain/usecases/update_task_usecase.dart';
+import 'package:mindease_focus/features/tasks/domain/usecases/delete_task_usecase.dart';
 
 class TaskController extends ChangeNotifier {
-  final TaskRepository repository;
+  final LoadTasksUseCase _loadTasksUseCase;
+  final AddTaskUseCase _addTaskUseCase;
+  final UpdateTaskUseCase _updateTaskUseCase;
+  final DeleteTaskUseCase _deleteTaskUseCase;
 
   List<Task> _tasks = [];
   bool _isLoading = false;
   String? _error;
 
-  TaskController({required this.repository});
+  TaskController({
+    required LoadTasksUseCase loadTasksUseCase,
+    required AddTaskUseCase addTaskUseCase,
+    required UpdateTaskUseCase updateTaskUseCase,
+    required DeleteTaskUseCase deleteTaskUseCase,
+  })  : _loadTasksUseCase = loadTasksUseCase,
+        _addTaskUseCase = addTaskUseCase,
+        _updateTaskUseCase = updateTaskUseCase,
+        _deleteTaskUseCase = deleteTaskUseCase;
 
   List<Task> get tasks => _tasks;
   bool get isLoading => _isLoading;
@@ -28,7 +42,7 @@ class TaskController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _tasks = await repository.getTasks();
+      _tasks = await _loadTasksUseCase();
     } catch (e) {
       _error = 'Erro ao carregar tarefas: $e';
     } finally {
@@ -44,14 +58,12 @@ class TaskController extends ChangeNotifier {
     TaskStatus status = TaskStatus.todo,
   }) async {
     try {
-      final newTask = Task(
-        id: '',
+      final createdTask = await _addTaskUseCase(
         title: title,
         description: description,
+        userId: userId,
         status: status,
       );
-
-      final createdTask = await repository.addTask(newTask, userId);
       _tasks.insert(0, createdTask);
       _error = null;
       notifyListeners();
@@ -61,7 +73,6 @@ class TaskController extends ChangeNotifier {
     }
   }
 
-  /// ✅ Edita título/descrição/status e retorna sucesso/erro
   Future<bool> updateTask(
     String taskId, {
     required String title,
@@ -73,7 +84,7 @@ class TaskController extends ChangeNotifier {
 
     final oldTask = _tasks[index];
 
-    // Optimistic update (UI muda na hora)
+    // Optimistic update
     _tasks[index] = oldTask.copyWith(
       title: title,
       description: description,
@@ -83,8 +94,7 @@ class TaskController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // ✅ pega o retorno do banco (garante consistência)
-      final updated = await repository.updateTask(
+      final updated = await _updateTaskUseCase(
         taskId,
         title: title,
         description: description,
@@ -96,7 +106,6 @@ class TaskController extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      // rollback
       _tasks[index] = oldTask;
       _error = 'Erro ao editar tarefa: $e';
       notifyListeners();
@@ -115,7 +124,7 @@ class TaskController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await repository.updateTaskStatus(taskId, newStatus);
+      await _updateTaskUseCase.updateStatus(taskId, newStatus);
     } catch (e) {
       _tasks[index] = oldTask;
       _error = 'Erro ao mover tarefa: $e';
@@ -130,7 +139,7 @@ class TaskController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await repository.deleteTask(taskId);
+      await _deleteTaskUseCase(taskId);
     } catch (e) {
       _tasks.add(taskBackup);
       _error = 'Erro ao deletar tarefa: $e';

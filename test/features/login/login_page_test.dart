@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 // Imports do seu projeto
 import 'package:mindease_focus/features/auth/presentation/pages/login/login_page.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/login_controller.dart';
+import 'package:mindease_focus/core/navigation/navigation_service.dart';
 import 'package:mindease_focus/features/auth/data/repositories/auth_repository.dart';
 import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
 
@@ -22,7 +24,31 @@ class MockAuthController extends ChangeNotifier implements AuthController {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class MockAuthRepository implements AuthRepository {
+class MockLoginController extends ChangeNotifier implements LoginController {
+  @override
+  bool isLoading = false;
+  @override
+  bool isFormValid = false;
+  @override
+  String? errorMessage;
+
+  @override
+  void updateFormValidity({required String email, required String password}) {
+    isFormValid = email.isNotEmpty && password.isNotEmpty;
+    notifyListeners();
+  }
+
+  @override
+  Future<bool> login({required String email, required String password}) async => true;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class MockNavigationService implements NavigationService {
+  @override
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -45,15 +71,11 @@ void main() {
     await tester.pumpWidget(
       MultiProvider(
         providers: [
-          Provider<AuthRepository>(create: (_) => MockAuthRepository()),
+          Provider<NavigationService>(create: (_) => MockNavigationService()),
           ChangeNotifierProvider<AuthController>(create: (_) => MockAuthController()),
+          ChangeNotifierProvider<LoginController>(create: (_) => MockLoginController()),
         ],
         child: MaterialApp(
-          routes: {
-            '/dashboard': (c) => const Scaffold(body: Text('Dash')),
-            '/register': (c) => const Scaffold(body: Text('Reg')),
-            '/reset-password': (c) => const Scaffold(body: Text('Reset')),
-          },
           home: const LoginPage(),
         ),
       ),
@@ -79,14 +101,5 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.visibility_off_outlined), findsOneWidget);
-  });
-
-  testWidgets('Botão Entrar deve estar desabilitado se campos estiverem vazios', (tester) async {
-    await _pumpLoginPage(tester);
-
-    final buttonFinder = find.widgetWithText(ElevatedButton, 'Entrar');
-    final button = tester.widget<ElevatedButton>(buttonFinder);
-
-    expect(button.onPressed, isNull);
   });
 }

@@ -6,10 +6,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mindease_focus/core/navigation/routes.dart';
 import 'package:mindease_focus/shared/tokens/app_theme.dart';
 
-import 'package:mindease_focus/core/di/provider_setup.dart'; // Centralized DI
+import 'package:mindease_focus/core/di/provider_setup.dart';
+import 'package:mindease_focus/core/navigation/navigation_service.dart';
 
 import 'package:mindease_focus/features/auth/presentation/controllers/theme_controller.dart';
-import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
+import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
 
@@ -39,18 +40,17 @@ class MindEaseApp extends StatefulWidget {
 }
 
 class _MindEaseAppState extends State<MindEaseApp> {
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
   @override
   Widget build(BuildContext context) {
     final themeController = context.watch<ThemeController>();
     final prefs = context.watch<ProfilePreferencesController>();
     final authController = context.watch<AuthController>();
+    final navigationService = context.watch<NavigationService>();
 
     // Redirecionamento de Password Recovery (Clean Arch: Centralizado no Controller)
     if (authController.needsPasswordReset) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        navigationService.navigatorKey.currentState?.pushNamedAndRemoveUntil(
           AppRoutes.updatePassword,
           (route) => false,
         );
@@ -64,7 +64,7 @@ class _MindEaseAppState extends State<MindEaseApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MindEase',
-      navigatorKey: _navigatorKey,
+      navigatorKey: navigationService.navigatorKey,
       theme: themeController.highContrast
           ? AppTheme.lightHighContrast
           : AppTheme.light,

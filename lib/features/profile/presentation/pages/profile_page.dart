@@ -6,7 +6,7 @@ import 'package:mindease_focus/core/navigation/routes.dart';
 // Controllers
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/cognitive_panel_controller.dart';
-import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
+import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 
 // ViewModel
 import 'package:mindease_focus/features/profile/domain/models/profile_view/profile_view_model.dart';

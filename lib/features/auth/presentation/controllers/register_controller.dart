@@ -1,14 +1,36 @@
 import 'package:flutter/material.dart';
-// CORREÇÃO: Usando caminhos completos para Repositório e DataSource
-import 'package:mindease_focus/features/auth/data/repositories/auth_repository.dart';
+import 'package:mindease_focus/features/auth/domain/usecases/register_usecase.dart';
+import 'package:mindease_focus/features/auth/domain/validators/register_form_validator.dart';
 
 class RegisterController extends ChangeNotifier {
-  final AuthRepository _repository;
+  final RegisterUseCase _registerUseCase;
 
-  RegisterController(this._repository);
+  RegisterController(this._registerUseCase);
 
   bool isLoading = false;
   String? errorMessage;
+  bool isFormValid = false;
+
+  void updateFormValidity({
+    required String name,
+    required String email,
+    required String password,
+    required String confirmPassword,
+    required bool acceptedTerms,
+  }) {
+    final isValid = RegisterFormValidator.isValid(
+      name: name,
+      email: email,
+      password: password,
+      confirmPassword: confirmPassword,
+      acceptedTerms: acceptedTerms,
+    );
+
+    if (isValid != isFormValid) {
+      isFormValid = isValid;
+      notifyListeners();
+    }
+  }
 
   Future<bool> register({
     required String name,
@@ -20,19 +42,19 @@ class RegisterController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _repository.registerUser(
+      await _registerUseCase(
         name: name,
         email: email,
         password: password,
       );
       isLoading = false;
       notifyListeners();
-      return true; // Sucesso
+      return true;
     } catch (e) {
       isLoading = false;
       errorMessage = e.toString().replaceAll('Exception: ', '');
       notifyListeners();
-      return false; // Falha
+      return false;
     }
   }
 }

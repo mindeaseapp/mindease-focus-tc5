@@ -1,23 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:mindease_focus/core/navigation/routes.dart';
-
+import 'package:mindease_focus/core/navigation/navigation_service.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/login_controller.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mindease_focus/features/auth/domain/validators/email_validator.dart';
+import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/login/login_styles.dart';
+import 'package:mindease_focus/features/auth/presentation/pages/login/feature_card.dart';
 import 'package:mindease_focus/shared/layout/flex_grid.dart';
 import 'package:mindease_focus/shared/widgets/gradient_panel/gradient_panel.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
-
-import 'package:mindease_focus/features/auth/domain/validators/email_validator.dart';
-import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
-import 'package:mindease_focus/features/auth/domain/validators/login_form_validator.dart';
-
-import 'package:mindease_focus/features/auth/presentation/pages/login/login_styles.dart';
-import 'package:mindease_focus/features/auth/presentation/pages/login/feature_card.dart';
-
-import 'package:mindease_focus/features/auth/presentation/controllers/login_controller.dart';
-import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:mindease_focus/features/auth/data/repositories/auth_repository.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -36,7 +30,6 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordFocusNode = FocusNode();
 
   bool _obscurePassword = true;
-  bool _isFormValid = false;
 
   bool get _isMobile => MediaQuery.of(context).size.width < 768;
 
@@ -49,18 +42,15 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _updateFormValidity() {
-    final isValid = LoginFormValidator.isValid(
+  void _onFieldsChanged() {
+    context.read<LoginController>().updateFormValidity(
       email: _emailController.text,
       password: _passwordController.text,
     );
-
-    if (isValid != _isFormValid) {
-      setState(() => _isFormValid = isValid);
-    }
   }
 
   Future<void> _submit(LoginController controller) async {
+    final navigationService = context.read<NavigationService>();
     FocusScope.of(context).unfocus();
 
     if (controller.isLoading) return;
@@ -75,12 +65,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (success) {
       context.read<AuthController>().refreshUser();
-
-      Navigator.pushReplacementNamed(
-        context,
-        AppRoutes.dashboard,
-        arguments: {'showWelcome': true},
-      );
+      navigationService.goToDashboard();
     } else if (controller.errorMessage != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -93,17 +78,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authRepository = context.read<AuthRepository>();
-    return ChangeNotifierProvider(
-      create: (_) => LoginController(authRepository),
-      child: Consumer<LoginController>(
-        builder: (context, controller, _) {
-          return Scaffold(
-            resizeToAvoidBottomInset: true,
-            body: _isMobile ? _buildMobile(controller) : _buildDesktop(controller),
-          );
-        },
-      ),
+    final controller = context.watch<LoginController>();
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: _isMobile ? _buildMobile(controller) : _buildDesktop(controller),
     );
   }
 
@@ -234,7 +212,7 @@ class _LoginPageState extends State<LoginPage> {
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               validator: EmailValidator.validate,
-              onChanged: (_) => _updateFormValidity(),
+              onChanged: (_) => _onFieldsChanged(),
               enabled: !controller.isLoading,
               decoration: const InputDecoration(
                 labelText: 'Email',
@@ -250,7 +228,7 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: _obscurePassword,
               textInputAction: TextInputAction.done,
               validator: PasswordValidator.validate,
-              onChanged: (_) => _updateFormValidity(),
+              onChanged: (_) => _onFieldsChanged(),
               onFieldSubmitted: (_) => _submit(controller),
               enabled: !controller.isLoading,
               decoration: InputDecoration(
@@ -277,7 +255,7 @@ class _LoginPageState extends State<LoginPage> {
               child: TextButton(
                 onPressed: controller.isLoading
                     ? null
-                    : () => Navigator.pushNamed(context, '/reset-password'),
+                    : () => context.read<NavigationService>().navigateTo('/reset-password'),
                 child: const Text('Esqueci minha senha'),
               ),
             ),
@@ -289,7 +267,7 @@ class _LoginPageState extends State<LoginPage> {
               width: double.infinity,
               height: AppSizes.buttonHeight,
               child: ElevatedButton(
-                onPressed: (!_isFormValid || controller.isLoading)
+                onPressed: (!controller.isFormValid || controller.isLoading)
                     ? null
                     : () => _submit(controller),
                 child: controller.isLoading
@@ -323,7 +301,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: GestureDetector(
                       onTap: controller.isLoading
                           ? null
-                          : () => Navigator.pushNamed(context, '/register'),
+                          : () => context.read<NavigationService>().navigateTo('/register'),
                       child: Text(
                         'Cadastre-se',
                         style: LoginStyles.signUpLink,

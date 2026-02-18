@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // ✅ ADICIONE ISSO
 
-import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
+import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 import 'package:mindease_focus/features/profile/presentation/widgets/cards/toggle_setting_tile/toggle_setting_tile.dart';
 import 'package:mindease_focus/features/auth/presentation/widgets/settings_section_card.dart';

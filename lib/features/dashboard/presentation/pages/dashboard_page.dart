@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:mindease_focus/core/navigation/routes.dart';
+
+import 'package:mindease_focus/core/navigation/navigation_service.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mindease_focus/features/dashboard/presentation/controllers/dashboard_controller.dart';
 
 import 'package:mindease_focus/shared/layout/centered_constrained.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
@@ -12,7 +14,7 @@ import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header.da
 
 import 'package:mindease_focus/shared/widgets/focus_mode/mindease_accessibility_fab.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
-import 'package:mindease_focus/features/auth/presentation/controllers/profile_preferences_controller.dart';
+import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 
 import 'package:mindease_focus/features/dashboard/presentation/pages/dashboard_styles.dart';
 import 'package:mindease_focus/features/profile/presentation/widgets/cards/modal/welcome_modal.dart';
@@ -32,7 +34,6 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  bool _welcomeHandled = false;
 
   @override
   void didChangeDependencies() {
@@ -44,8 +45,12 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void _handleWelcomeModal() {
-    if (_welcomeHandled) return;
-    _welcomeHandled = true;
+    final dashboardController = context.read<DashboardController>();
+    if (dashboardController.welcomeHandled) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      dashboardController.markWelcomeHandled();
+    });
 
     final args = ModalRoute.of(context)?.settings.arguments;
 
@@ -72,6 +77,8 @@ class _DashboardPageState extends State<DashboardPage> {
     final userEntity = authController.user;
 
     final isFocusMode = context.watch<FocusModeController>().enabled;
+    final dashboardController = context.watch<DashboardController>();
+    final navigationService = context.watch<NavigationService>();
 
     final prefs = context.watch<ProfilePreferencesController>();
     final highContrast = prefs.highContrast;
@@ -82,46 +89,32 @@ class _DashboardPageState extends State<DashboardPage> {
     void goTo(MindEaseNavItem item) {
       if (item == MindEaseNavItem.dashboard) return;
       
-      final routeName = item == MindEaseNavItem.tasks 
-          ? AppRoutes.tasks 
-          : AppRoutes.profile;
-          
-      if (item == MindEaseNavItem.tasks) {
-        Navigator.of(context).pushNamed(routeName, arguments: 1);
-      } else {
-        Navigator.of(context).pushNamed(routeName);
+      switch (item) {
+        case MindEaseNavItem.tasks:
+          navigationService.goToTasks(tabIndex: 1);
+          break;
+        case MindEaseNavItem.profile:
+          navigationService.goToProfile();
+          break;
+        default:
+          break;
       }
     }
 
     void logout() {
-      context.read<AuthController>().logout();
+      authController.logout();
+      navigationService.goToLogin();
     }
 
-    final metrics = <_MetricData>[
-      const _MetricData(
-        kind: DashboardMetricKind.done,
-        title: 'Tarefas Concluídas',
-        value: '12',
-        subtitle: 'Esta semana',
-        icon: Icons.checklist_rounded,
-      ),
-      const _MetricData(
-        kind: DashboardMetricKind.focus,
-        title: 'Tempo de Foco',
-        value: '3h 45m',
-        subtitle: 'Hoje',
-        icon: Icons.timer_outlined,
-      ),
-      const _MetricData(
-        kind: DashboardMetricKind.productivity,
-        title: 'Produtividade',
-        value: '+24%',
-        subtitle: 'vs. semana passada',
-        icon: Icons.trending_up_rounded,
-      ),
-    ];
-
     final taskController = context.watch<TaskController>();
+    final metrics = dashboardController.getMetrics(taskController.tasks).map((m) => _MetricData(
+      kind: DashboardMetricKind.done, 
+      title: m.title,
+      value: m.value,
+      subtitle: m.subtitle,
+      icon: m.icon,
+    )).toList();
+
     final recentTasks = taskController.tasks.take(3).map((task) {
       return _RecentTaskData(
         title: task.title,
