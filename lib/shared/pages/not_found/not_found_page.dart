@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/core/navigation/routes.dart';
 import 'package:mindease_focus/shared/pages/not_found/not_found_styles.dart';
+import 'package:provider/provider.dart';
 
 class NotFoundPage extends StatelessWidget {
   final String? requestedRoute;
@@ -11,8 +11,8 @@ class NotFoundPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Supabase.instance.client.auth.currentUser;
-    final isLoggedIn = user != null;
+    final isAuthenticated = context.watch<AuthController>().isAuthenticated;
+    final isLoggedIn = isAuthenticated;
 
     final routeText = (requestedRoute == null || requestedRoute!.isEmpty)
         ? 'Rota desconhecida'

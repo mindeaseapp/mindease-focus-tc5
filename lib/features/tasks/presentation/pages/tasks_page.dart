@@ -39,22 +39,19 @@ class TasksPage extends StatelessWidget {
     final hideDistractions = prefs.hideDistractions;
 
     final authController = context.watch<AuthController>();
-    final userEntity = authController.user;
-
-    final userLabel = (userEntity.name.isNotEmpty)
-        ? userEntity.name
-        : (userEntity.email.isNotEmpty ? userEntity.email : 'Usuário');
+    final userLabel = authController.user.displayName;
 
     void goTo(MindEaseNavItem item) {
-      switch (item) {
-        case MindEaseNavItem.dashboard:
-          Navigator.of(context).popUntil((route) => route.settings.name == AppRoutes.dashboard);
-          break;
-        case MindEaseNavItem.tasks:
-          break;
-        case MindEaseNavItem.profile:
-          Navigator.of(context).pushNamed(AppRoutes.profile);
-          break;
+      if (item == MindEaseNavItem.tasks) return;
+      
+      final routeName = item == MindEaseNavItem.dashboard 
+          ? AppRoutes.dashboard 
+          : AppRoutes.profile;
+          
+      if (item == MindEaseNavItem.dashboard) {
+        Navigator.of(context).popUntil((route) => route.settings.name == AppRoutes.dashboard);
+      } else {
+        Navigator.of(context).pushNamed(routeName);
       }
     }
 

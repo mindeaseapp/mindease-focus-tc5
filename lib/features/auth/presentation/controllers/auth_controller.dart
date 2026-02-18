@@ -4,26 +4,37 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
 import 'package:mindease_focus/features/auth/domain/usecases/get_user_usecase.dart';
 import 'package:mindease_focus/features/auth/data/repositories/auth_repository.dart';
-import 'package:mindease_focus/features/auth/data/datasources/auth_remote_datasource.dart';
 
 class AuthController extends ChangeNotifier {
-  // Em um projeto real com injeção de dependência (GetIt/Modular), isso viria no construtor
-  final GetUserUseCase _getUserUseCase = GetUserUseCase(
-    AuthRepository(AuthRemoteDataSource()),
-  );
+  final GetUserUseCase _getUserUseCase;
+  final AuthRepository _authRepository;
   
   late final StreamSubscription<AuthState> _authSubscription;
-  // Agora guardamos a Entidade, não o objeto do Supabase
   UserEntity _user = UserEntity.empty();
   
-  UserEntity get user => _user;
   bool get isAuthenticated => _user.id.isNotEmpty;
+  UserEntity get user => _user;
 
-  AuthController() {
+  bool _needsPasswordReset = false;
+  bool get needsPasswordReset => _needsPasswordReset;
+
+  void resetPasswordResetFlag() {
+    _needsPasswordReset = false;
+    notifyListeners();
+  }
+
+  AuthController({
+    required GetUserUseCase getUserUseCase,
+    required AuthRepository authRepository,
+    required SupabaseClient supabaseClient,
+  })  : _getUserUseCase = getUserUseCase,
+        _authRepository = authRepository {
     _loadCurrentUser();
-    // 2. ESCUTA ATIVA: Qualquer mudança no Supabase (Login, Logout, Link Mágico)
-    // atualiza automaticamente o nosso Controller
-    _authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+    _authSubscription = supabaseClient.auth.onAuthStateChange.listen((data) {
+      if (data.event == AuthChangeEvent.passwordRecovery) {
+        _needsPasswordReset = true;
+        notifyListeners();
+      }
       _loadCurrentUser();
     });
   }
@@ -35,9 +46,7 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    // Idealmente teria um LogoutUseCase também, mas vamos focar no GetUser
-    final repo = AuthRepository(AuthRemoteDataSource());
-    await repo.logoutUser();
+    await _authRepository.logoutUser();
     
     _user = UserEntity.empty();
     notifyListeners();

@@ -93,7 +93,8 @@ class FakeTaskController extends ChangeNotifier implements TaskController {
   @override
   Future<void> addTask(
     String title,
-    String description, {
+    String description,
+    String userId, {
     TaskStatus status = TaskStatus.todo,
   }) async {
     notifyListeners();

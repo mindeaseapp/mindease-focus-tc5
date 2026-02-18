@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_focus/features/auth/data/repositories/auth_repository.dart';
-import 'package:mindease_focus/features/auth/data/datasources/auth_remote_datasource.dart';
 
 class UpdatePasswordController extends ChangeNotifier {
-  final AuthRepository _repository = AuthRepository(AuthRemoteDataSource());
+  final AuthRepository _repository;
+
+  UpdatePasswordController(this._repository);
 
   bool isLoading = false;
   String? errorMessage;

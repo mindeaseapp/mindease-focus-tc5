@@ -77,32 +77,24 @@ class _DashboardPageState extends State<DashboardPage> {
     final highContrast = prefs.highContrast;
     final hideDistractions = prefs.hideDistractions;
 
-    final userLabel = (userEntity.name.isNotEmpty)
-        ? userEntity.name
-        : (userEntity.email.isNotEmpty ? userEntity.email : 'Usuário');
+    final userLabel = userEntity.displayName;
 
     void goTo(MindEaseNavItem item) {
-      switch (item) {
-        case MindEaseNavItem.dashboard:
-          return;
-        case MindEaseNavItem.tasks:
-          Navigator.of(context).pushNamed(
-            AppRoutes.tasks,
-            arguments: 1,
-          );
-          return;
-        case MindEaseNavItem.profile:
-          Navigator.of(context).pushNamed(AppRoutes.profile);
-          return;
+      if (item == MindEaseNavItem.dashboard) return;
+      
+      final routeName = item == MindEaseNavItem.tasks 
+          ? AppRoutes.tasks 
+          : AppRoutes.profile;
+          
+      if (item == MindEaseNavItem.tasks) {
+        Navigator.of(context).pushNamed(routeName, arguments: 1);
+      } else {
+        Navigator.of(context).pushNamed(routeName);
       }
     }
 
     void logout() {
       context.read<AuthController>().logout();
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        AppRoutes.login,
-        (_) => false,
-      );
     }
 
     final metrics = <_MetricData>[
@@ -131,28 +123,10 @@ class _DashboardPageState extends State<DashboardPage> {
 
     final taskController = context.watch<TaskController>();
     final recentTasks = taskController.tasks.take(3).map((task) {
-      DashboardTaskPillKind pillKind;
-      String pillLabel;
-
-      switch (task.status) {
-        case TaskStatus.done:
-          pillKind = DashboardTaskPillKind.done;
-          pillLabel = 'concluída';
-          break;
-        case TaskStatus.inProgress:
-          pillKind = DashboardTaskPillKind.inProgress;
-          pillLabel = 'em andamento';
-          break;
-        case TaskStatus.todo:
-          pillKind = DashboardTaskPillKind.pending;
-          pillLabel = 'pendente';
-          break;
-      }
-
       return _RecentTaskData(
         title: task.title,
-        pill: pillKind,
-        pillLabel: pillLabel,
+        pill: task.status.dashboardPillKind,
+        pillLabel: task.status.dashboardLabel,
         meta: task.timeSpent ?? '',
       );
     }).toList();

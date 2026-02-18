@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 // CORREÇÃO: Usando caminhos completos para Repositório e DataSource
 import 'package:mindease_focus/features/auth/data/repositories/auth_repository.dart';
-import 'package:mindease_focus/features/auth/data/datasources/auth_remote_datasource.dart';
 
 class RegisterController extends ChangeNotifier {
-  // Injeção de dependência manual
-  final AuthRepository _repository = AuthRepository(AuthRemoteDataSource());
+  final AuthRepository _repository;
+
+  RegisterController(this._repository);
 
   bool isLoading = false;
   String? errorMessage;

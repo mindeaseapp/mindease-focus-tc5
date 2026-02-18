@@ -1,7 +1,9 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthRemoteDataSource {
-  final SupabaseClient _supabase = Supabase.instance.client;
+  final SupabaseClient _supabase;
+
+  AuthRemoteDataSource(this._supabase);
 
   // Cadastro
   Future<void> signUp({

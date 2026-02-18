@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:mindease_focus/features/profile/data/repositories/profile_repository.dart';
 import 'package:mindease_focus/features/profile/domain/models/user_preferences/user_preferences_model.dart';
 import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfilePreferencesController extends ChangeNotifier {
   final ProfileRepository? repository;
@@ -69,14 +68,6 @@ class ProfilePreferencesController extends ChangeNotifier {
   }
 
   void _scheduleSave() {
-    // Fallback: Se _currentUserId for nulo, tenta pegar da sessão atual
-    if (_currentUserId == null) {
-      final user = Supabase.instance.client.auth.currentUser;
-      if (user != null) {
-        _currentUserId = user.id;
-      }
-    }
-
     if (repository == null || _currentUserId == null) return;
 
     if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();

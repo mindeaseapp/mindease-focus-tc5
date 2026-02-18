@@ -17,6 +17,7 @@ import 'package:mindease_focus/features/auth/presentation/pages/login/feature_ca
 
 import 'package:mindease_focus/features/auth/presentation/controllers/login_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mindease_focus/features/auth/data/repositories/auth_repository.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -92,8 +93,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authRepository = context.read<AuthRepository>();
     return ChangeNotifierProvider(
-      create: (_) => LoginController(),
+      create: (_) => LoginController(authRepository),
       child: Consumer<LoginController>(
         builder: (context, controller, _) {
           return Scaffold(

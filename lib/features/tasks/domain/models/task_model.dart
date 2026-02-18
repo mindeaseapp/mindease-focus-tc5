@@ -1,3 +1,5 @@
+import 'package:mindease_focus/features/dashboard/presentation/pages/dashboard_styles.dart';
+
 // ==============================
 // 📦 TASK MODEL (Entidade Única)
 // ==============================
@@ -6,6 +8,41 @@ enum TaskStatus {
   todo,
   inProgress,
   done,
+}
+
+extension TaskStatusExtension on TaskStatus {
+  String get label {
+    switch (this) {
+      case TaskStatus.todo:
+        return 'A Fazer';
+      case TaskStatus.inProgress:
+        return 'Em Andamento';
+      case TaskStatus.done:
+        return 'Concluído';
+    }
+  }
+
+  String get dashboardLabel {
+    switch (this) {
+      case TaskStatus.todo:
+        return 'pendente';
+      case TaskStatus.inProgress:
+        return 'em andamento';
+      case TaskStatus.done:
+        return 'concluída';
+    }
+  }
+
+  DashboardTaskPillKind get dashboardPillKind {
+    switch (this) {
+      case TaskStatus.todo:
+        return DashboardTaskPillKind.pending;
+      case TaskStatus.inProgress:
+        return DashboardTaskPillKind.inProgress;
+      case TaskStatus.done:
+        return DashboardTaskPillKind.done;
+    }
+  }
 }
 
 class Task {
@@ -65,16 +102,7 @@ class Task {
     );
   }
 
-  String get statusText {
-    switch (status) {
-      case TaskStatus.todo:
-        return 'A Fazer';
-      case TaskStatus.inProgress:
-        return 'Em Andamento';
-      case TaskStatus.done:
-        return 'Concluído';
-    }
-  }
+  String get statusText => status.label;
 
   @override
   String toString() => 'Task(id: $id, title: $title, status: $status)';

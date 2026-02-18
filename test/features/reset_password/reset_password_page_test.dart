@@ -1,18 +1,27 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Necessário para o Supabase não quebrar
-import 'package:supabase_flutter/supabase_flutter.dart'; // Necessário para inicializar
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/reset_password_controller.dart';
+import 'package:mindease_focus/features/auth/data/repositories/auth_repository.dart';
+
+class MockAuthRepository implements AuthRepository {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {
+    if (email == 'error@teste.com') {
+      throw Exception('Erro de rede simulado');
+    }
+    return;
+  }
+}
 
 void main() {
-  // Garante que os plugins funcionam no teste
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUpAll(() async {
-    // 1. Simula o SharedPreferences (O Supabase precisa disso para guardar sessão)
     SharedPreferences.setMockInitialValues({});
-
-    // 2. Inicializa o Supabase com dados FALSOS só para parar o erro de "instance not initialized"
-    // Não te preocupes com a URL, o teste vai falhar na rede e cair no catch do teu controller, que é o que queremos.
     await Supabase.initialize(
       url: 'https://fake-url.com',
       anonKey: 'fake-anon-key',
@@ -20,49 +29,41 @@ void main() {
   });
 
   late ResetPasswordController controller;
+  late MockAuthRepository mockRepo;
 
   setUp(() {
-    controller = ResetPasswordController();
+    mockRepo = MockAuthRepository();
+    controller = ResetPasswordController(mockRepo);
   });
 
-  group('ResetPasswordController Tests (Sem Mock)', () {
+  group('ResetPasswordController Tests', () {
     
     test('Deve iniciar com os estados padrão (limpos)', () {
       expect(controller.isLoading, false);
-      expect(controller.isSuccess, false);
       expect(controller.errorMessage, null);
     });
 
-    test('Deve resetar o estado corretamente ao chamar resetState', () {
-      controller.isLoading = true;
-      controller.isSuccess = true;
-      controller.errorMessage = 'Erro antigo';
-
-      controller.resetState();
-
-      expect(controller.isLoading, false);
-      expect(controller.isSuccess, false);
-      expect(controller.errorMessage, null);
-    });
-
-    test('Fluxo sendResetLink: Deve gerenciar o estado e não quebrar', () async {
+    test('Fluxo resetPassword: Deve gerenciar o estado corretamente', () async {
       // 1. Tenta enviar
-      final future = controller.sendResetLink('email@teste.com');
+      final future = controller.resetPassword('email@teste.com');
       
       // 2. Verifica se entrou em loading
       expect(controller.isLoading, true);
 
-      // 3. Espera acabar (vai dar erro de rede porque a URL do supabase é falsa)
+      // 3. Espera acabar
       await future;
 
       // 4. Verifica se saiu do loading
       expect(controller.isLoading, false);
+      expect(controller.errorMessage, null);
+    });
 
-      // 5. O teste PASSA se tiver dado Sucesso OU se tiver capturado o erro.
-      // Como a URL é falsa, vai cair no erro, a controller vai preencher o errorMessage, e o teste vai passar.
-      final funcionouOuTratouErro = controller.isSuccess || controller.errorMessage != null;
+    test('Fluxo resetPassword: Deve capturar erro corretamente', () async {
+      await controller.resetPassword('error@teste.com');
       
-      expect(funcionouOuTratouErro, true, reason: 'Deve ter dado sucesso ou capturado o erro de rede');
+      expect(controller.isLoading, false);
+      expect(controller.errorMessage, isNotNull);
+      expect(controller.errorMessage, contains('Erro de rede simulado'));
     });
   });
 }

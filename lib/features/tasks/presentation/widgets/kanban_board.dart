@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/tasks/presentation/controllers/task_controller.dart';
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
 import 'package:mindease_focus/features/tasks/presentation/widgets/kanban_column.dart';
@@ -24,11 +25,12 @@ class KanbanBoard extends StatefulWidget {
 
 class _KanbanBoardState extends State<KanbanBoard> {
   void _handleAddTask(String title, String description, TaskStatus status) {
-    context.read<TaskController>().addTask(title, description, status: status);
+    final userId = context.read<AuthController>().user.id;
+    context.read<TaskController>().addTask(title, description, userId, status: status);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Salvando tarefa em "${_getStatusText(status)}"...'),
+        content: Text('Salvando tarefa em "${status.label}"...'),
         backgroundColor: KanbanBoardStyles.savingSnackBg(context),
         duration: KanbanBoardStyles.snackDuration,
       ),
@@ -80,17 +82,6 @@ class _KanbanBoardState extends State<KanbanBoard> {
           duration: KanbanBoardStyles.snackDuration,
         ),
       );
-    }
-  }
-
-  String _getStatusText(TaskStatus status) {
-    switch (status) {
-      case TaskStatus.todo:
-        return 'A Fazer';
-      case TaskStatus.inProgress:
-        return 'Em Andamento';
-      case TaskStatus.done:
-        return 'Concluído';
     }
   }
 

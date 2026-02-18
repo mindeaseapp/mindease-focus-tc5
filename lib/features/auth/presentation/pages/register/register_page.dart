@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // Imports de Layout e UI
 import 'package:mindease_focus/shared/layout/flex_grid.dart';
@@ -30,7 +31,6 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  final _registerController = RegisterController();
 
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -52,9 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    _registerController.addListener(() {
-      if (mounted) setState(() {});
-    });
+    // No listener needed here, as we'll use context.watch in build
   }
 
   void _updateFormValidity() {
@@ -72,11 +70,12 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _submit() async {
+    final controller = context.read<RegisterController>();
     FocusScope.of(context).unfocus();
-    if (!_isFormValid || _registerController.isLoading) return;
+    if (!_isFormValid || controller.isLoading) return;
 
     if (_formKey.currentState!.validate()) {
-      final success = await _registerController.register(
+      final success = await controller.register(
         name: _nameController.text,
         email: _emailController.text,
         password: _passwordController.text,
@@ -95,7 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(_registerController.errorMessage ?? 'Erro desconhecido.'),
+            content: Text(controller.errorMessage ?? 'Erro desconhecido.'),
             backgroundColor: RegisterStyles.errorColor,
           ),
         );
@@ -113,18 +112,19 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
     _confirmPasswordFocusNode.dispose();
-    _registerController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Watch the controller to rebuild when its state changes (e.g., isLoading, errorMessage)
+    final controller = context.watch<RegisterController>();
     return Scaffold(
-      body: _isMobile ? _buildMobile() : _buildDesktop(),
+      body: _isMobile ? _buildMobile(controller) : _buildDesktop(controller),
     );
   }
 
-  Widget _buildMobile() {
+  Widget _buildMobile(RegisterController controller) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -161,7 +161,7 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Card(
               child: Padding(
                 padding: const EdgeInsets.all(RegisterStyles.cardPadding),
-                child: _buildForm(),
+                child: _buildForm(controller),
               ),
             ),
           ),
@@ -170,7 +170,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _buildDesktop() {
+  Widget _buildDesktop(RegisterController controller) {
     return FlexGrid(
       left: GradientPanel(
         child: Column(
@@ -206,7 +206,7 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(RegisterStyles.cardPadding),
-              child: _buildForm(),
+              child: _buildForm(controller),
             ),
           ),
         ),
@@ -214,7 +214,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _buildForm() {
+  Widget _buildForm(RegisterController controller) {
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -238,6 +238,30 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
           AppSpacing.gapLg,
+
+          if (controller.errorMessage != null) ...[
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppSizes.cardBorderRadiusSm),
+                border: Border.all(color: RegisterStyles.errorColor),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.error_outline, color: RegisterStyles.errorColor),
+                  AppSpacing.gapSm,
+                  Expanded(
+                    child: Text(
+                      controller.errorMessage!,
+                      style: const TextStyle(color: RegisterStyles.errorColor),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            AppSpacing.gapMd,
+          ],
 
           // NOME COMPLETO
           Semantics(
@@ -344,7 +368,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               onChanged: (_) => _updateFormValidity(),
               onFieldSubmitted: (_) {
-                if (_isFormValid && !_registerController.isLoading) {
+                if (_isFormValid && !controller.isLoading) {
                   _submit();
                 }
               },
@@ -421,18 +445,18 @@ class _RegisterPageState extends State<RegisterPage> {
           // BOTÃO CRIAR CONTA
           Semantics(
             button: true,
-            enabled: _isFormValid && !_registerController.isLoading,
-            label: _registerController.isLoading 
+            enabled: _isFormValid && !controller.isLoading,
+            label: controller.isLoading 
               ? 'Criando conta, aguarde' 
               : 'Criar conta',
             child: SizedBox(
               width: double.infinity,
               height: AppSizes.buttonHeight,
               child: ElevatedButton(
-                onPressed: (!_isFormValid || _registerController.isLoading)
+                onPressed: (!_isFormValid || controller.isLoading)
                     ? null
                     : _submit,
-                child: _registerController.isLoading
+                child: controller.isLoading
                     ? const SizedBox(
                         width: RegisterStyles.loadingIconSize,
                         height: RegisterStyles.loadingIconSize,

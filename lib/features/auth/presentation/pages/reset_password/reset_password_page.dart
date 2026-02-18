@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:mindease_focus/shared/layout/flex_grid.dart';
 import 'package:mindease_focus/shared/widgets/gradient_panel/gradient_panel.dart';
@@ -6,6 +7,7 @@ import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 
 import 'package:mindease_focus/features/auth/domain/validators/email_validator.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/reset_password_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/reset_password/reset_password_styles.dart';
 
 class ResetPasswordPage extends StatefulWidget {
@@ -20,7 +22,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _emailController = TextEditingController();
   final _emailFocusNode = FocusNode();
 
-  bool _isSubmitting = false;
   bool _isFormValid = false;
 
   bool get _isMobile => MediaQuery.of(context).size.width < ResetPasswordStyles.mobileBreakpoint;
@@ -38,24 +39,32 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     }
   }
 
-  void _submit() {
+  Future<void> _submit() async {
+    final controller = context.read<ResetPasswordController>();
     FocusScope.of(context).unfocus();
-    if (!_isFormValid || _isSubmitting) return;
+    if (!_isFormValid || controller.isLoading) return;
 
     if (_formKey.currentState!.validate()) {
-      setState(() => _isSubmitting = true);
+      final success = await controller.resetPassword(_emailController.text);
+      
+      if (!mounted) return;
 
-      Future.delayed(const Duration(seconds: 2), () {
-        if (!mounted) return;
-        setState(() => _isSubmitting = false);
-
+      if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Se o email existir, enviaremos instruções para redefinir a senha.'),
             duration: Duration(seconds: 4),
           ),
         );
-      });
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(controller.errorMessage ?? 'Erro ao enviar instruções.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -69,15 +78,16 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<ResetPasswordController>();
     return Scaffold(
       body: Semantics(
         label: 'Página de recuperação de senha',
-        child: _isMobile ? _buildMobile() : _buildDesktop(),
+        child: _isMobile ? _buildMobile(controller) : _buildDesktop(controller),
       ),
     );
   }
 
-  Widget _buildMobile() {
+  Widget _buildMobile(ResetPasswordController controller) {
     final height = MediaQuery.of(context).size.height;
 
     return SingleChildScrollView(
@@ -115,7 +125,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               child: Card(
                 child: Padding(
                   padding: const EdgeInsets.all(ResetPasswordStyles.cardPadding),
-                  child: _buildForm(),
+                  child: _buildForm(controller),
                 ),
               ),
             ),
@@ -126,7 +136,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     );
   }
 
-  Widget _buildDesktop() {
+  Widget _buildDesktop(ResetPasswordController controller) {
     return FlexGrid(
       left: GradientPanel(
         child: Column(
@@ -158,7 +168,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(ResetPasswordStyles.cardPadding),
-              child: _buildForm(),
+              child: _buildForm(controller),
             ),
           ),
         ),
@@ -166,7 +176,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     );
   }
 
-  Widget _buildForm() {
+  Widget _buildForm(ResetPasswordController controller) {
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -184,6 +194,31 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           AppSpacing.gapSm,
           Text('Digite seu email e enviaremos instruções para redefinir sua senha.', style: ResetPasswordStyles.helper),
           AppSpacing.gapLg,
+
+          if (controller.errorMessage != null) ...[
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              decoration: BoxDecoration(
+                color: Colors.red.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppSizes.cardBorderRadiusSm),
+                border: Border.all(color: Colors.red),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red),
+                  AppSpacing.gapSm,
+                  Expanded(
+                    child: Text(
+                      controller.errorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            AppSpacing.gapMd,
+          ],
+
           Semantics(
             label: 'Campo de email. Digite seu endereço de email para receber instruções de recuperação de senha',
             textField: true,
@@ -206,8 +241,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           AppSpacing.gapLg,
           Semantics(
             button: true,
-            enabled: _isFormValid && !_isSubmitting,
-            label: _isSubmitting 
+            enabled: _isFormValid && !controller.isLoading,
+            label: controller.isLoading 
               ? 'Enviando instruções. Por favor, aguarde' 
               : _isFormValid 
                 ? 'Enviar instruções de recuperação de senha' 
@@ -216,16 +251,16 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               width: double.infinity,
               height: AppSizes.buttonHeight,
               child: ElevatedButton(
-                onPressed: (!_isFormValid || _isSubmitting) ? null : _submit,
-                child: _isSubmitting
+                onPressed: (!_isFormValid || controller.isLoading) ? null : _submit,
+                child: controller.isLoading
                     ? Semantics(
                         label: 'Carregando',
-                        child: const SizedBox(
+                        child: SizedBox(
                           width: ResetPasswordStyles.loadingIconSize,
                           height: ResetPasswordStyles.loadingIconSize,
                           child: CircularProgressIndicator(
                             strokeWidth: ResetPasswordStyles.loadingStrokeWidth,
-                            color: ResetPasswordStyles.loadingColor,
+                            color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                             semanticsLabel: 'Enviando instruções',
                           ),
                         ),

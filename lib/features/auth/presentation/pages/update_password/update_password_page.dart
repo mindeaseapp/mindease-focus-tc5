@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart'; // Necessário para verificar a sessão
 
-// Controllers e Validators
+import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/update_password_controller.dart';
 import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/confirm_password_validator.dart';
@@ -30,13 +29,9 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
   @override
   void initState() {
     super.initState();
-    // --- SECURITY CHECK (Clean Arch: Guardião da View) ---
-    // Verifica se a sessão existe assim que a tela é montada.
-    // Isso resolve o problema do redirecionamento errado:
-    // Se o link mágico funcionou, session != null. Se falhou, manda pro Login.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final session = Supabase.instance.client.auth.currentSession;
-      if (session == null) {
+      final authController = context.read<AuthController>();
+      if (!authController.isAuthenticated) {
         Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -57,102 +52,95 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => UpdatePasswordController(),
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Redefinir Senha')),
-        // Consumer observa mudanças no Controller e reconstrói a tela se necessário
-        body: Consumer<UpdatePasswordController>(
-          builder: (context, controller, _) {
-            return Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: UpdatePasswordStyles.desktopContentWidth),
-                  child: Card(
-                    child: Padding(
-                      padding: UpdatePasswordStyles.cardPadding,
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Semantics(
-                              header: true,
-                              child: Text(
-                                'Criar Nova Senha', 
-                                style: UpdatePasswordStyles.title,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            AppSpacing.gapMd,
-                            Text(
-                              'Sua identidade foi confirmada. Crie uma nova senha segura.',
-                              textAlign: TextAlign.center,
-                              style: UpdatePasswordStyles.description,
-                            ),
-                            AppSpacing.gapLg,
-
-                            // Nova Senha
-                            TextFormField(
-                              controller: _passwordController,
-                              obscureText: _obscureText,
-                              validator: PasswordValidator.validate,
-                              decoration: InputDecoration(
-                                labelText: 'Nova Senha',
-                                prefixIcon: const Icon(Icons.lock_outline),
-                                suffixIcon: IconButton(
-                                  tooltip: _obscureText ? 'Mostrar senha' : 'Ocultar senha',
-                                  icon: Icon(_obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                                  onPressed: () => setState(() => _obscureText = !_obscureText),
-                                ),
-                              ),
-                            ),
-                            AppSpacing.gapMd,
-
-                            // Confirmar Senha
-                            TextFormField(
-                              controller: _confirmPasswordController,
-                              obscureText: _obscureText,
-                              validator: (val) => ConfirmPasswordValidator.validate(
-                                password: _passwordController.text,
-                                confirmPassword: val ?? '',
-                              ),
-                              decoration: const InputDecoration(
-                                labelText: 'Confirmar Nova Senha',
-                                prefixIcon: Icon(Icons.lock_reset),
-                              ),
-                            ),
-                            AppSpacing.gapLg,
-
-                            // Botão Salvar
-                            SizedBox(
-                              width: double.infinity,
-                              height: AppSizes.buttonHeight,
-                              child: ElevatedButton(
-                                onPressed: controller.isLoading
-                                    ? null
-                                    : () => _submit(context, controller),
-                                child: controller.isLoading
-                                    ? const SizedBox(
-                                        width: UpdatePasswordStyles.loadingIconSize, 
-                                        height: UpdatePasswordStyles.loadingIconSize, 
-                                        child: CircularProgressIndicator(
-                                            color: UpdatePasswordStyles.loadingColor, 
-                                            strokeWidth: UpdatePasswordStyles.loadingStrokeWidth),
-                                      )
-                                    : const Text('Redefinir e Ir para Login'),
-                              ),
-                            ),
-                          ],
+    final controller = context.watch<UpdatePasswordController>();
+    return Scaffold(
+      appBar: AppBar(title: const Text('Redefinir Senha')),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: UpdatePasswordStyles.desktopContentWidth),
+            child: Card(
+              child: Padding(
+                padding: UpdatePasswordStyles.cardPadding,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          'Criar Nova Senha', 
+                          style: UpdatePasswordStyles.title,
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                    ),
+                      AppSpacing.gapMd,
+                      Text(
+                        'Sua identidade foi confirmada. Crie uma nova senha segura.',
+                        textAlign: TextAlign.center,
+                        style: UpdatePasswordStyles.description,
+                      ),
+                      AppSpacing.gapLg,
+
+                      // Nova Senha
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: _obscureText,
+                        validator: PasswordValidator.validate,
+                        decoration: InputDecoration(
+                          labelText: 'Nova Senha',
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            tooltip: _obscureText ? 'Mostrar senha' : 'Ocultar senha',
+                            icon: Icon(_obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                            onPressed: () => setState(() => _obscureText = !_obscureText),
+                          ),
+                        ),
+                      ),
+                      AppSpacing.gapMd,
+
+                      // Confirmar Senha
+                      TextFormField(
+                        controller: _confirmPasswordController,
+                        obscureText: _obscureText,
+                        validator: (val) => ConfirmPasswordValidator.validate(
+                          password: _passwordController.text,
+                          confirmPassword: val ?? '',
+                        ),
+                        decoration: const InputDecoration(
+                          labelText: 'Confirmar Nova Senha',
+                          prefixIcon: Icon(Icons.lock_reset),
+                        ),
+                      ),
+                      AppSpacing.gapLg,
+
+                      // Botão Salvar
+                      SizedBox(
+                        width: double.infinity,
+                        height: AppSizes.buttonHeight,
+                        child: ElevatedButton(
+                          onPressed: controller.isLoading
+                              ? null
+                              : () => _submit(context, controller),
+                          child: controller.isLoading
+                              ? const SizedBox(
+                                  width: UpdatePasswordStyles.loadingIconSize, 
+                                  height: UpdatePasswordStyles.loadingIconSize, 
+                                  child: CircularProgressIndicator(
+                                      color: UpdatePasswordStyles.loadingColor, 
+                                      strokeWidth: UpdatePasswordStyles.loadingStrokeWidth),
+                                )
+                              : const Text('Redefinir e Ir para Login'),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mindease_focus/features/tasks/data/repositories/task_repository.dart';
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
 
@@ -40,12 +39,11 @@ class TaskController extends ChangeNotifier {
 
   Future<void> addTask(
     String title,
-    String description, {
+    String description,
+    String userId, {
     TaskStatus status = TaskStatus.todo,
   }) async {
     try {
-      final userId = Supabase.instance.client.auth.currentUser!.id;
-
       final newTask = Task(
         id: '',
         title: title,

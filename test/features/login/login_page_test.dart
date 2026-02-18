@@ -7,9 +7,22 @@ import 'package:provider/provider.dart';
 // Imports do seu projeto
 import 'package:mindease_focus/features/auth/presentation/pages/login/login_page.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mindease_focus/features/auth/data/repositories/auth_repository.dart';
+import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
 
 // Mock simples para não quebrar o Provider
 class MockAuthController extends ChangeNotifier implements AuthController {
+  @override
+  bool get isAuthenticated => false;
+
+  @override
+  UserEntity get user => const UserEntity(id: '1', email: 'test@test.com', name: 'Test User');
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class MockAuthRepository implements AuthRepository {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -18,10 +31,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUpAll(() async {
-    // 1. HACK: Simula o SharedPreferences para o Supabase não chorar
     SharedPreferences.setMockInitialValues({});
-    
-    // 2. HACK: Inicializa o Supabase com dados falsos para evitar erro de instância
     await Supabase.initialize(
       url: 'https://fake-url.com',
       anonKey: 'fake-anon-key',
@@ -29,17 +39,16 @@ void main() {
   });
 
   Future<void> _pumpLoginPage(WidgetTester tester) async {
-    // Configura tamanho de tela para Desktop para evitar erros de overflow nos testes
     await tester.binding.setSurfaceSize(const Size(1440, 900));
     addTearDown(() async => await tester.binding.setSurfaceSize(null));
 
     await tester.pumpWidget(
       MultiProvider(
         providers: [
+          Provider<AuthRepository>(create: (_) => MockAuthRepository()),
           ChangeNotifierProvider<AuthController>(create: (_) => MockAuthController()),
         ],
         child: MaterialApp(
-          // Define rotas falsas para navegação não quebrar o teste
           routes: {
             '/dashboard': (c) => const Scaffold(body: Text('Dash')),
             '/register': (c) => const Scaffold(body: Text('Reg')),
@@ -63,17 +72,12 @@ void main() {
   testWidgets('Botão de visibilidade deve alternar o ícone da senha', (tester) async {
     await _pumpLoginPage(tester);
 
-    // 1. Acha o ícone inicial (Olho aberto)
     final visibilityIcon = find.byIcon(Icons.visibility_outlined);
     expect(visibilityIcon, findsOneWidget);
 
-    // 2. Clica nele
     await tester.tap(visibilityIcon);
     await tester.pumpAndSettle();
 
-    // 3. Verifica se mudou para o ícone de olho riscado/fechado
-    // Nota: O seu código usa visibility_off_outlined quando a senha NÃO é obscura? 
-    // Se der erro aqui, inverta os ícones neste teste.
     expect(find.byIcon(Icons.visibility_off_outlined), findsOneWidget);
   });
 

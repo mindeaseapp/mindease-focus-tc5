@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 // ==============================
 // AUTH
@@ -14,7 +13,6 @@ import 'package:mindease_focus/features/auth/presentation/pages/update_password/
 // ==============================
 import 'package:mindease_focus/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:mindease_focus/features/profile/presentation/pages/profile_page.dart';
-import 'package:mindease_focus/features/profile/domain/models/profile_view/profile_view_model.dart';
 import 'package:mindease_focus/features/tasks/presentation/pages/tasks_page.dart';
 
 // ==============================
@@ -53,26 +51,8 @@ class AppRoutes {
     dashboard: (_) => const AuthGuard(child: DashboardPage()),
     tasks: (_) => const AuthGuard(child: TasksPage()),
 
-    // ✅ Profile dinâmico + protegido + "somente leitura por enquanto"
-    profile: (context) {
-      final user = Supabase.instance.client.auth.currentUser;
-
-      final name = user?.userMetadata?['name']?.toString() ??
-          user?.email?.split('@').first ??
-          'Usuário MindEase';
-
-      final email = user?.email ?? 'sem-email@local';
-
-      final vm = ProfileViewModel.demo(
-        name: name,
-        email: email,
-        // ✅ sem onOpenPersonalInfo (igual Larissa)
-      );
-
-      return AuthGuard(
-        child: ProfilePage(viewModel: vm),
-      );
-    },
+    // ✅ Profile dinâmico + protegido
+    profile: (_) => const AuthGuard(child: ProfilePage()),
 
     // ✅ rota fixa
     notFound: (_) => const NotFoundPage(),

@@ -40,35 +40,6 @@ class MindEaseApp extends StatefulWidget {
 
 class _MindEaseAppState extends State<MindEaseApp> {
   final _navigatorKey = GlobalKey<NavigatorState>();
-  late final StreamSubscription<AuthState> _authSubscription;
-
-  @override
-  void initState() {
-    super.initState();
-    _setupAuthListener();
-  }
-
-  void _setupAuthListener() {
-    _authSubscription =
-        Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      final AuthChangeEvent event = data.event;
-
-      if (event == AuthChangeEvent.passwordRecovery) {
-        Future.microtask(() {
-          _navigatorKey.currentState?.pushNamedAndRemoveUntil(
-            '/update-password',
-            (route) => false,
-          );
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _authSubscription.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,15 +47,24 @@ class _MindEaseAppState extends State<MindEaseApp> {
     final prefs = context.watch<ProfilePreferencesController>();
     final authController = context.watch<AuthController>();
 
+    // Redirecionamento de Password Recovery (Clean Arch: Centralizado no Controller)
+    if (authController.needsPasswordReset) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+          AppRoutes.updatePassword,
+          (route) => false,
+        );
+        authController.resetPasswordResetFlag();
+      });
+    }
+
     final focusMode = context.watch<FocusModeController>().enabled;
     final disableAnimations = prefs.hideDistractions || focusMode;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MindEase',
-
       navigatorKey: _navigatorKey,
-
       theme: themeController.highContrast
           ? AppTheme.lightHighContrast
           : AppTheme.light,
@@ -92,7 +72,6 @@ class _MindEaseAppState extends State<MindEaseApp> {
           ? AppTheme.darkHighContrast
           : AppTheme.dark,
       themeMode: themeController.mode,
-
       builder: (context, child) {
         final mq = MediaQuery.of(context);
         return MediaQuery(
@@ -100,12 +79,9 @@ class _MindEaseAppState extends State<MindEaseApp> {
           child: child ?? const SizedBox.shrink(),
         );
       },
-
       initialRoute:
           authController.isAuthenticated ? AppRoutes.dashboard : AppRoutes.login,
-
       routes: AppRoutes.routes,
-
       onGenerateRoute: AppRoutes.onGenerateRoute,
       onUnknownRoute: AppRoutes.onUnknownRoute,
     );

@@ -40,11 +40,11 @@ import 'package:mindease_focus/shared/widgets/focus_mode/mindease_accessibility_
 import 'package:mindease_focus/features/profile/presentation/pages/profile_styles.dart';
 
 class ProfilePage extends StatefulWidget {
-  final ProfileViewModel viewModel;
+  final ProfileViewModel? viewModel;
 
   const ProfilePage({
     super.key,
-    required this.viewModel,
+    this.viewModel,
   });
 
   @override
@@ -90,33 +90,34 @@ class _ProfilePageState extends State<ProfilePage> {
     // Auth
     final authController = context.watch<AuthController>();
     final userEntity = authController.user;
+    final userLabel = userEntity.displayName;
+
+    final viewModel = widget.viewModel ?? ProfileViewModel.demo(
+      name: userEntity.name,
+      email: userEntity.email,
+    );
 
     void goTo(MindEaseNavItem item) {
-      switch (item) {
-        case MindEaseNavItem.dashboard:
-          Navigator.of(context).popUntil((route) => route.settings.name == AppRoutes.dashboard);
-          return;
-        case MindEaseNavItem.tasks:
-          Navigator.of(context).pushNamed(AppRoutes.tasks);
-          return;
-        case MindEaseNavItem.profile:
-          return;
+      if (item == MindEaseNavItem.profile) return;
+      
+      final routeName = item == MindEaseNavItem.dashboard 
+          ? AppRoutes.dashboard 
+          : AppRoutes.tasks;
+          
+      if (item == MindEaseNavItem.dashboard) {
+        Navigator.of(context).popUntil((route) => route.settings.name == AppRoutes.dashboard);
+      } else {
+        Navigator.of(context).pushNamed(routeName);
       }
     }
 
     void logout() {
       context.read<AuthController>().logout();
-
-      if (!mounted) return;
       Navigator.of(context).pushNamedAndRemoveUntil(
         AppRoutes.login,
         (_) => false,
       );
     }
-
-    final userLabel = (userEntity.name.isNotEmpty)
-        ? userEntity.name
-        : (userEntity.email.isNotEmpty ? userEntity.email : 'Usuário');
 
     return Scaffold(
       appBar: MindEaseHeader(
@@ -158,14 +159,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         Semantics(
                           header: true,
                           child: Text(
-                            widget.viewModel.pageTitle,
+                            viewModel.pageTitle,
                             textAlign: ProfilePageStyles.headerTextAlign(context),
                             style: ProfilePageStyles.titleStyle(context),
                           ),
                         ),
                         AppSpacing.gapXs,
                         Text(
-                          widget.viewModel.pageSubtitle,
+                          viewModel.pageSubtitle,
                           textAlign: ProfilePageStyles.headerTextAlign(context),
                           style: ProfilePageStyles.subtitleStyle(context),
                         ),
@@ -193,7 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     icon: Icons.person_outline,
                     title: 'Informações Pessoais',
                     children: [
-                      for (final section in widget.viewModel.sections)
+                      for (final section in viewModel.sections)
                         for (final tile in section.tiles) SettingsTile(data: tile),
                     ],
                   ),
