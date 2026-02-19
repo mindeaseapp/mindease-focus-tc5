@@ -20,6 +20,10 @@ import 'package:mindease_focus/features/auth/presentation/controllers/task_contr
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/pomodoro_controller.dart';
 
+import 'package:mindease_focus/shared/services/notification_service.dart';
+import 'package:mindease_focus/shared/services/toast_service.dart';
+import 'package:mindease_focus/shared/services/pomodoro_alert_service.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -27,6 +31,14 @@ Future<void> main() async {
     url: 'https://pbdhxxixktekjzgfucwm.supabase.co',
     anonKey: 'sb_publishable_mHOOBibYEftti209CvA_dg_4NG4atPg',
   );
+
+  // ✅ Inicializar NotificationService
+  final notificationService = NotificationService();
+  await notificationService.initialize();
+
+  // ✅ Criar instâncias dos serviços compartilhados
+  final toastService = ToastService();
+  final pomodoroAlertService = PomodoroAlertService();
 
   runApp(
     MultiProvider(
@@ -48,14 +60,29 @@ Future<void> main() async {
 
         ChangeNotifierProvider(create: (_) => FocusModeController()),
 
-        ChangeNotifierProvider(create: (_) => PomodoroController()),
-
+        // ✅ TaskController com PomodoroAlertService
         ChangeNotifierProvider(
           create: (_) {
             final supabase = Supabase.instance.client;
             final dataSource = TaskRemoteDataSourceImpl(supabase);
             final repository = TaskRepository(dataSource);
-            return TaskController(repository: repository);
+            return TaskController(
+              repository: repository,
+              pomodoroAlertService: pomodoroAlertService,
+            );
+          },
+        ),
+
+        // ✅ PomodoroController com todas as dependências
+        ChangeNotifierProvider(
+          create: (context) {
+            return PomodoroController(
+              notificationService: notificationService,
+              toastService: toastService,
+              alertService: pomodoroAlertService,
+              preferencesController: context.read<ProfilePreferencesController>(),
+              taskController: context.read<TaskController>(),
+            );
           },
         ),
       ],
