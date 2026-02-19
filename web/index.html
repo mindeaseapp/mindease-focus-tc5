@@ -31,6 +31,23 @@
 
   <title>mindease_focus</title>
   <link rel="manifest" href="manifest.json">
+
+  <script>
+    // Verificar suporte a notificações
+    if ('Notification' in window) {
+      console.log('✅ Navegador suporta notificações');
+      
+      // Log do estado atual da permissão
+      console.log('📋 Permissão atual:', Notification.permission);
+      
+      // Função helper para solicitar permissão (será chamada pelo Dart)
+      window.requestNotificationPermission = function() {
+        return Notification.requestPermission();
+      };
+    } else {
+      console.warn('⚠️ Navegador não suporta notificações');
+    }
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>

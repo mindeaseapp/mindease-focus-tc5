@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mindease_focus/features/routes.dart';
@@ -32,15 +33,25 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   bool _welcomeHandled = false;
+  bool _tasksLoaded = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+    if(!_tasksLoaded) {
+      _tasksLoaded = true;
+    // Carrega as tarefas sempre que a página é montada (após o frame para evitar erro de build)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TaskController>().loadTasks();
+    });
+    }
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _handleWelcomeModal();
-    // Carrega as tarefas sempre que a página é montada (após o frame para evitar erro de build)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TaskController>().loadTasks();
-    });
   }
 
   void _handleWelcomeModal() {

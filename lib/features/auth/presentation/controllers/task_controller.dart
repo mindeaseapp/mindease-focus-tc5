@@ -1,16 +1,22 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mindease_focus/features/auth/data/repositories/task_repository.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/tasks/models/task_model.dart';
+import 'package:mindease_focus/shared/services/pomodoro_alert_service.dart';
 
 class TaskController extends ChangeNotifier {
   final TaskRepository repository;
+  final PomodoroAlertService? pomodoroAlertService;
 
   List<Task> _tasks = [];
   bool _isLoading = false;
   String? _error;
 
-  TaskController({required this.repository});
+  TaskController({
+    required this.repository,
+    this.pomodoroAlertService,
+  });
 
   List<Task> get tasks => _tasks;
   bool get isLoading => _isLoading;
@@ -115,6 +121,14 @@ class TaskController extends ChangeNotifier {
     _tasks[index] = oldTask.copyWith(status: newStatus);
     _error = null;
     notifyListeners();
+
+    // ✅ Se moveu para "In Progress", resetar contador de pomodoros
+    if (newStatus == TaskStatus.inProgress && pomodoroAlertService != null) {
+      pomodoroAlertService!.reset();
+      if (kDebugMode) {
+        print('TaskController: Tarefa movida para In Progress - Contador de pomodoros resetado');
+      }
+    }
 
     try {
       await repository.updateTaskStatus(taskId, newStatus);

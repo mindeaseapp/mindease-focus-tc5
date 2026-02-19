@@ -15,6 +15,12 @@ dependencies:
   # 🖼 SVG (opcional, mas já configurado)
   flutter_svg: ^2.2.3
   supabase_flutter: ^2.0.0
+  
+  # 🔔 Notificações locais
+  flutter_local_notifications: ^17.0.0
+  
+  # 🌐 Suporte Web para notificações
+  web: ^0.5.1
 
 dev_dependencies:
   flutter_test:
