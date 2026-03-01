@@ -76,19 +76,44 @@ Resultado esperado:
 - Flutter reconhecido
 - Dart reconhecido
 
+## 🔑 Variáveis de Ambiente e Supabase
+
+A arquitetura do projeto foi desenhada para facilitar o onboarding de novos Devs sem onerar a máquina local com a criação manual de diversos arquivos `.env`, seguindo as **Boas Práticas oficiais do Flutter para injeção nativa**.
+
+Criamos um arquivo de repositório centralizado em `config/dev.json`. Ele carrega as chaves **públicas** relativas ao backend do projeto (Supabase Web/Mobile). 
+
+> **Importante:** No Flutter, não se usa pacotes de `dotenv` como em Node.js. Toda variável do `dev.json` é injetada nativamente em "tempo de compilação" via flag `--dart-define-from-file`. 
+
 ---
 
-## ▶️ Rodar o projeto — WEB
+## ▶️ Rodar o projeto Localmente
 
-Na raiz do projeto:
+Nosso `package.json` já conta com os scripts nativos que abstraem todo esse comando de injeção automática para você de forma simples:
 
-### 1️⃣ flutter clean
-Limpa arquivos temporários e o cache de build do Flutter.
+### 🌐 Web (Porta Fixada em 3000)
+Para rodar a aplicação Web, utilizamos o gatilho NPM que irá injetar o `dev.json` no Dart e rodará o sistema cravado na porta 3000. Isso é crucial para evitar portas aleatórias do Flutter que poderiam causar problemas de CORS na comunicação com a API:
 
-Use quando:
-- houver mudanças na estrutura do projeto
-- ocorrerem erros inesperados de compilação
-- após grandes refatorações
+```bash
+npm start
+```
+*(Atalho para: `flutter run -d chrome --web-port 3000 --dart-define-from-file=config/dev.json`)*
+
+---
+
+### 📱 Mobile (Android/iOS)
+Para rodar a aplicação em emuladores ou dispositivos físicos conectados via USB, utilizamos o script focado no mobile que lê exatamente o mesmo arquivo, ativando as chaves no Dart:
+
+```bash
+npm run start:mobile
+```
+*(Atalho para: `flutter run --dart-define-from-file=config/dev.json`)*
+
+---
+
+### Comandos Auxiliares do Flutter
+
+**flutter clean**
+Limpa arquivos temporários e o cache de build.
 
 ```bash
 flutter clean
@@ -96,38 +121,12 @@ flutter clean
 
 ---
 
-### 2️⃣ flutter pub get
-Instala e resolve todas as dependências definidas no `pubspec.yaml`.
+**flutter pub get**
+Instala as dependências definidas no `pubspec.yaml`.
 
 ```bash
 flutter pub get
 ```
-
----
-
-### 3️⃣ flutter run -d chrome
-Executa a aplicação Flutter no navegador Google Chrome (Flutter Web).
-
-```bash
-flutter run -d chrome
-```
-
-> Caso o projeto ainda não tenha suporte Web:
-```bash
-flutter create .
-```
-
----
-
-### Dispositivo físico
-- Ativar Depuração USB
-- Conectar o celular
-
-```bash
-flutter run
-```
-
----
 
 ## ▶️ Rodar o projeto — iOS (macOS)
 

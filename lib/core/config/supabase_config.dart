@@ -1,4 +1,4 @@
 class SupabaseConfig {
-  static const String url = 'https://pbdhxxixktekjzgfucwm.supabase.co';
-  static const String anonKey = 'sb_publishable_mHOOBibYEftti209CvA_dg_4NG4atPg';
+  static const String url = String.fromEnvironment('SUPABASE_URL');
+  static const String anonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 }

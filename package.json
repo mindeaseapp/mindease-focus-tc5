@@ -8,6 +8,7 @@
   },
   "scripts": {
     "prepare": "husky",
-    "start": "flutter run -d chrome --web-port 3000"
+    "start": "flutter run -d chrome --web-port 3000 --dart-define-from-file=config/dev.json",
+    "start:mobile": "flutter run --dart-define-from-file=config/dev.json"
   }
 }
