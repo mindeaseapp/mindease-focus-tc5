@@ -4,6 +4,7 @@ import 'package:mindease_focus/features/profile/domain/models/user_preferences/u
 import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 import 'package:mindease_focus/features/profile/domain/usecases/get_preferences_usecase.dart';
 import 'package:mindease_focus/features/profile/domain/usecases/update_preferences_usecase.dart';
+import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 
 class ProfilePreferencesController extends ChangeNotifier {
   final GetPreferencesUseCase _getPreferencesUseCase;
@@ -12,6 +13,7 @@ class ProfilePreferencesController extends ChangeNotifier {
   // Debounce para evitar excesso de writes
   Timer? _debounceTimer;
   String? _currentUserId;
+  bool _hasLoadedPreferences = false;
 
   ProfilePreferencesController({
     required GetPreferencesUseCase getPreferencesUseCase,
@@ -197,5 +199,28 @@ class ProfilePreferencesController extends ChangeNotifier {
     notificationSounds = v;
     notifyListeners();
     _scheduleSave();
+  }
+
+  // ==========================
+  // Auto-load on Auth Change
+  // ==========================
+  void updateDependencies({AuthController? authController}) {
+    if (authController == null) return;
+    
+    final userId = authController.user.id;
+    final isAuthenticated = authController.isAuthenticated;
+    
+    // Se o usuário está autenticado e ainda não carregamos as preferências
+    // OU se o userId mudou (novo login)
+    if (isAuthenticated && userId.isNotEmpty) {
+      if (!_hasLoadedPreferences || _currentUserId != userId) {
+        _hasLoadedPreferences = true;
+        loadPreferences(userId);
+      }
+    } else {
+      // Usuário fez logout, resetar flag
+      _hasLoadedPreferences = false;
+      _currentUserId = null;
+    }
   }
 }
