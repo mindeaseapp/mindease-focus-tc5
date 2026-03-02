@@ -11,9 +11,9 @@ class PomodoroController extends ChangeNotifier {
   static const int _focusTime = 25 * 60;
   static const int _breakTime = 5 * 60;
 
-  final NotificationController? _notificationController;
-  final ProfilePreferencesController? _preferencesController;
-  final TaskController? _taskController;
+  NotificationController? _notificationController;
+  ProfilePreferencesController? _preferencesController;
+  TaskController? _taskController;
   String? _currentTaskId;
 
   PomodoroMode _mode = PomodoroMode.focus;
@@ -28,6 +28,16 @@ class PomodoroController extends ChangeNotifier {
   })  : _notificationController = notificationController,
         _preferencesController = preferencesController,
         _taskController = taskController;
+
+  void updateDependencies({
+    NotificationController? notificationController,
+    ProfilePreferencesController? preferencesController,
+    TaskController? taskController,
+  }) {
+    _notificationController = notificationController;
+    _preferencesController = preferencesController;
+    _taskController = taskController;
+  }
 
   // ── Getters ────────────────────────────────────────────────────────────────
 

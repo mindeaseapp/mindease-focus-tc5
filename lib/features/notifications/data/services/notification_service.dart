@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mindease_focus/features/notifications/data/services/notification_service_stub.dart'
+    if (dart.library.html) 'package:mindease_focus/features/notifications/data/services/notification_service_web.dart'
+    as web_impl;
 
 /// Serviço de notificações push do sistema operacional.
 ///
@@ -23,7 +26,7 @@ class NotificationService {
 
   Future<void> init() async {
     if (kIsWeb) {
-      await _requestWebPermission();
+      _requestWebPermission();
       return;
     }
 
@@ -106,13 +109,10 @@ class NotificationService {
 
   // ── Web — Notification API ─────────────────────────────────────────────────
 
-  Future<void> _requestWebPermission() async {
-    // Importação condicional para evitar erro em compilação nativa
+  void _requestWebPermission() {
     if (kIsWeb) {
       try {
-        // ignore: avoid_web_libraries_in_flutter
-        // Usar JS interop via eval para não quebrar compilação nativa
-        _webRequestPermission();
+        web_impl.webRequestPermission();
       } catch (_) {}
     }
   }
@@ -120,12 +120,7 @@ class NotificationService {
   void _showWebNotification({required String title, required String body}) {
     if (!kIsWeb) return;
     try {
-      _webShowNotification(title, body);
+      web_impl.webShowNotification(title, body);
     } catch (_) {}
   }
-
-  // Stub — implementação real injetada via conditional import se necessário.
-  // Em mobile/desktop estas funções nunca são chamadas (kIsWeb=false).
-  void _webRequestPermission() {}
-  void _webShowNotification(String title, String body) {}
 }

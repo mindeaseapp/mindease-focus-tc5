@@ -103,22 +103,6 @@ List<SingleChildWidget> get providers {
     // Notificações in-app (sininho) — deve vir antes do PomodoroController
     ChangeNotifierProvider(create: (_) => NotificationController()),
 
-    // Tasks & Focus
-    ChangeNotifierProvider(create: (_) => FocusModeController()),
-    ChangeNotifierProxyProvider2<NotificationController, ProfilePreferencesController, PomodoroController>(
-      create: (_) => PomodoroController(),
-      update: (_, notifCtrl, prefsCtrl, previous) {
-        if (previous == null) {
-          return PomodoroController(
-            notificationController: notifCtrl,
-            preferencesController: prefsCtrl,
-          );
-        }
-        // Reutiliza a instância existente (preserva o estado do timer)
-        return previous;
-      },
-    ),
-    
     ChangeNotifierProvider(
       create: (_) => TaskController(
         loadTasksUseCase: loadTasksUseCase,
@@ -128,5 +112,24 @@ List<SingleChildWidget> get providers {
       ),
     ),
     ChangeNotifierProvider(create: (_) => DashboardController()),
+
+    // Tasks & Focus
+    ChangeNotifierProvider(create: (_) => FocusModeController()),
+    ChangeNotifierProxyProvider3<NotificationController, ProfilePreferencesController, TaskController, PomodoroController>(
+      create: (_) => PomodoroController(),
+      update: (_, notifCtrl, prefsCtrl, taskCtrl, previous) {
+        previous?.updateDependencies(
+          notificationController: notifCtrl,
+          preferencesController: prefsCtrl,
+          taskController: taskCtrl,
+        );
+        return previous ??
+            PomodoroController(
+              notificationController: notifCtrl,
+              preferencesController: prefsCtrl,
+              taskController: taskCtrl,
+            );
+      },
+    ),
   ];
 }
