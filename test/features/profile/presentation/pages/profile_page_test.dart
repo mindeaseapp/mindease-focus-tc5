@@ -89,17 +89,7 @@ void main() {
       expect(find.text('Test User').first, findsOneWidget);
       expect(find.text('test@test.com').first, findsOneWidget);
       expect(find.text('Informações Pessoais'), findsOneWidget);
-      expect(find.text('Sair da Conta'), findsOneWidget);
-    });
-
-    testWidgets('calls logout on button press', (tester) async {
-       await tester.pumpWidget(createWidgetUnderTest());
-
-       await tester.ensureVisible(find.text('Sair da Conta'));
-       await tester.tap(find.text('Sair da Conta'), warnIfMissed: false);
-       await tester.pump();
-
-       verify(() => mockAuthController.logout()).called(1);
     });
   });
+
 }

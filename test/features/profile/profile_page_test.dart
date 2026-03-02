@@ -159,7 +159,6 @@ void main() {
 
     expect(find.text('Perfil'), findsAtLeastNWidgets(1));
     expect(find.text('Subtitulo'), findsOneWidget);
-    expect(find.text('Sair da Conta'), findsOneWidget);
     expect(find.text('Teste'), findsAtLeastNWidgets(1));
   });
 }

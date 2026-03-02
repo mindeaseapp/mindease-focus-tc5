@@ -144,91 +144,77 @@ class _ProfilePageState extends State<ProfilePage> {
           child: CenteredConstrained(
             maxWidth: AppSizes.maxProfileWidth,
             padding: ProfilePageStyles.contentPadding(context),
-            child: SingleChildScrollView(
-              physics: ProfilePageStyles.scrollPhysics,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Align(
-                    alignment: ProfilePageStyles.headerAlignment(context),
-                    child: Column(
-                      crossAxisAlignment:
-                          ProfilePageStyles.headerCrossAxisAlignment(context),
-                      children: [
-                        Semantics(
-                          header: true,
-                          child: Text(
-                            viewModel.pageTitle,
-                            textAlign: ProfilePageStyles.headerTextAlign(context),
-                            style: ProfilePageStyles.titleStyle(context),
-                          ),
-                        ),
-                        AppSpacing.gapXs,
-                        Text(
-                          viewModel.pageSubtitle,
-                          textAlign: ProfilePageStyles.headerTextAlign(context),
-                          style: ProfilePageStyles.subtitleStyle(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                  AppSpacing.gapXl,
-
-                  // 1) Identidade REAL do usuário
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.md),
-                      child: ProfileIdentityTile(
-                        name: userEntity.name,
-                        email: userEntity.email,
-                        onTap: () {},
-                      ),
-                    ),
-                  ),
-                  AppSpacing.gapLg,
-
-                  // 2) Seção do ViewModel
-                  SettingsSectionCard(
-                    semanticsLabel: 'Informações pessoais',
-                    icon: Icons.person_outline,
-                    title: 'Informações Pessoais',
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Align(
+                  alignment: ProfilePageStyles.headerAlignment(context),
+                  child: Column(
+                    crossAxisAlignment:
+                        ProfilePageStyles.headerCrossAxisAlignment(context),
                     children: [
-                      for (final section in viewModel.sections)
-                        for (final tile in section.tiles) SettingsTile(data: tile),
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          viewModel.pageTitle,
+                          textAlign: ProfilePageStyles.headerTextAlign(context),
+                          style: ProfilePageStyles.titleStyle(context),
+                        ),
+                      ),
+                      AppSpacing.gapXs,
+                      Text(
+                        viewModel.pageSubtitle,
+                        textAlign: ProfilePageStyles.headerTextAlign(context),
+                        style: ProfilePageStyles.subtitleStyle(context),
+                      ),
                     ],
                   ),
-                  AppSpacing.gapLg,
+                ),
+                AppSpacing.gapXl,
 
-                  // 3) Painel Cognitivo
-                  CognitivePanelCard(controller: _cognitiveController),
-                  AppSpacing.gapLg,
-
-                  // 4) Modo Foco
-                  const FocusModeCard(),
-                  AppSpacing.gapLg,
-
-                  // 5) Alertas e Preferências
-                  CognitiveAlertsCard(controller: prefs),
-                  AppSpacing.gapLg,
-
-                  // 6) Notificações
-                  NotificationsCard(controller: prefs),
-                  AppSpacing.gapXl,
-
-                  // 7) Botão logout
-                  SizedBox(
-                    height: ProfilePageStyles.logoutButtonHeight,
-                    child: OutlinedButton.icon(
-                      onPressed: logout,
-                      style: ProfilePageStyles.logoutButtonStyle(),
-                      icon: const Icon(Icons.logout_rounded),
-                      label: const Text('Sair da Conta'),
+                // 1) Identidade REAL do usuário
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: ProfileIdentityTile(
+                      name: userEntity.name,
+                      email: userEntity.email,
+                      onTap: () {},
                     ),
                   ),
-                  AppSpacing.gapXl,
-                ],
-              ),
+                ),
+                AppSpacing.gapLg,
+
+                // 2) Seção do ViewModel
+                SettingsSectionCard(
+                  semanticsLabel: 'Informações pessoais',
+                  icon: Icons.person_outline,
+                  title: 'Informações Pessoais',
+                  children: [
+                    for (final section in viewModel.sections)
+                      for (final tile in section.tiles) SettingsTile(data: tile),
+                  ],
+                ),
+                AppSpacing.gapLg,
+
+                // 3) Painel Cognitivo
+                CognitivePanelCard(controller: _cognitiveController),
+                AppSpacing.gapLg,
+
+                // 4) Modo Foco
+                const FocusModeCard(),
+                AppSpacing.gapLg,
+
+                // 5) Alertas e Preferências
+                CognitiveAlertsCard(controller: prefs),
+                AppSpacing.gapLg,
+
+                // 6) Notificações
+                NotificationsCard(controller: prefs),
+                AppSpacing.gapXl,
+
+              ],
             ),
           ),
         ),

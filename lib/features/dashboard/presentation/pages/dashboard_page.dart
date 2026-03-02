@@ -151,65 +151,62 @@ class _DashboardPageState extends State<DashboardPage> {
           child: CenteredConstrained(
             maxWidth: DashboardPageStyles.maxWidth,
             padding: DashboardPageStyles.contentPadding(context),
-            child: SingleChildScrollView(
-              physics: DashboardPageStyles.scrollPhysics,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      'Dashboard',
-                      style: DashboardPageStyles.pageTitleStyle(context),
-                    ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Semantics(
+                  header: true,
+                  child: Text(
+                    'Dashboard',
+                    style: DashboardPageStyles.pageTitleStyle(context),
                   ),
-                  if (!hideDistractions) ...[
-                    AppSpacing.gapSm,
-                    Text(
-                      'Bem-vindo de volta! Aqui está seu resumo de hoje.',
-                      style: DashboardPageStyles.pageSubtitleStyle(context),
-                    ),
-                  ],
-                  AppSpacing.gapXl,
+                ),
+                if (!hideDistractions) ...[
+                  AppSpacing.gapSm,
+                  Text(
+                    'Bem-vindo de volta! Aqui está seu resumo de hoje.',
+                    style: DashboardPageStyles.pageSubtitleStyle(context),
+                  ),
+                ],
+                AppSpacing.gapXl,
 
-                  if (!isFocusMode) ...[
-                    _MetricsGrid(
-                      metrics: metrics,
-                      highContrast: highContrast,
-                      hideDistractions: hideDistractions,
-                    ),
-                    AppSpacing.gapXl,
-                  ],
-
-                  _FocusModeBanner(
-                    onConfigure: () => Navigator.of(context).pushNamed(
-                      AppRoutes.tasks,
-                      arguments: 0,
-                    ),
+                if (!isFocusMode) ...[
+                  _MetricsGrid(
+                    metrics: metrics,
+                    highContrast: highContrast,
                     hideDistractions: hideDistractions,
                   ),
                   AppSpacing.gapXl,
-
-                  if (!isFocusMode) ...[
-                    _RecentTasksCard(
-                      tasks: recentTasks,
-                      highContrast: highContrast,
-                      onSeeAll: () => Navigator.of(context).pushNamed(
-                        AppRoutes.tasks,
-                        arguments: 1,
-                      ),
-                    ),
-                    
-                    AppSpacing.gapXl,
-                    _TipOfDayCard(
-                      highContrast: highContrast,
-                      hideDistractions: hideDistractions,
-                    ),
-
-                    AppSpacing.gapXl,
-                  ],
                 ],
-              ),
+
+                _FocusModeBanner(
+                  onConfigure: () => Navigator.of(context).pushNamed(
+                    AppRoutes.tasks,
+                    arguments: 0,
+                  ),
+                  hideDistractions: hideDistractions,
+                ),
+                AppSpacing.gapXl,
+
+                if (!isFocusMode) ...[
+                  _RecentTasksCard(
+                    tasks: recentTasks,
+                    highContrast: highContrast,
+                    onSeeAll: () => Navigator.of(context).pushNamed(
+                      AppRoutes.tasks,
+                      arguments: 1,
+                    ),
+                  ),
+                  
+                  AppSpacing.gapXl,
+                  _TipOfDayCard(
+                    highContrast: highContrast,
+                    hideDistractions: hideDistractions,
+                  ),
+
+                  AppSpacing.gapXl,
+                ],
+              ],
             ),
           ),
         ),
