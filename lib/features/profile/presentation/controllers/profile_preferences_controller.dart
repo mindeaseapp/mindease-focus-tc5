@@ -163,28 +163,36 @@ class ProfilePreferencesController extends ChangeNotifier {
   }
 
   void setBreakReminder(bool v) {
-    if (!_complexity.allowedCognitiveAlerts.contains(CognitiveAlertSetting.breakReminder)) return;
+    if (!_complexity.allowedCognitiveAlerts.contains(CognitiveAlertSetting.breakReminder)) {
+      return;
+    }
     breakReminder = v;
     notifyListeners();
     _scheduleSave();
   }
 
   void setTaskTimeAlert(bool v) {
-    if (!_complexity.allowedCognitiveAlerts.contains(CognitiveAlertSetting.taskTimeAlert)) return;
+    if (!_complexity.allowedCognitiveAlerts.contains(CognitiveAlertSetting.taskTimeAlert)) {
+      return;
+    }
     taskTimeAlert = v;
     notifyListeners();
     _scheduleSave();
   }
 
   void setSmoothTransition(bool v) {
-    if (!_complexity.allowedCognitiveAlerts.contains(CognitiveAlertSetting.smoothTransition)) return;
+    if (!_complexity.allowedCognitiveAlerts.contains(CognitiveAlertSetting.smoothTransition)) {
+      return;
+    }
     smoothTransition = v;
     notifyListeners();
     _scheduleSave();
   }
 
   void setPushNotifications(bool v) {
-    if (!_complexity.allowedNotifications.contains(NotificationSetting.pushNotifications)) return;
+    if (!_complexity.allowedNotifications.contains(NotificationSetting.pushNotifications)) {
+      return;
+    }
     pushNotifications = v;
     _enforceDependencies();
     notifyListeners();
@@ -192,8 +200,12 @@ class ProfilePreferencesController extends ChangeNotifier {
   }
 
   void setNotificationSounds(bool v) {
-    if (!_complexity.allowedNotifications.contains(NotificationSetting.notificationSounds)) return;
-    if (!pushNotifications) return;
+    if (!_complexity.allowedNotifications.contains(NotificationSetting.notificationSounds)) {
+      return;
+    }
+    if (!pushNotifications) {
+      return;
+    }
     notificationSounds = v;
     notifyListeners();
     _scheduleSave();
