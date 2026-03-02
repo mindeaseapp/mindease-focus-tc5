@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -12,6 +11,7 @@ import 'package:mindease_focus/core/navigation/navigation_service.dart';
 import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/pomodoro_controller.dart';
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
+import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
 
 class MockTaskController extends Mock implements TaskController {}
 class MockAuthController extends Mock implements AuthController {}
@@ -19,6 +19,7 @@ class MockFocusModeController extends Mock implements FocusModeController {}
 class MockProfilePreferencesController extends Mock implements ProfilePreferencesController {}
 class MockNavigationService extends Mock implements NavigationService {}
 class MockPomodoroController extends Mock implements PomodoroController {}
+class MockNotificationController extends Mock implements NotificationController {}
 
 void main() {
   late MockTaskController mockTaskController;
@@ -27,6 +28,7 @@ void main() {
   late MockProfilePreferencesController mockProfilePreferencesController;
   late MockNavigationService mockNavigationService;
   late MockPomodoroController mockPomodoroController;
+  late MockNotificationController mockNotificationController;
 
   setUp(() {
     mockTaskController = MockTaskController();
@@ -35,6 +37,7 @@ void main() {
     mockProfilePreferencesController = MockProfilePreferencesController();
     mockNavigationService = MockNavigationService();
     mockPomodoroController = MockPomodoroController();
+    mockNotificationController = MockNotificationController();
 
     when(() => mockTaskController.tasks).thenReturn([
       const Task(id: '1', title: 'Task 1', status: TaskStatus.todo),
@@ -55,9 +58,10 @@ void main() {
     when(() => mockPomodoroController.isRunning).thenReturn(false);
     when(() => mockPomodoroController.mode).thenReturn(PomodoroMode.focus);
     when(() => mockPomodoroController.progress).thenReturn(0.0);
-    
-    // Add missing totalTime getter mock if needed by progress calculation or UI
     when(() => mockPomodoroController.totalTime).thenReturn(1500);
+
+    when(() => mockNotificationController.unreadCount).thenReturn(0);
+    when(() => mockNotificationController.notifications).thenReturn([]);
   });
 
   Widget createWidgetUnderTest() {
@@ -68,6 +72,7 @@ void main() {
         ChangeNotifierProvider<FocusModeController>.value(value: mockFocusModeController),
         ChangeNotifierProvider<ProfilePreferencesController>.value(value: mockProfilePreferencesController),
         ChangeNotifierProvider<PomodoroController>.value(value: mockPomodoroController),
+        ChangeNotifierProvider<NotificationController>.value(value: mockNotificationController),
         Provider<NavigationService>.value(value: mockNavigationService),
       ],
       child: const MaterialApp(
@@ -89,9 +94,8 @@ void main() {
        await tester.pumpWidget(createWidgetUnderTest());
        await tester.pumpAndSettle();
 
-       // Should start on first tab (Focus) default
        expect(find.text('Seu tempo de foco'), findsOneWidget);
-       expect(find.text('25:00'), findsOneWidget); // Default pomodoro mocked
+       expect(find.text('25:00'), findsOneWidget);
     });
 
     testWidgets('renders Kanban in Tasks tab', (tester) async {
@@ -105,13 +109,8 @@ void main() {
        await tester.tap(find.text('Tarefas').first);
        await tester.pumpAndSettle();
 
-       // Check if KanbanBoard is present (it has columns Todo, Doing, Done)
-       // We can check by text if standard
-       expect(find.byType(ListView), findsOneWidget); // KanbanBoard uses scrollable
-       // Or verify loadTasks called
-       verify(() => mockTaskController.loadTasks()).called(1); // Once on init
-       // It seems loadTasks is called in _KanbanTabContent initState too?
-       // Yes.
+       expect(find.byType(ListView), findsOneWidget);
+       verify(() => mockTaskController.loadTasks()).called(1);
     });
     
     testWidgets('shows loading indicator when tasks loading', (tester) async {
@@ -126,9 +125,8 @@ void main() {
        await tester.pumpAndSettle();
 
        await tester.tap(find.widgetWithText(Tab, 'Tarefas'));
-       await tester.pump(const Duration(milliseconds: 200)); // Start animation
-       await tester.pump(const Duration(milliseconds: 200)); // Mid animation
-       await tester.pump(const Duration(seconds: 1)); // Finish animation
+       await tester.pump(const Duration(milliseconds: 200));
+       await tester.pump(const Duration(seconds: 1));
        
        expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });

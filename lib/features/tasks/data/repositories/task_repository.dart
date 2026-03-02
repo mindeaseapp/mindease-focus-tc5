@@ -16,12 +16,14 @@ class TaskRepository {
     required String title,
     required String description,
     required TaskStatus status,
+    int? pomodoroCount,
   }) async {
     return dataSource.updateTask(
       id,
       title: title,
       description: description,
       status: status,
+      pomodoroCount: pomodoroCount,
     );
   }
 

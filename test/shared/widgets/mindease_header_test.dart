@@ -1,36 +1,43 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header.dart';
+import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
 
 void main() {
   group('MindEaseHeader', () {
-    testWidgets('renders desktop layout on wide screen', (tester) async {
-      tester.view.physicalSize = const Size(1024, 768);
-      tester.view.devicePixelRatio = 1.0;
-
-      await tester.pumpWidget(
-        MaterialApp(
+    Widget createHeader({
+      MindEaseNavItem current = MindEaseNavItem.dashboard,
+      String userLabel = 'User',
+      ValueChanged<MindEaseNavItem>? onNavigate,
+    }) {
+      return ChangeNotifierProvider(
+        create: (_) => NotificationController(),
+        child: MaterialApp(
           home: Scaffold(
             appBar: MindEaseHeader(
-              current: MindEaseNavItem.dashboard,
-              onNavigate: (_) {},
-              userLabel: 'User',
+              current: current,
+              onNavigate: onNavigate ?? (_) {},
+              userLabel: userLabel,
               onLogout: () {},
             ),
           ),
         ),
       );
+    }
+
+    testWidgets('renders desktop layout on wide screen', (tester) async {
+      tester.view.physicalSize = const Size(1024, 768);
+      tester.view.devicePixelRatio = 1.0;
+
+      await tester.pumpWidget(createHeader());
 
       expect(find.text('MindEase'), findsOneWidget);
       expect(find.text('Dashboard'), findsOneWidget);
       expect(find.text('Tarefas'), findsOneWidget);
-      expect(find.text('Perfil'), findsOneWidget); // In nav bar
-      // User menu also has "Perfil" potentially?
-      // Check for user label
+      expect(find.text('Perfil'), findsOneWidget);
       expect(find.text('User'), findsOneWidget);
 
-      // Mobile menu button should not exist
       expect(find.byIcon(Icons.menu), findsNothing);
       
       addTearDown(() {
@@ -43,27 +50,10 @@ void main() {
       tester.view.physicalSize = const Size(400, 800);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            appBar: MindEaseHeader(
-              current: MindEaseNavItem.dashboard,
-              onNavigate: (_) {},
-              userLabel: 'User',
-              onLogout: () {},
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(createHeader());
 
-      // Mobile layout hides MindEase text (or shows it differently?) 
-      // Code says: label: '' when mobile. So 'MindEase' text not shown.
       expect(find.text('MindEase'), findsNothing);
-      
-      // Nav items should be hidden (in drawer)
       expect(find.text('Dashboard'), findsNothing);
-
-      // Should have menu button
       expect(find.byIcon(Icons.menu), findsOneWidget);
 
       addTearDown(() {
@@ -78,18 +68,9 @@ void main() {
       
       MindEaseNavItem? navigatedTo;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            appBar: MindEaseHeader(
-              current: MindEaseNavItem.dashboard,
-              onNavigate: (item) => navigatedTo = item,
-              userLabel: 'User',
-              onLogout: () {},
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(createHeader(
+        onNavigate: (item) => navigatedTo = item,
+      ));
 
       await tester.tap(find.text('Tarefas'));
       await tester.pumpAndSettle();

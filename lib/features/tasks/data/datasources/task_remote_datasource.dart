@@ -9,6 +9,7 @@ abstract class TaskRemoteDataSource {
     required String title,
     required String description,
     required TaskStatus status,
+    int? pomodoroCount,
   });
   Future<void> updateTaskStatus(String id, TaskStatus status);
   Future<void> deleteTask(String id);
@@ -46,6 +47,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
     required String title,
     required String description,
     required TaskStatus status,
+    int? pomodoroCount,
   }) async {
     final statusString = status.toString().split('.').last;
 
@@ -55,6 +57,7 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           'title': title,
           'description': description.trim().isEmpty ? null : description.trim(),
           'status': statusString,
+          'pomodoro_count': pomodoroCount,
         })
         .eq('id', id)
         .select()

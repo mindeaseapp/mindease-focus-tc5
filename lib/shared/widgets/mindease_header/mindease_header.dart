@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header_styles.dart';
+import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
 
 enum MindEaseNavItem { dashboard, tasks, profile }
 
 class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
   final MindEaseNavItem current;
   final ValueChanged<MindEaseNavItem> onNavigate;
-
   final String userLabel;
-
   final VoidCallback onLogout;
-
   final Widget? logo;
 
   const MindEaseHeader({
@@ -45,19 +44,11 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: MindEaseHeaderStyles.backgroundColor(context),
       surfaceTintColor: MindEaseHeaderStyles.surfaceTintColor,
       titleSpacing: isMobile ? 0 : MindEaseHeaderStyles.titleSpacing,
-
       title: isMobile
-          ? _BrandTitle(
-              logo: logo,
-              label: '',
-            )
+          ? _BrandTitle(logo: logo, label: '')
           : Row(
               children: [
-                _BrandTitle(
-                  logo: logo,
-                  label: 'MindEase',
-                ),
-
+                _BrandTitle(logo: logo, label: 'MindEase'),
                 Expanded(
                   child: Center(
                     child: ClipRect(
@@ -72,10 +63,9 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
                 ),
-
                 ConstrainedBox(
                   constraints: const BoxConstraints(
-                    maxWidth: MindEaseHeaderStyles.userMaxWidth,
+                    maxWidth: MindEaseHeaderStyles.userMaxWidth + 60,
                   ),
                   child: _UserMenu(
                     userLabel: userLabel,
@@ -83,13 +73,18 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
                     onLogout: onLogout,
                   ),
                 ),
-
                 MindEaseHeaderStyles.rightGap,
               ],
             ),
-
       actions: isMobile
           ? <Widget>[
+              // Sininho com contador — mobile
+              Consumer<NotificationController>(
+                builder: (_, nc, __) => _NotificationBell(
+                  unreadCount: nc.unreadCount,
+                  onTap: () => nc.markAllAsRead(),
+                ),
+              ),
               Builder(
                 builder: (ctx) => IconButton(
                   tooltip: 'Abrir menu',
@@ -103,6 +98,8 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+
+// ── Brand ──────────────────────────────────────────────────────────────────────
 
 class _BrandTitle extends StatelessWidget {
   final Widget? logo;
@@ -146,14 +143,13 @@ class _BrandTitle extends StatelessWidget {
   }
 }
 
+// ── Nav bar desktop ─────────────────────────────────────────────────────────────
+
 class _WebNavBar extends StatelessWidget {
   final MindEaseNavItem current;
   final ValueChanged<MindEaseNavItem> onNavigate;
 
-  const _WebNavBar({
-    required this.current,
-    required this.onNavigate,
-  });
+  const _WebNavBar({required this.current, required this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
@@ -241,6 +237,8 @@ class _WebNavItem extends StatelessWidget {
   }
 }
 
+// ── User Menu (desktop) ─────────────────────────────────────────────────────────
+
 class _UserMenu extends StatelessWidget {
   final String userLabel;
   final ValueChanged<MindEaseNavItem> onNavigate;
@@ -254,46 +252,108 @@ class _UserMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final nc = context.watch<NotificationController>();
+
     return Semantics(
       label: 'Menu do usuário: $userLabel',
       button: true,
-      child: PopupMenuButton<String>(
-        tooltip: 'Abrir menu do usuário',
-        onSelected: (value) {
-          if (value == 'profile') onNavigate(MindEaseNavItem.profile);
-          if (value == 'logout') onLogout();
-        },
-        itemBuilder: (_) => const [
-          PopupMenuItem(value: 'profile', child: Text('Perfil')),
-          PopupMenuItem(value: 'logout', child: Text('Sair')),
-        ],
-        child: InkWell(
-          borderRadius: MindEaseHeaderStyles.inkRadius,
-          overlayColor: MindEaseHeaderStyles.overlayColor(context),
-          child: Padding(
-            padding: MindEaseHeaderStyles.userPadding,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.account_circle,
-                  size: MindEaseHeaderStyles.userIconSize,
-                  color: MindEaseHeaderStyles.userIconColor(context),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Sininho com contador ao lado do nome (desktop)
+          _NotificationBell(
+            unreadCount: nc.unreadCount,
+            onTap: () => nc.markAllAsRead(),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          PopupMenuButton<String>(
+            tooltip: 'Abrir menu do usuário',
+            onSelected: (value) {
+              if (value == 'profile') onNavigate(MindEaseNavItem.profile);
+              if (value == 'logout') onLogout();
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(value: 'profile', child: Text('Perfil')),
+              PopupMenuItem(value: 'logout', child: Text('Sair')),
+            ],
+            child: InkWell(
+              borderRadius: MindEaseHeaderStyles.inkRadius,
+              overlayColor: MindEaseHeaderStyles.overlayColor(context),
+              child: Padding(
+                padding: MindEaseHeaderStyles.userPadding,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.account_circle,
+                      size: MindEaseHeaderStyles.userIconSize,
+                      color: MindEaseHeaderStyles.userIconColor(context),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Flexible(
+                      child: Text(
+                        userLabel,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: MindEaseHeaderStyles.userLabelStyle(context),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                Flexible(
-                  child: Text(
-                    userLabel,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: MindEaseHeaderStyles.userLabelStyle(context),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
+    );
+  }
+}
+
+// ── Sininho com contador ────────────────────────────────────────────────────────
+
+class _NotificationBell extends StatelessWidget {
+  final int unreadCount;
+  final VoidCallback onTap;
+
+  const _NotificationBell({required this.unreadCount, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        IconButton(
+          key: const Key('notification_bell'),
+          onPressed: onTap,
+          icon: const Icon(Icons.notifications_none_outlined),
+          tooltip: 'Notificações',
+        ),
+        if (unreadCount > 0)
+          Positioned(
+            right: 8,
+            top: 8,
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.error,
+                shape: BoxShape.circle,
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 16,
+                minHeight: 16,
+              ),
+              child: Text(
+                '$unreadCount',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

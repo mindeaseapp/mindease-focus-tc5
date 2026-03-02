@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:mindease_focus/core/config/supabase_config.dart';
+import 'package:mindease_focus/features/notifications/data/services/notification_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,8 @@ import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-
+  // Inicializa notificações push (Android/iOS/Desktop/Web)
+  await NotificationService().init();
 
   await Supabase.initialize(
     url: SupabaseConfig.url,

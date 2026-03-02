@@ -13,6 +13,7 @@ import 'package:mindease_focus/core/navigation/navigation_service.dart';
 import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
 import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
+import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
 
 class MockDashboardController extends Mock implements DashboardController {}
 class MockTaskController extends Mock implements TaskController {}
@@ -60,6 +61,7 @@ void main() {
         ChangeNotifierProvider<AuthController>.value(value: mockAuthController),
         ChangeNotifierProvider<FocusModeController>.value(value: mockFocusModeController),
         ChangeNotifierProvider<ProfilePreferencesController>.value(value: mockProfilePreferencesController),
+        ChangeNotifierProvider<NotificationController>(create: (_) => NotificationController()),
         Provider<NavigationService>.value(value: mockNavigationService),
       ],
       child: const MaterialApp(

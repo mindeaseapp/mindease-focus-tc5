@@ -12,6 +12,7 @@ import 'package:mindease_focus/features/tasks/presentation/controllers/task_cont
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
 import 'package:mindease_focus/core/navigation/navigation_service.dart';
 
+import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
 import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 
@@ -141,6 +142,7 @@ void main() {
           ChangeNotifierProvider<FocusModeController>(create: (_) => FakeFocusModeController()),
           ChangeNotifierProvider<TaskController>(create: (_) => FakeTaskController()),
           ChangeNotifierProvider<DashboardController>(create: (_) => FakeDashboardController()),
+          ChangeNotifierProvider<NotificationController>(create: (_) => NotificationController()),
           ChangeNotifierProvider<ProfilePreferencesController>(create: (_) => FakeProfilePreferencesController()),
         ],
         child: const MaterialApp(

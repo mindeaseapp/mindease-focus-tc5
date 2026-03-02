@@ -14,6 +14,7 @@ import 'package:mindease_focus/features/auth/presentation/controllers/reset_pass
 import 'package:mindease_focus/features/auth/presentation/controllers/update_password_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/pomodoro_controller.dart';
+import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
 import 'package:mindease_focus/features/tasks/presentation/controllers/task_controller.dart';
 import 'package:mindease_focus/features/dashboard/presentation/controllers/dashboard_controller.dart';
 import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
@@ -99,9 +100,24 @@ List<SingleChildWidget> get providers {
       ),
     ),
 
+    // Notificações in-app (sininho) — deve vir antes do PomodoroController
+    ChangeNotifierProvider(create: (_) => NotificationController()),
+
     // Tasks & Focus
     ChangeNotifierProvider(create: (_) => FocusModeController()),
-    ChangeNotifierProvider(create: (_) => PomodoroController()),
+    ChangeNotifierProxyProvider2<NotificationController, ProfilePreferencesController, PomodoroController>(
+      create: (_) => PomodoroController(),
+      update: (_, notifCtrl, prefsCtrl, previous) {
+        if (previous == null) {
+          return PomodoroController(
+            notificationController: notifCtrl,
+            preferencesController: prefsCtrl,
+          );
+        }
+        // Reutiliza a instância existente (preserva o estado do timer)
+        return previous;
+      },
+    ),
     
     ChangeNotifierProvider(
       create: (_) => TaskController(

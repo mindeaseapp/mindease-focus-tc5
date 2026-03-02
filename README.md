@@ -173,6 +173,15 @@ Antes de cada commit:
 
 ---
 
+### 🔔 Notificações Push
+
+O MindEase Focus agora conta com um sistema de notificações push nativas para Android e Web:
+
+- **Android**: Utiliza o plugin `flutter_local_notifications` para exibir alertas do sistema quando o timer Pomodoro termina.
+- **Web**: Utiliza a `Notification API` do navegador para garantir que você não perca o fim de uma sessão, mesmo se estiver em outra aba.
+- **Configurável**: Os alertas podem ser ativados/desativados nas configurações de perfil (Alerta de Tempo da Tarefa e Notificações Push).
+- **In-app**: Um contador de notificações (sininho) no cabeçalho permite acompanhar o histórico de alertas.
+
 ## ✍️ Padrão de Commit (Conventional Commits)
 
 Exemplos válidos:

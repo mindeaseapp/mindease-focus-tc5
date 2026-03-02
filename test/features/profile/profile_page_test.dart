@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mindease_focus/features/profile/presentation/pages/profile_page.dart';
 import 'package:mindease_focus/features/profile/domain/models/profile_view/profile_view_model.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
 import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/theme_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
@@ -144,6 +145,9 @@ void main() {
           ),
           ChangeNotifierProvider<ThemeController>(
             create: (_) => MockThemeController(),
+          ),
+          ChangeNotifierProvider<NotificationController>(
+            create: (_) => NotificationController(),
           ),
           ChangeNotifierProvider<FocusModeController>(
             create: (_) => FakeFocusModeController(enabled: false),

@@ -11,12 +11,14 @@ class UpdateTaskUseCase {
     required String title,
     required String description,
     required TaskStatus status,
+    int? pomodoroCount,
   }) async {
     return await _repository.updateTask(
       taskId,
       title: title,
       description: description,
       status: status,
+      pomodoroCount: pomodoroCount,
     );
   }
 

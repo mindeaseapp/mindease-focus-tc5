@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
+import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
 import 'package:mindease_focus/features/tasks/domain/usecases/load_tasks_usecase.dart';
 import 'package:mindease_focus/features/tasks/domain/usecases/add_task_usecase.dart';
 import 'package:mindease_focus/features/tasks/domain/usecases/update_task_usecase.dart';
@@ -143,6 +144,43 @@ class TaskController extends ChangeNotifier {
     } catch (e) {
       _tasks.add(taskBackup);
       _error = 'Erro ao deletar tarefa: $e';
+      notifyListeners();
+    }
+  }
+  Future<void> incrementPomodoroCount(
+    String taskId, {
+    NotificationController? notificationController,
+    bool taskTimeAlertEnabled = true,
+  }) async {
+    final index = _tasks.indexWhere((t) => t.id == taskId);
+    if (index == -1) return;
+
+    final task = _tasks[index];
+    final updatedTask = task.copyWith(
+      pomodoroCount: task.pomodoroCount + 1,
+    );
+
+    _tasks[index] = updatedTask;
+    notifyListeners();
+
+    // Lógica de alerta: a cada 4 pomodoros (exemplo)
+    if (taskTimeAlertEnabled && updatedTask.pomodoroCount % 4 == 0) {
+      notificationController?.addNotification(
+        title: '🎯 Meta alcançada!',
+        body: 'Você completou ${updatedTask.pomodoroCount} pomodoros na tarefa: ${task.title}.',
+      );
+    }
+
+    try {
+      await _updateTaskUseCase(
+        taskId,
+        title: updatedTask.title,
+        description: updatedTask.description ?? '',
+        status: updatedTask.status,
+        pomodoroCount: updatedTask.pomodoroCount,
+      );
+    } catch (e) {
+      _error = 'Erro ao atualizar contagem: $e';
       notifyListeners();
     }
   }

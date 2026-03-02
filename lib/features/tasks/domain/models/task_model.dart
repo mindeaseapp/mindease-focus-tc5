@@ -50,7 +50,8 @@ class Task {
   final String title;
   final String? description;
   final TaskStatus status;
-  final String? timeSpent; // Campo opcional (ainda não vem do banco)
+  final String? timeSpent; 
+  final int pomodoroCount;
 
   const Task({
     required this.id,
@@ -58,6 +59,7 @@ class Task {
     this.description,
     required this.status,
     this.timeSpent,
+    this.pomodoroCount = 0,
   });
 
   // ✅ CONVERTER DE SUPABASE (JSON) -> PARA TASK
@@ -72,6 +74,7 @@ class Task {
         orElse: () => TaskStatus.todo,
       ),
       timeSpent: null, 
+      pomodoroCount: json['pomodoro_count'] ?? 0,
     );
   }
 
@@ -83,6 +86,7 @@ class Task {
       'description': description,
       // Salva no banco apenas a string: 'todo', 'inProgress' etc
       'status': status.toString().split('.').last,
+      'pomodoro_count': pomodoroCount,
     };
   }
 
@@ -92,6 +96,7 @@ class Task {
     String? description,
     TaskStatus? status,
     String? timeSpent,
+    int? pomodoroCount,
   }) {
     return Task(
       id: id ?? this.id,
@@ -99,6 +104,7 @@ class Task {
       description: description ?? this.description,
       status: status ?? this.status,
       timeSpent: timeSpent ?? this.timeSpent,
+      pomodoroCount: pomodoroCount ?? this.pomodoroCount,
     );
   }
 

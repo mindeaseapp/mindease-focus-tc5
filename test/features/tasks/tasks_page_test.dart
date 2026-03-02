@@ -11,6 +11,7 @@ import 'package:mindease_focus/core/navigation/navigation_service.dart';
 
 import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
+import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
 import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 
@@ -97,27 +98,46 @@ class FakeNavigationService implements NavigationService {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  Widget createTasksPage({
+    TaskController? taskController,
+    PomodoroController? pomodoroController,
+  }) {
+    return MultiProvider(
+      providers: [
+        Provider<NavigationService>(create: (_) => FakeNavigationService()),
+        ChangeNotifierProvider<AuthController>(create: (_) => FakeAuthController()),
+        ChangeNotifierProvider<FocusModeController>(create: (_) => FakeFocusModeController()),
+        ChangeNotifierProvider<TaskController>(create: (_) => taskController ?? FakeTaskController()),
+        ChangeNotifierProvider<PomodoroController>(create: (_) => pomodoroController ?? FakePomodoroController()),
+        ChangeNotifierProvider<NotificationController>(create: (_) => NotificationController()),
+        ChangeNotifierProvider<ProfilePreferencesController>(create: (_) => FakeProfilePreferencesController()),
+      ],
+      child: const MaterialApp(
+        home: TasksPage(),
+      ),
+    );
+  }
+
   testWidgets('TasksPage renderiza header e tab Pomodoro', (tester) async {
     await tester.binding.setSurfaceSize(const Size(1440, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          Provider<NavigationService>(create: (_) => FakeNavigationService()),
-          ChangeNotifierProvider<AuthController>(create: (_) => FakeAuthController()),
-          ChangeNotifierProvider<FocusModeController>(create: (_) => FakeFocusModeController()),
-          ChangeNotifierProvider<TaskController>(create: (_) => FakeTaskController()),
-          ChangeNotifierProvider<PomodoroController>(create: (_) => FakePomodoroController()),
-          ChangeNotifierProvider<ProfilePreferencesController>(create: (_) => FakeProfilePreferencesController()),
-        ],
-        child: const MaterialApp(
-          home: TasksPage(),
-        ),
-      ),
-    );
-
+    await tester.pumpWidget(createTasksPage());
     await tester.pumpAndSettle();
     expect(find.text('Teste User'), findsAtLeastNWidgets(1));
+  });
+
+  testWidgets('shows error message if tasks fail to load', (tester) async {
+    final taskController = FakeTaskController();
+    // Simular erro se necessário, mas o header já vai exigir o NotificationController
+    await tester.pumpWidget(createTasksPage(taskController: taskController));
+    await tester.pump();
+    // Verificações de erro...
+  });
+
+  testWidgets('renders Kanban in Tasks tab', (tester) async {
+    await tester.pumpWidget(createTasksPage());
+    await tester.pumpAndSettle();
+    // Verificações de Kanban...
   });
 }

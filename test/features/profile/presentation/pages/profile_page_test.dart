@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -6,11 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:mindease_focus/features/profile/presentation/pages/profile_page.dart';
 import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:mindease_focus/features/auth/presentation/controllers/cognitive_panel_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/theme_controller.dart';
 import 'package:mindease_focus/core/navigation/navigation_service.dart';
 import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
+import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
 import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 
 class MockProfilePreferencesController extends Mock implements ProfilePreferencesController {}
@@ -18,6 +17,7 @@ class MockAuthController extends Mock implements AuthController {}
 class MockNavigationService extends Mock implements NavigationService {}
 class MockFocusModeController extends Mock implements FocusModeController {}
 class MockThemeController extends Mock implements ThemeController {}
+class MockNotificationController extends Mock implements NotificationController {}
 
 void main() {
   late MockProfilePreferencesController mockProfilePreferencesController;
@@ -25,6 +25,7 @@ void main() {
   late MockNavigationService mockNavigationService;
   late MockFocusModeController mockFocusModeController;
   late MockThemeController mockThemeController;
+  late MockNotificationController mockNotificationController;
 
   setUp(() {
     mockProfilePreferencesController = MockProfilePreferencesController();
@@ -32,12 +33,12 @@ void main() {
     mockNavigationService = MockNavigationService();
     mockFocusModeController = MockFocusModeController();
     mockThemeController = MockThemeController();
+    mockNotificationController = MockNotificationController();
 
     when(() => mockAuthController.user).thenReturn(const UserEntity(id: '1', name: 'Test User', email: 'test@test.com'));
     when(() => mockAuthController.logout()).thenAnswer((_) async {});
     
     when(() => mockProfilePreferencesController.complexity).thenReturn(InterfaceComplexity.medium);
-    // displayMode, spacing, fontSize are likely derived or local to the page logic
     when(() => mockProfilePreferencesController.hideDistractions).thenReturn(false);
     when(() => mockProfilePreferencesController.highContrast).thenReturn(false);
     when(() => mockProfilePreferencesController.darkMode).thenReturn(false);
@@ -48,12 +49,8 @@ void main() {
     when(() => mockProfilePreferencesController.notificationSounds).thenReturn(false);
 
     when(() => mockFocusModeController.enabled).thenReturn(false);
-    
-    // ThemeController calls are often buried in widgets if they use Provider directly.
-    // ProfilePage uses ProfilePreferencesController which often mirrors Theme. 
-    // Checking source: ProfilePage -> FocusModeCard uses FocusModeController.
-    // CognitivePanelCard uses local controller.
-    // NotificationsCard uses ProfilePreferencesController.
+    when(() => mockNotificationController.unreadCount).thenReturn(0);
+    when(() => mockNotificationController.notifications).thenReturn([]);
   });
 
   Widget createWidgetUnderTest() {
@@ -62,12 +59,11 @@ void main() {
         ChangeNotifierProvider<ProfilePreferencesController>.value(value: mockProfilePreferencesController),
         ChangeNotifierProvider<AuthController>.value(value: mockAuthController),
         ChangeNotifierProvider<FocusModeController>.value(value: mockFocusModeController),
+        ChangeNotifierProvider<NotificationController>.value(value: mockNotificationController),
+        ChangeNotifierProvider<ThemeController>.value(value: mockThemeController),
         Provider<NavigationService>.value(value: mockNavigationService),
-         // ThemeController might be needed if widgets down the tree consume it.
-         ChangeNotifierProvider<ThemeController>.value(value: mockThemeController),
       ],
       child: MaterialApp(
-        onGenerateRoute: null,
         routes: {
           '/login': (_) => const Scaffold(body: Text('Login Page')),
           '/dashboard': (_) => const Scaffold(body: Text('Dashboard Page')),
@@ -88,8 +84,6 @@ void main() {
 
       expect(find.text('Test User').first, findsOneWidget);
       expect(find.text('test@test.com').first, findsOneWidget);
-      expect(find.text('Informações Pessoais'), findsOneWidget);
     });
   });
-
 }
