@@ -88,6 +88,7 @@ class PomodoroController extends ChangeNotifier {
         _currentTaskId!,
         notificationController: _notificationController,
         taskTimeAlertEnabled: _preferencesController?.taskTimeAlert ?? true,
+        pushNotificationsEnabled: _preferencesController?.pushNotifications ?? false,
       );
     }
 
@@ -114,20 +115,21 @@ class PomodoroController extends ChangeNotifier {
     // Sininho in-app
     if (prefs.taskTimeAlert) {
       _notificationController?.addNotification(title: title, body: body);
-    }
 
-    // Push do sistema (Android / iOS / Desktop / Web)
-    if (prefs.pushNotifications) {
-      // ignore: unawaited_futures
-      NotificationService()
-          .showNotification(
-            id: isFocus ? 1 : 2,
-            title: title,
-            body: body,
-          )
-          .catchError((_) {
-        // Silencia erros de plataforma não inicializada (ex: testes)
-      });
+      // Push do sistema (Android / iOS / Desktop / Web)
+      // Conforme regra: Push só dispara se Alerta de Tempo estiver ON.
+      if (prefs.pushNotifications) {
+        // ignore: unawaited_futures
+        NotificationService()
+            .showNotification(
+              id: isFocus ? 1 : 2,
+              title: title,
+              body: body,
+            )
+            .catchError((_) {
+          // Silencia erros de plataforma não inicializada (ex: testes)
+        });
+      }
     }
   }
 

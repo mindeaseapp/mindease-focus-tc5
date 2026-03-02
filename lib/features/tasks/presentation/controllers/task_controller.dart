@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
+import 'package:mindease_focus/features/notifications/data/services/notification_service.dart';
 import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
 import 'package:mindease_focus/features/tasks/domain/usecases/load_tasks_usecase.dart';
 import 'package:mindease_focus/features/tasks/domain/usecases/add_task_usecase.dart';
@@ -151,6 +152,7 @@ class TaskController extends ChangeNotifier {
     String taskId, {
     NotificationController? notificationController,
     bool taskTimeAlertEnabled = true,
+    bool pushNotificationsEnabled = false,
   }) async {
     final index = _tasks.indexWhere((t) => t.id == taskId);
     if (index == -1) return;
@@ -165,10 +167,26 @@ class TaskController extends ChangeNotifier {
 
     // Lógica de alerta: a cada 4 pomodoros (exemplo)
     if (taskTimeAlertEnabled && updatedTask.pomodoroCount % 4 == 0) {
-      notificationController?.addNotification(
-        title: '🎯 Meta alcançada!',
-        body: 'Você completou ${updatedTask.pomodoroCount} pomodoros na tarefa: ${task.title}.',
-      );
+      final title = '🎯 Meta alcançada!';
+      final body =
+          'Você completou ${updatedTask.pomodoroCount} pomodoros na tarefa: ${task.title}.';
+
+      // Sininho in-app
+      notificationController?.addNotification(title: title, body: body);
+
+      // Push do sistema (conforme regra: Push depende de Alerta ON)
+      if (pushNotificationsEnabled) {
+        // ignore: unawaited_futures
+        NotificationService()
+            .showNotification(
+          id: 3,
+          title: title,
+          body: body,
+        )
+            .catchError((_) {
+          // Silencia erros de plataforma em testes
+        });
+      }
     }
 
     try {
