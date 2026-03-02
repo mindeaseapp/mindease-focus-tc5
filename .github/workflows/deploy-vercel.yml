@@ -1,0 +1,44 @@
+name: Deploy Web Preview to Vercel
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📦 Clonar o repositório
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Baixar e Configurar o Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Instalar dependências do projeto
+        run: flutter pub get
+
+      - name: 🧹 Checar formato do código e Lint
+        run: flutter analyze
+
+      - name: 🧪 Rodar Testes Unitários
+        run: flutter test
+
+      - name: 🏗️ Fazer o Build do Flutter para Web
+        run: flutter build web --release
+
+      - name: ⚙️ Configurar Rotas da Vercel (Evitar erro 404)
+        run: echo '{"rewrites":[{"source":"/(.*)","destination":"/index.html"}]}' > build/web/vercel.json
+
+      - name: 🚀 Fazer o Deploy para a Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod=false'
+          working-directory: ./build/web
