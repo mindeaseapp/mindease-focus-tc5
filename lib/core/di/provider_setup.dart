@@ -67,7 +67,6 @@ List<SingleChildWidget> get providers {
 
   return [
     Provider<NavigationService>.value(value: navigationService),
-    ChangeNotifierProvider(create: (_) => ThemeController()),
     
     // Auth & Profile
     ChangeNotifierProvider(
@@ -93,11 +92,29 @@ List<SingleChildWidget> get providers {
       create: (_) => UpdatePasswordController(authRepository),
     ),
     
-    ChangeNotifierProvider(
+    ChangeNotifierProxyProvider<AuthController, ProfilePreferencesController>(
       create: (_) => ProfilePreferencesController(
         getPreferencesUseCase: getPreferencesUseCase,
         updatePreferencesUseCase: updatePreferencesUseCase,
       ),
+      update: (_, authCtrl, previous) {
+        final controller = previous ?? ProfilePreferencesController(
+          getPreferencesUseCase: getPreferencesUseCase,
+          updatePreferencesUseCase: updatePreferencesUseCase,
+        );
+        controller.updateDependencies(authController: authCtrl);
+        return controller;
+      },
+    ),
+
+    // Theme Controller - sincroniza com ProfilePreferencesController
+    ChangeNotifierProxyProvider<ProfilePreferencesController, ThemeController>(
+      create: (_) => ThemeController(),
+      update: (_, prefsCtrl, previous) {
+        final controller = previous ?? ThemeController();
+        controller.updateFromPreferences(prefsCtrl);
+        return controller;
+      },
     ),
 
     // Notificações in-app (sininho) — deve vir antes do PomodoroController

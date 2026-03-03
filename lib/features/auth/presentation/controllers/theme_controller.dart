@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 
 class ThemeController extends ChangeNotifier {
   ThemeMode _mode = ThemeMode.light;
@@ -20,5 +21,26 @@ class ThemeController extends ChangeNotifier {
     if (_highContrast == value) return;
     _highContrast = value;
     notifyListeners();
+  }
+
+  // ==========================
+  // Sync with ProfilePreferences
+  // ==========================
+  void updateFromPreferences(ProfilePreferencesController? prefs) {
+    if (prefs == null) return;
+    
+    // Sincroniza modo escuro
+    final shouldBeDark = prefs.darkMode;
+    final targetMode = shouldBeDark ? ThemeMode.dark : ThemeMode.light;
+    if (_mode != targetMode) {
+      _mode = targetMode;
+      notifyListeners();
+    }
+    
+    // Sincroniza alto contraste
+    if (_highContrast != prefs.highContrast) {
+      _highContrast = prefs.highContrast;
+      notifyListeners();
+    }
   }
 }
