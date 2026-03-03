@@ -162,7 +162,6 @@ class _AccessibilityPopover extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      tooltip: 'Fechar',
                       onPressed: onClose,
                       icon: const Icon(Icons.close_fullscreen_rounded, size: 18),
                     ),
