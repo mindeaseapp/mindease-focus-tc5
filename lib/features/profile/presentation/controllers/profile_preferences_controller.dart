@@ -48,6 +48,15 @@ class ProfilePreferencesController extends ChangeNotifier {
   InterfaceComplexity get complexity => _complexity;
 
   // ==========================
+  // Font Size e Spacing
+  // ==========================
+  FontSizePreference _fontSize = FontSizePreference.normal;
+  FontSizePreference get fontSize => _fontSize;
+
+  ElementSpacing _spacing = ElementSpacing.medium;
+  ElementSpacing get spacing => _spacing;
+
+  // ==========================
   // Initialization
   // ==========================
   Future<void> loadPreferences(String userId) async {
@@ -65,6 +74,8 @@ class ProfilePreferencesController extends ChangeNotifier {
       pushNotifications = prefs.pushNotifications;
       notificationSounds = prefs.notificationSounds;
       _complexity = prefs.complexity;
+      _fontSize = prefs.fontSize;
+      _spacing = prefs.elementSpacing;
       
       notifyListeners();
     } catch (e) {
@@ -89,6 +100,8 @@ class ProfilePreferencesController extends ChangeNotifier {
         pushNotifications: pushNotifications,
         notificationSounds: notificationSounds,
         complexity: _complexity,
+        fontSize: _fontSize,
+        elementSpacing: _spacing,
       );
       
       _updatePreferencesUseCase(prefs).catchError((e) {
@@ -210,6 +223,33 @@ class ProfilePreferencesController extends ChangeNotifier {
     }
     notificationSounds = v;
     notifyListeners();
+    _scheduleSave();
+  }
+
+  void setFontSize(FontSizePreference v) {
+    if (_fontSize == v) return;
+    _fontSize = v;
+    notifyListeners();
+    _scheduleSave();
+  }
+
+  void setSpacing(ElementSpacing v) {
+    if (_spacing == v) return;
+    _spacing = v;
+    notifyListeners();
+    _scheduleSave();
+  }
+
+  void setFontSizeFromSlider(double value) {
+    final index = value.round().clamp(0, FontSizePreference.values.length - 1);
+    final candidate = FontSizePreference.values[index];
+    setFontSize(candidate);
+  }
+
+  void setSpacingFromSlider(double value) {
+    final index = value.round().clamp(0, ElementSpacing.values.length - 1);
+    final candidate = ElementSpacing.values[index];
+    setSpacing(candidate);
     _scheduleSave();
   }
 

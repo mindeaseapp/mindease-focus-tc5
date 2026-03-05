@@ -16,6 +16,7 @@ import 'package:mindease_focus/features/auth/presentation/controllers/theme_cont
 import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/focus_mode_controller.dart';
+import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,8 +81,12 @@ class _MindEaseAppState extends State<MindEaseApp> {
       themeMode: themeController.mode,
       builder: (context, child) {
         final mq = MediaQuery.of(context);
+        final fontScale = prefs.fontSize.scale;
         return MediaQuery(
-          data: mq.copyWith(disableAnimations: disableAnimations),
+          data: mq.copyWith(
+            disableAnimations: disableAnimations,
+            textScaler: TextScaler.linear(fontScale),
+          ),
           child: child ?? const SizedBox.shrink(),
         );
       },

@@ -4,8 +4,14 @@ import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/co
 class CognitivePanelController extends ChangeNotifier {
   // ✅ opcional: avisa alguém quando a complexidade mudar (ex.: prefs)
   final ValueChanged<InterfaceComplexity>? onComplexityChanged;
+  final ValueChanged<FontSizePreference>? onFontSizeChanged;
+  final ValueChanged<ElementSpacing>? onSpacingChanged;
 
-  CognitivePanelController({this.onComplexityChanged});
+  CognitivePanelController({
+    this.onComplexityChanged,
+    this.onFontSizeChanged,
+    this.onSpacingChanged,
+  });
 
   InterfaceComplexity _complexity = InterfaceComplexity.medium;
   DisplayMode _displayMode = DisplayMode.balanced;
@@ -72,6 +78,7 @@ class CognitivePanelController extends ChangeNotifier {
     if (_spacing == next) return;
     _spacing = next;
     notifyListeners();
+    onSpacingChanged?.call(_spacing);
   }
 
   void setFontSizeFromSlider(double value) {
@@ -84,5 +91,6 @@ class CognitivePanelController extends ChangeNotifier {
     if (_fontSize == next) return;
     _fontSize = next;
     notifyListeners();
+    onFontSizeChanged?.call(_fontSize);
   }
 }

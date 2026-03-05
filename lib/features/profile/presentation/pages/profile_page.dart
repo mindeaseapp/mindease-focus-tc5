@@ -64,6 +64,16 @@ class _ProfilePageState extends State<ProfilePage> {
            context.read<ProfilePreferencesController>().applyComplexity(newComplexity);
         }
       },
+      onFontSizeChanged: (newFontSize) {
+        if (mounted) {
+          context.read<ProfilePreferencesController>().setFontSize(newFontSize);
+        }
+      },
+      onSpacingChanged: (newSpacing) {
+        if (mounted) {
+          context.read<ProfilePreferencesController>().setSpacing(newSpacing);
+        }
+      },
     );
   }
 
@@ -80,11 +90,14 @@ class _ProfilePageState extends State<ProfilePage> {
     
     // ✅ Sincronia: Se o dado do Supabase mudar (load inicial), atualiza a UI
     if (prefs.complexity != _cognitiveController.complexity) {
-      // Usamos postFrameCallback ou apenas setamos se não estivermos no meio de build? 
-      // Como o setComplexity tem check de igualdade e notifyListeners, melhor evitar chamar durante build se possível,
-      // mas aqui é essencial para a UI refletir o estado.
-      // O controller local tem check de igualdade, então só vai notificar se mudar de verdade.
       _cognitiveController.setComplexity(prefs.complexity);
+    }
+    // Sincroniza fontSize e spacing do Supabase → UI local
+    if (prefs.fontSize != _cognitiveController.fontSize) {
+      _cognitiveController.setFontSizeFromSlider(prefs.fontSize.index.toDouble());
+    }
+    if (prefs.spacing != _cognitiveController.spacing) {
+      _cognitiveController.setSpacingFromSlider(prefs.spacing.index.toDouble());
     }
 
     // Auth

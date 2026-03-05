@@ -29,6 +29,8 @@ void main() {
     pushNotifications: true,
     notificationSounds: false,
     complexity: InterfaceComplexity.medium,
+    fontSize: FontSizePreference.normal,
+    elementSpacing: ElementSpacing.medium,
   );
 
   group('getPreferences', () {

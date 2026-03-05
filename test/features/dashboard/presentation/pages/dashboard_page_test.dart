@@ -13,6 +13,7 @@ import 'package:mindease_focus/core/navigation/navigation_service.dart';
 import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
 import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
+import 'package:mindease_focus/features/dashboard/presentation/pages/dashboard_styles.dart';
 import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
 
 class MockDashboardController extends Mock implements DashboardController {}
@@ -74,7 +75,7 @@ void main() {
     testWidgets('renders correctly', (tester) async {
        // Mock specific metrics to verify rendering
        when(() => mockDashboardController.getMetrics(any())).thenReturn([
-         DashboardMetric(title: 'Tasks Done', value: '5', subtitle: 'Great job', icon: Icons.check)
+         DashboardMetric(kind: DashboardMetricKind.done, title: 'Tasks Done', value: '5', subtitle: 'Great job', icon: Icons.check)
        ]);
 
       await tester.pumpWidget(createWidgetUnderTest());

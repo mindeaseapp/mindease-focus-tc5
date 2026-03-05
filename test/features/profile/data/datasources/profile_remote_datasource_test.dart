@@ -79,6 +79,8 @@ void main() {
     'push_notifications': true,
     'notification_sounds': false,
     'complexity': 'medium',
+    'font_size': 'normal',
+    'element_spacing': 'medium',
   };
   
   final tPreferences = UserPreferencesModel(
@@ -92,6 +94,8 @@ void main() {
     pushNotifications: true,
     notificationSounds: false,
     complexity: InterfaceComplexity.medium,
+    fontSize: FontSizePreference.normal,
+    elementSpacing: ElementSpacing.medium,
   );
 
 

@@ -47,6 +47,8 @@ void main() {
     when(() => mockProfilePreferencesController.smoothTransition).thenReturn(false);
     when(() => mockProfilePreferencesController.pushNotifications).thenReturn(false);
     when(() => mockProfilePreferencesController.notificationSounds).thenReturn(false);
+    when(() => mockProfilePreferencesController.fontSize).thenReturn(FontSizePreference.normal);
+    when(() => mockProfilePreferencesController.spacing).thenReturn(ElementSpacing.medium);
 
     when(() => mockFocusModeController.enabled).thenReturn(false);
     when(() => mockNotificationController.unreadCount).thenReturn(0);

@@ -34,14 +34,19 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  bool _tasksLoaded = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _handleWelcomeModal();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TaskController>().loadTasks();
-    });
+    if (!_tasksLoaded) {
+      _tasksLoaded = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        context.read<TaskController>().loadTasks();
+      });
+    }
   }
 
   void _handleWelcomeModal() {
@@ -108,7 +113,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     final taskController = context.watch<TaskController>();
     final metrics = dashboardController.getMetrics(taskController.tasks).map((m) => _MetricData(
-      kind: DashboardMetricKind.done, 
+      kind: m.kind, 
       title: m.title,
       value: m.value,
       subtitle: m.subtitle,

@@ -46,12 +46,16 @@ void main() {
       final metrics = controller.getMetrics(tasks);
 
       expect(metrics.length, 3);
-      expect(metrics[0].title, 'Tarefas Concluídas');
-      expect(metrics[0].value, '1'); // 1 updated task
+      // Card 1: Pendentes (todo + inProgress)
+      expect(metrics[0].title, 'Pendentes');
+      expect(metrics[0].value, '1'); // 1 todo, 0 inProgress
       
-      // Other metrics are currently mocked/static in controller
-      expect(metrics[1].title, 'Tempo de Foco');
-      expect(metrics[2].title, 'Produtividade');
+      // Card 2: Concluídas
+      expect(metrics[1].title, 'Concluídas');
+      expect(metrics[1].value, '1'); // 1 done
+
+      // Card 3: Motivação
+      expect(metrics[2].title, 'Motivação');
     });
   });
 }

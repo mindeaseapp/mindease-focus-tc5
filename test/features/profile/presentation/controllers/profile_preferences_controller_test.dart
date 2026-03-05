@@ -33,7 +33,9 @@ void main() {
         smoothTransition: true,
         pushNotifications: true,
         notificationSounds: false,
-        complexity: InterfaceComplexity.medium));
+        complexity: InterfaceComplexity.medium,
+        fontSize: FontSizePreference.normal,
+        elementSpacing: ElementSpacing.medium));
   });
 
   group('ProfilePreferencesController', () {
@@ -56,6 +58,8 @@ void main() {
         pushNotifications: false,
         notificationSounds: false,
         complexity: InterfaceComplexity.advanced,
+        fontSize: FontSizePreference.large,
+        elementSpacing: ElementSpacing.high,
       );
 
       when(() => mockGetPreferencesUseCase('user1')).thenAnswer((_) async => prefs);
@@ -66,6 +70,8 @@ void main() {
       expect(controller.highContrast, true);
       expect(controller.darkMode, true);
       expect(controller.breakReminder, false);
+      expect(controller.fontSize, FontSizePreference.large);
+      expect(controller.spacing, ElementSpacing.high);
       // ... verify other fields
     });
 
