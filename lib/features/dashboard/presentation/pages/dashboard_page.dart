@@ -34,28 +34,22 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  bool _tasksLoaded = false;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _handleWelcomeModal();
-    if (!_tasksLoaded) {
-      _tasksLoaded = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        context.read<TaskController>().loadTasks();
-      });
-    }
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<TaskController>().loadTasks();
+      _handleWelcomeModal();
+    });
   }
 
   void _handleWelcomeModal() {
     final dashboardController = context.read<DashboardController>();
     if (dashboardController.welcomeHandled) return;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      dashboardController.markWelcomeHandled();
-    });
+    dashboardController.markWelcomeHandled();
 
     final args = ModalRoute.of(context)?.settings.arguments;
 
@@ -65,15 +59,11 @@ class _DashboardPageState extends State<DashboardPage> {
 
     if (!shouldShowWelcome) return;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
-
-      await showDialog<bool>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const WelcomeModal(),
-      );
-    });
+    showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const WelcomeModal(),
+    );
   }
 
   @override
