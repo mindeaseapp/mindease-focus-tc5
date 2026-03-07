@@ -34,6 +34,7 @@ void main() {
         pushNotifications: true,
         notificationSounds: false,
         complexity: InterfaceComplexity.medium,
+        displayMode: DisplayMode.balanced,
         fontSize: FontSizePreference.normal,
         elementSpacing: ElementSpacing.medium));
   });
@@ -58,6 +59,7 @@ void main() {
         pushNotifications: false,
         notificationSounds: false,
         complexity: InterfaceComplexity.advanced,
+        displayMode: DisplayMode.detailed,
         fontSize: FontSizePreference.large,
         elementSpacing: ElementSpacing.high,
       );

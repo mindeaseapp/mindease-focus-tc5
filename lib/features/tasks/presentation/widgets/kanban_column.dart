@@ -16,6 +16,8 @@ class KanbanColumn extends StatelessWidget {
   final void Function(String taskId) onTaskDeleted;
   final Future<void> Function(Task task) onTaskEdited;
   final bool highContrast;
+  final bool isSummary;
+  final double spacingFactor;
 
   const KanbanColumn({
     super.key,
@@ -29,6 +31,8 @@ class KanbanColumn extends StatelessWidget {
     required this.onTaskDeleted,
     required this.onTaskEdited,
     this.highContrast = false,
+    this.isSummary = false,
+    this.spacingFactor = 1.0,
   });
 
   List<Task> get columnTasks =>
@@ -63,7 +67,7 @@ class KanbanColumn extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildColumnHeader(context),
-              KanbanColumnStyles.gap8h,
+              SizedBox(height: 8 * spacingFactor),
               Expanded(child: _buildTasksList(context)),
             ],
           ),
@@ -88,7 +92,7 @@ class KanbanColumn extends StatelessWidget {
             Row(
               children: [
                 Icon(icon, color: color, size: KanbanColumnStyles.headerIconSize),
-                KanbanColumnStyles.headerGap8,
+                SizedBox(width: 8 * spacingFactor),
                 Text(title, style: KanbanColumnStyles.headerTitleStyle(context)),
               ],
             ),
@@ -135,6 +139,8 @@ class KanbanColumn extends StatelessWidget {
             onEdit: () {},
             onDelete: (_) {},
             highContrast: highContrast,
+            isSummary: isSummary,
+            spacingFactor: spacingFactor,
           ),
         ),
       ),
@@ -147,16 +153,20 @@ class KanbanColumn extends StatelessWidget {
         onEdit: () {},
         onDelete: (_) {},
         highContrast: highContrast,
+        isSummary: isSummary,
+        spacingFactor: spacingFactor,
       ),
     );
 
     final child = Padding(
-      padding: KanbanColumnStyles.taskBottomPadding,
+      padding: EdgeInsets.only(bottom: 8 * spacingFactor),
       child: TaskCard(
         task: task,
         onEdit: () => onTaskEdited(task),
         onDelete: onTaskDeleted,
         highContrast: highContrast,
+        isSummary: isSummary,
+        spacingFactor: spacingFactor,
       ),
     );
 

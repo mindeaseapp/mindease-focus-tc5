@@ -79,6 +79,7 @@ void main() {
     'push_notifications': true,
     'notification_sounds': false,
     'complexity': 'medium',
+    'display_mode': 'balanced',
     'font_size': 'normal',
     'element_spacing': 'medium',
   };
@@ -94,6 +95,7 @@ void main() {
     pushNotifications: true,
     notificationSounds: false,
     complexity: InterfaceComplexity.medium,
+    displayMode: DisplayMode.balanced,
     fontSize: FontSizePreference.normal,
     elementSpacing: ElementSpacing.medium,
   );

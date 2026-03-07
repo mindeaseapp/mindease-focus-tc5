@@ -64,6 +64,9 @@ class FakeProfilePreferencesController extends ChangeNotifier implements Profile
   InterfaceComplexity get complexity => InterfaceComplexity.medium;
   
   @override
+  DisplayMode get displayMode => DisplayMode.balanced;
+
+  @override
   bool get hideDistractions => false;
   @override
   bool get highContrast => false;

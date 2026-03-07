@@ -88,6 +88,10 @@ class FakeProfilePreferencesController extends ChangeNotifier implements Profile
   bool get notificationSounds => false;
   @override
   InterfaceComplexity get complexity => InterfaceComplexity.medium;
+  @override
+  ElementSpacing get spacing => ElementSpacing.medium;
+  @override
+  DisplayMode get displayMode => DisplayMode.balanced;
 
   @override
   Future<void> applyComplexity(InterfaceComplexity value) async {}

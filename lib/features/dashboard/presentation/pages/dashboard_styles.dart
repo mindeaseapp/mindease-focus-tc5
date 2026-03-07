@@ -16,10 +16,10 @@ class DashboardPageStyles {
   static bool isMobileByWidth(BuildContext context) =>
       MediaQuery.sizeOf(context).width < mobileBreakpoint;
 
-  static EdgeInsets contentPadding(BuildContext context) {
+  static EdgeInsets contentPadding(BuildContext context, double spacingFactor) {
     return EdgeInsets.symmetric(
-      horizontal: AppSpacing.pagePadding(context),
-      vertical: AppSpacing.xl,
+      horizontal: AppSpacing.pagePadding(context) * spacingFactor,
+      vertical: AppSpacing.xl * spacingFactor,
     );
   }
 

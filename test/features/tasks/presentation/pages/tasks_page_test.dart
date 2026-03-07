@@ -12,6 +12,7 @@ import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/pomodoro_controller.dart';
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
 import 'package:mindease_focus/features/notifications/presentation/controllers/notification_controller.dart';
+import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 
 class MockTaskController extends Mock implements TaskController {}
 class MockAuthController extends Mock implements AuthController {}
@@ -52,6 +53,8 @@ void main() {
     
     when(() => mockProfilePreferencesController.highContrast).thenReturn(false);
     when(() => mockProfilePreferencesController.hideDistractions).thenReturn(false);
+    when(() => mockProfilePreferencesController.spacing).thenReturn(ElementSpacing.medium);
+    when(() => mockProfilePreferencesController.displayMode).thenReturn(DisplayMode.balanced);
 
     when(() => mockPomodoroController.timeLeft).thenReturn(25 * 60);
     when(() => mockPomodoroController.formattedTime).thenReturn('25:00');

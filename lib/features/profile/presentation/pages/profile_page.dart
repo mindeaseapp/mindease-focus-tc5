@@ -69,6 +69,11 @@ class _ProfilePageState extends State<ProfilePage> {
           context.read<ProfilePreferencesController>().setFontSize(newFontSize);
         }
       },
+      onDisplayModeChanged: (newDisplayMode) {
+        if (mounted) {
+          context.read<ProfilePreferencesController>().setDisplayMode(newDisplayMode);
+        }
+      },
       onSpacingChanged: (newSpacing) {
         if (mounted) {
           context.read<ProfilePreferencesController>().setSpacing(newSpacing);
@@ -88,17 +93,14 @@ class _ProfilePageState extends State<ProfilePage> {
     // Controllers
     final prefs = context.watch<ProfilePreferencesController>();
     
-    // ✅ Sincronia: Se o dado do Supabase mudar (load inicial), atualiza a UI
-    if (prefs.complexity != _cognitiveController.complexity) {
-      _cognitiveController.setComplexity(prefs.complexity);
-    }
-    // Sincroniza fontSize e spacing do Supabase → UI local
-    if (prefs.fontSize != _cognitiveController.fontSize) {
-      _cognitiveController.setFontSizeFromSlider(prefs.fontSize.index.toDouble());
-    }
-    if (prefs.spacing != _cognitiveController.spacing) {
-      _cognitiveController.setSpacingFromSlider(prefs.spacing.index.toDouble());
-    }
+    // ✅ Sincronia passiva e segura: Atualiza apenas a UI sem enviar dados
+    // de volta para a nuvem recém carregados (evitando sobrescrita/loop).
+    _cognitiveController.syncFromGlobal(
+      globalComplexity: prefs.complexity,
+      globalDisplayMode: prefs.displayMode,
+      globalSpacing: prefs.spacing,
+      globalFontSize: prefs.fontSize,
+    );
 
     // Auth
     final authController = context.watch<AuthController>();

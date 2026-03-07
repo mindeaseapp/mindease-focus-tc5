@@ -39,6 +39,7 @@ void main() {
     when(() => mockAuthController.logout()).thenAnswer((_) async {});
     
     when(() => mockProfilePreferencesController.complexity).thenReturn(InterfaceComplexity.medium);
+    when(() => mockProfilePreferencesController.displayMode).thenReturn(DisplayMode.balanced);
     when(() => mockProfilePreferencesController.hideDistractions).thenReturn(false);
     when(() => mockProfilePreferencesController.highContrast).thenReturn(false);
     when(() => mockProfilePreferencesController.darkMode).thenReturn(false);

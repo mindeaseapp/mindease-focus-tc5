@@ -19,6 +19,7 @@ import 'package:mindease_focus/features/profile/presentation/controllers/profile
 import 'package:mindease_focus/features/dashboard/presentation/pages/dashboard_styles.dart';
 import 'package:mindease_focus/features/profile/presentation/widgets/cards/modal/welcome_modal.dart';
 import 'package:mindease_focus/features/tasks/presentation/controllers/task_controller.dart';
+import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 import 'package:mindease_focus/features/tasks/domain/models/task_model.dart';
 
 class DashboardRouteArgs {
@@ -78,6 +79,8 @@ class _DashboardPageState extends State<DashboardPage> {
     final prefs = context.watch<ProfilePreferencesController>();
     final highContrast = prefs.highContrast;
     final hideDistractions = prefs.hideDistractions;
+    final spacingFactor = prefs.spacing.scale;
+    final isSummary = prefs.displayMode == DisplayMode.summary;
 
     final userLabel = userEntity.displayName;
 
@@ -145,7 +148,7 @@ class _DashboardPageState extends State<DashboardPage> {
           policy: OrderedTraversalPolicy(),
           child: CenteredConstrained(
             maxWidth: DashboardPageStyles.maxWidth,
-            padding: DashboardPageStyles.contentPadding(context),
+            padding: DashboardPageStyles.contentPadding(context, spacingFactor),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -157,21 +160,21 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
                 if (!hideDistractions) ...[
-                  AppSpacing.gapSm,
+                  SizedBox(height: AppSpacing.sm * spacingFactor),
                   Text(
                     'Bem-vindo de volta! Aqui está seu resumo de hoje.',
                     style: DashboardPageStyles.pageSubtitleStyle(context),
                   ),
                 ],
-                AppSpacing.gapXl,
+                SizedBox(height: AppSpacing.xl * spacingFactor),
 
                 if (!isFocusMode) ...[
                   _MetricsGrid(
                     metrics: metrics,
                     highContrast: highContrast,
-                    hideDistractions: hideDistractions,
+                    hideDistractions: hideDistractions || isSummary,
                   ),
-                  AppSpacing.gapXl,
+                  SizedBox(height: AppSpacing.xl * spacingFactor),
                 ],
 
                 _FocusModeBanner(
@@ -179,27 +182,31 @@ class _DashboardPageState extends State<DashboardPage> {
                     AppRoutes.tasks,
                     arguments: 0,
                   ),
-                  hideDistractions: hideDistractions,
+                  hideDistractions: hideDistractions || isSummary,
                 ),
-                AppSpacing.gapXl,
+                SizedBox(height: AppSpacing.xl * spacingFactor),
 
                 if (!isFocusMode) ...[
                   _RecentTasksCard(
                     tasks: recentTasks,
                     highContrast: highContrast,
+                    isSummary: isSummary,
+                    spacingFactor: spacingFactor,
                     onSeeAll: () => Navigator.of(context).pushNamed(
                       AppRoutes.tasks,
                       arguments: 1,
                     ),
                   ),
                   
-                  AppSpacing.gapXl,
-                  _TipOfDayCard(
-                    highContrast: highContrast,
-                    hideDistractions: hideDistractions,
-                  ),
+                  if (!isSummary) ...[
+                    SizedBox(height: AppSpacing.xl * spacingFactor),
+                    _TipOfDayCard(
+                      highContrast: highContrast,
+                      hideDistractions: hideDistractions,
+                    ),
+                  ],
 
-                  AppSpacing.gapXl,
+                  SizedBox(height: AppSpacing.xl * spacingFactor),
                 ],
               ],
             ),
@@ -444,11 +451,15 @@ class _RecentTasksCard extends StatelessWidget {
   final List<_RecentTaskData> tasks;
   final VoidCallback onSeeAll;
   final bool highContrast;
+  final bool isSummary;
+  final double spacingFactor;
 
   const _RecentTasksCard({
     required this.tasks,
     required this.onSeeAll,
     required this.highContrast,
+    required this.isSummary,
+    required this.spacingFactor,
   });
 
   @override
@@ -485,10 +496,10 @@ class _RecentTasksCard extends StatelessWidget {
               ),
             ],
           ),
-          AppSpacing.gapMd,
+          SizedBox(height: AppSpacing.md * spacingFactor),
           if (tasks.isEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.md * spacingFactor),
               child: Text(
                 'Não há tarefas cadastradas',
                 style: DashboardPageStyles.metricSubtitleStyle(context),
@@ -499,8 +510,10 @@ class _RecentTasksCard extends StatelessWidget {
               _RecentTaskTile(
                 data: tasks[i],
                 highContrast: highContrast,
+                isSummary: isSummary,
+                spacingFactor: spacingFactor,
               ),
-              if (i < tasks.length - 1) AppSpacing.gapMd,
+              if (i < tasks.length - 1) SizedBox(height: AppSpacing.md * spacingFactor),
             ],
         ],
       ),
@@ -512,10 +525,14 @@ class _RecentTasksCard extends StatelessWidget {
 class _RecentTaskTile extends StatelessWidget {
   final _RecentTaskData data;
   final bool highContrast;
+  final bool isSummary;
+  final double spacingFactor;
 
   const _RecentTaskTile({
     required this.data,
     required this.highContrast,
+    required this.isSummary,
+    required this.spacingFactor,
   });
 
   @override
@@ -540,11 +557,11 @@ class _RecentTaskTile extends StatelessWidget {
               data.title,
               style: DashboardPageStyles.taskTitleStyle(context),
             ),
-            AppSpacing.gapSm,
+            SizedBox(height: AppSpacing.sm * spacingFactor),
             Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: AppSpacing.md.toDouble(),
-              runSpacing: AppSpacing.sm.toDouble(),
+              spacing: AppSpacing.md * spacingFactor,
+              runSpacing: AppSpacing.sm * spacingFactor,
               children: [
                 Container(
                   padding: DashboardPageStyles.pillPadding(),
@@ -562,7 +579,7 @@ class _RecentTaskTile extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (data.meta.isNotEmpty)
+                if (data.meta.isNotEmpty && !isSummary)
                   Text(
                     data.meta,
                     style: DashboardPageStyles.taskMetaStyle(context).copyWith(

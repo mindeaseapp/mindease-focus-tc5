@@ -8,11 +8,15 @@ import 'package:mindease_focus/features/auth/presentation/controllers/pomodoro_c
 class PomodoroTimer extends StatefulWidget {
   final bool highContrast;
   final bool hideDistractions;
+  final bool isSummary;
+  final double spacingFactor;
 
   const PomodoroTimer({
     super.key,
     this.highContrast = false,
     this.hideDistractions = false,
+    this.isSummary = false,
+    this.spacingFactor = 1.0,
   });
 
   @override
@@ -112,13 +116,13 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildHeader(styles, controller, widget.highContrast),
-                const SizedBox(height: 18),
-                _buildTimerCircle(styles, controller, widget.highContrast),
-                const SizedBox(height: 18),
-                _buildControls(styles, controller, widget.highContrast),
-                if (!widget.hideDistractions) ...[
-                  const SizedBox(height: 14),
+                _buildHeader(styles, controller, widget.highContrast, widget.spacingFactor),
+                SizedBox(height: 18 * widget.spacingFactor),
+                _buildTimerCircle(styles, controller, widget.highContrast, widget.spacingFactor),
+                SizedBox(height: 18 * widget.spacingFactor),
+                _buildControls(styles, controller, widget.highContrast, widget.spacingFactor),
+                if (!widget.hideDistractions && !widget.isSummary) ...[
+                  SizedBox(height: 14 * widget.spacingFactor),
                   _buildInfo(styles, controller, widget.highContrast),
                 ],
               ],
@@ -129,7 +133,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  Widget _buildHeader(PomodoroTimerStyles styles, PomodoroController controller, bool highContrast) {
+  Widget _buildHeader(PomodoroTimerStyles styles, PomodoroController controller, bool highContrast, double spacingFactor) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -146,19 +150,19 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
                   size: PomodoroTimerStyles.headerIconSize,
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8 * spacingFactor),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Timer', style: styles.headerTitle),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2 * spacingFactor),
                   Text('Pomodoro', style: styles.headerTitle),
                 ],
               ),
             ],
           ),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: 10 * spacingFactor),
         Padding(
           padding: const EdgeInsets.only(top: PomodoroTimerStyles.headerRightTop),
           child: FittedBox(
@@ -174,7 +178,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  Widget _buildTimerCircle(PomodoroTimerStyles styles, PomodoroController controller, bool highContrast) {
+  Widget _buildTimerCircle(PomodoroTimerStyles styles, PomodoroController controller, bool highContrast, double spacingFactor) {
     final label = controller.mode == PomodoroMode.focus ? 'Tempo de Foco' : 'Tempo de Pausa';
 
     return SizedBox(
@@ -198,7 +202,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(controller.formattedTime, style: styles.timeText),
-              const SizedBox(height: 6),
+              SizedBox(height: 6 * spacingFactor),
               Text(label, style: styles.subLabel(highContrast: highContrast)),
             ],
           ),
@@ -207,7 +211,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     );
   }
 
-  Widget _buildControls(PomodoroTimerStyles styles, PomodoroController controller, bool highContrast) {
+  Widget _buildControls(PomodoroTimerStyles styles, PomodoroController controller, bool highContrast, double spacingFactor) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -233,7 +237,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
             ),
           ),
         ),
-        const SizedBox(width: 14),
+        SizedBox(width: 14 * spacingFactor),
         SizedBox(
           height: PomodoroTimerStyles.actionHeight,
           child: ElevatedButton.icon(

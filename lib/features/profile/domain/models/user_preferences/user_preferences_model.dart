@@ -11,6 +11,7 @@ class UserPreferencesModel {
   final bool pushNotifications;
   final bool notificationSounds;
   final InterfaceComplexity complexity;
+  final DisplayMode displayMode;
   final FontSizePreference fontSize;
   final ElementSpacing elementSpacing;
 
@@ -25,6 +26,7 @@ class UserPreferencesModel {
     required this.pushNotifications,
     required this.notificationSounds,
     required this.complexity,
+    required this.displayMode,
     required this.fontSize,
     required this.elementSpacing,
   });
@@ -43,6 +45,10 @@ class UserPreferencesModel {
       complexity: InterfaceComplexity.values.firstWhere(
         (e) => e.name == (json['complexity'] as String?),
         orElse: () => InterfaceComplexity.medium,
+      ),
+      displayMode: DisplayMode.values.firstWhere(
+        (e) => e.name == (json['display_mode'] as String?),
+        orElse: () => DisplayMode.balanced,
       ),
       fontSize: FontSizePreference.values.firstWhere(
         (e) => e.name == (json['font_size'] as String?),
@@ -67,6 +73,7 @@ class UserPreferencesModel {
       'push_notifications': pushNotifications,
       'notification_sounds': notificationSounds,
       'complexity': complexity.name,
+      'display_mode': displayMode.name,
       'font_size': fontSize.name,
       'element_spacing': elementSpacing.name,
     };
@@ -85,6 +92,7 @@ class UserPreferencesModel {
       pushNotifications: true,
       notificationSounds: false,
       complexity: InterfaceComplexity.medium,
+      displayMode: DisplayMode.balanced,
       fontSize: FontSizePreference.normal,
       elementSpacing: ElementSpacing.medium,
     );

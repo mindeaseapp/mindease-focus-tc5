@@ -17,6 +17,7 @@ import 'package:mindease_focus/features/tasks/presentation/widgets/kanban_board.
 
 import 'package:mindease_focus/features/tasks/presentation/pages/tasks_page_styles.dart';
 
+import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 
 class TasksPage extends StatelessWidget {
@@ -37,6 +38,8 @@ class TasksPage extends StatelessWidget {
     final prefs = context.watch<ProfilePreferencesController>();
     final highContrast = prefs.highContrast;
     final hideDistractions = prefs.hideDistractions;
+    final spacingFactor = prefs.spacing.scale;
+    final isSummary = prefs.displayMode == DisplayMode.summary;
 
     final authController = context.watch<AuthController>();
     final userLabel = authController.user.displayName;
@@ -124,10 +127,14 @@ class TasksPage extends StatelessWidget {
                   _PomodoroTabContent(
                     highContrast: highContrast,
                     hideDistractions: hideDistractions,
+                    isSummary: isSummary,
+                    spacingFactor: spacingFactor,
                   ),
                   _KanbanTabContent(
                     highContrast: highContrast,
                     hideDistractions: hideDistractions,
+                    isSummary: isSummary,
+                    spacingFactor: spacingFactor,
                   ),
                 ],
               ),
@@ -142,10 +149,14 @@ class TasksPage extends StatelessWidget {
 class _PomodoroTabContent extends StatelessWidget {
   final bool highContrast;
   final bool hideDistractions;
+  final bool isSummary;
+  final double spacingFactor;
 
   const _PomodoroTabContent({
     required this.highContrast,
     required this.hideDistractions,
+    required this.isSummary,
+    required this.spacingFactor,
   });
 
   @override
@@ -153,7 +164,7 @@ class _PomodoroTabContent extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
-          padding: TasksPageStyles.pomodoroPadding,
+          padding: TasksPageStyles.pomodoroPadding(spacingFactor),
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(
@@ -168,10 +179,12 @@ class _PomodoroTabContent extends StatelessWidget {
                       style: TasksPageStyles.pomodoroTitleText,
                     ),
                   ),
-                  const SizedBox(height: TasksPageStyles.pomodoroTitleSpacing),
+                  SizedBox(height: TasksPageStyles.pomodoroTitleSpacing(spacingFactor)),
                   PomodoroTimer(
                     highContrast: highContrast,
                     hideDistractions: hideDistractions,
+                    isSummary: isSummary,
+                    spacingFactor: spacingFactor,
                   ),
                 ],
               ),
@@ -186,10 +199,14 @@ class _PomodoroTabContent extends StatelessWidget {
 class _KanbanTabContent extends StatefulWidget {
   final bool highContrast;
   final bool hideDistractions;
+  final bool isSummary;
+  final double spacingFactor;
 
   const _KanbanTabContent({
     required this.highContrast,
     this.hideDistractions = false,
+    this.isSummary = false,
+    this.spacingFactor = 1.0,
   });
 
   @override
@@ -220,7 +237,7 @@ class _KanbanTabContentState extends State<_KanbanTabContent> {
         return Container(
           color: TasksPageStyles.kanbanBackgroundColor(context),
           child: Padding(
-            padding: TasksPageStyles.kanbanPadding(isMobile: isMobile),
+            padding: TasksPageStyles.kanbanPadding(isMobile: isMobile, spacingFactor: widget.spacingFactor),
             child: Column(
               children: [
                 if (taskController.error != null)
@@ -248,6 +265,8 @@ class _KanbanTabContentState extends State<_KanbanTabContent> {
                   child: KanbanBoard(
                     highContrast: widget.highContrast,
                     hideDistractions: widget.hideDistractions,
+                    isSummary: widget.isSummary,
+                    spacingFactor: widget.spacingFactor,
                   ),
                 ),
               ],

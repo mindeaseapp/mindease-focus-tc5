@@ -27,9 +27,9 @@ class TasksPageStyles {
   }
 
   // Pomodoro Tab
-  static const EdgeInsets pomodoroPadding = EdgeInsets.all(AppSpacing.lg);
+  static EdgeInsets pomodoroPadding(double spacingFactor) => EdgeInsets.all(AppSpacing.lg * spacingFactor);
   static const double pomodoroMaxWidth = AppSizes.breakpointMobile;
-  static const double pomodoroTitleSpacing = AppSpacing.lg;
+  static double pomodoroTitleSpacing(double spacingFactor) => AppSpacing.lg * spacingFactor;
 
   static final TextStyle pomodoroTitleText = AppTypography.titleMedium.copyWith(
     color: AppColors.textSecondary,
@@ -39,8 +39,8 @@ class TasksPageStyles {
   // Kanban Tab
   static const double mobileBreakpoint = AppSizes.breakpointMobile;
 
-  static EdgeInsets kanbanPadding({required bool isMobile}) =>
-      EdgeInsets.all(isMobile ? AppSpacing.md : AppSpacing.xl);
+  static EdgeInsets kanbanPadding({required bool isMobile, required double spacingFactor}) =>
+      EdgeInsets.all((isMobile ? AppSpacing.md : AppSpacing.xl) * spacingFactor);
 
   static Color kanbanBackgroundColor(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark

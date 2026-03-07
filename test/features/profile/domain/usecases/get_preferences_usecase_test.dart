@@ -29,6 +29,7 @@ void main() {
     pushNotifications: true,
     notificationSounds: false,
     complexity: InterfaceComplexity.medium,
+    displayMode: DisplayMode.balanced,
     fontSize: FontSizePreference.normal,
     elementSpacing: ElementSpacing.medium,
   );

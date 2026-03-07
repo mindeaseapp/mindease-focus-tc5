@@ -52,6 +52,8 @@ void main() {
     
     when(() => mockProfilePreferencesController.highContrast).thenReturn(false);
     when(() => mockProfilePreferencesController.hideDistractions).thenReturn(false);
+    when(() => mockProfilePreferencesController.spacing).thenReturn(ElementSpacing.medium);
+    when(() => mockProfilePreferencesController.displayMode).thenReturn(DisplayMode.balanced);
   });
 
   Widget createWidgetUnderTest() {

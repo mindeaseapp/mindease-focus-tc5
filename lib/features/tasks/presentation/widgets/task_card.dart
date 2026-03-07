@@ -7,6 +7,8 @@ class TaskCard extends StatelessWidget {
   final VoidCallback onEdit;
   final void Function(String id) onDelete;
   final bool highContrast;
+  final bool isSummary;
+  final double spacingFactor;
 
   const TaskCard({
     super.key,
@@ -14,6 +16,8 @@ class TaskCard extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
     this.highContrast = false,
+    this.isSummary = false,
+    this.spacingFactor = 1.0,
   });
 
   @override
@@ -35,7 +39,7 @@ class TaskCard extends StatelessWidget {
                   color: TaskCardStyles.dragIconColor(context),
                   size: TaskCardStyles.dragIconSize,
                 ),
-                TaskCardStyles.gap8,
+                SizedBox(width: 8 * spacingFactor),
                 Expanded(
                   child: Text(
                     task.title,
@@ -60,8 +64,8 @@ class TaskCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (task.description != null && task.description!.isNotEmpty) ...[
-              TaskCardStyles.h8,
+            if (!isSummary && task.description != null && task.description!.isNotEmpty) ...[
+              SizedBox(height: 8 * spacingFactor),
               Text(
                 task.description!,
                 style: TaskCardStyles.descriptionText(context),
@@ -69,8 +73,8 @@ class TaskCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ],
-            if (task.timeSpent != null && task.timeSpent!.isNotEmpty) ...[
-              TaskCardStyles.h12,
+            if (!isSummary && task.timeSpent != null && task.timeSpent!.isNotEmpty) ...[
+              SizedBox(height: 12 * spacingFactor),
               Row(
                 children: [
                   Icon(
@@ -78,7 +82,7 @@ class TaskCard extends StatelessWidget {
                     size: TaskCardStyles.timeIconSize,
                     color: TaskCardStyles.timeColor(context),
                   ),
-                  TaskCardStyles.w4,
+                  SizedBox(width: 4 * spacingFactor),
                   Text(
                     '${task.timeSpent} de foco',
                     style: TaskCardStyles.timeText(context),

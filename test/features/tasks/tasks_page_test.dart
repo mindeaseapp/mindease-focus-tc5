@@ -85,6 +85,10 @@ class FakeProfilePreferencesController extends ChangeNotifier implements Profile
   @override
   InterfaceComplexity get complexity => InterfaceComplexity.medium;
   @override
+  ElementSpacing get spacing => ElementSpacing.medium;
+  @override
+  DisplayMode get displayMode => DisplayMode.balanced;
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 

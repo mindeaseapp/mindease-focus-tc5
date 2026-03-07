@@ -47,6 +47,9 @@ class ProfilePreferencesController extends ChangeNotifier {
   InterfaceComplexity _complexity = InterfaceComplexity.medium;
   InterfaceComplexity get complexity => _complexity;
 
+  DisplayMode _displayMode = DisplayMode.balanced;
+  DisplayMode get displayMode => _displayMode;
+
   // ==========================
   // Font Size e Spacing
   // ==========================
@@ -74,6 +77,7 @@ class ProfilePreferencesController extends ChangeNotifier {
       pushNotifications = prefs.pushNotifications;
       notificationSounds = prefs.notificationSounds;
       _complexity = prefs.complexity;
+      _displayMode = prefs.displayMode;
       _fontSize = prefs.fontSize;
       _spacing = prefs.elementSpacing;
       
@@ -100,6 +104,7 @@ class ProfilePreferencesController extends ChangeNotifier {
         pushNotifications: pushNotifications,
         notificationSounds: notificationSounds,
         complexity: _complexity,
+        displayMode: _displayMode,
         fontSize: _fontSize,
         elementSpacing: _spacing,
       );
@@ -120,6 +125,12 @@ class ProfilePreferencesController extends ChangeNotifier {
   }
 
   void _enforceAfterComplexityChange() {
+    // Modo de Exibição
+    final allowedModes = _complexity.allowedDisplayModes;
+    if (!allowedModes.contains(_displayMode)) {
+      _displayMode = _complexity.defaultDisplayMode;
+    }
+
     final allowedAlerts = _complexity.allowedCognitiveAlerts;
 
     if (!allowedAlerts.contains(CognitiveAlertSetting.breakReminder)) {
@@ -226,6 +237,13 @@ class ProfilePreferencesController extends ChangeNotifier {
     _scheduleSave();
   }
 
+  void setDisplayMode(DisplayMode v) {
+    if (_displayMode == v) return;
+    _displayMode = v;
+    notifyListeners();
+    _scheduleSave();
+  }
+
   void setFontSize(FontSizePreference v) {
     if (_fontSize == v) return;
     _fontSize = v;
@@ -270,9 +288,26 @@ class ProfilePreferencesController extends ChangeNotifier {
         loadPreferences(userId);
       }
     } else {
-      // Usuário fez logout, resetar flag
+      // Usuário fez logout, resetar flag e as variáveis
       _hasLoadedPreferences = false;
       _currentUserId = null;
+      _resetToDefaults();
     }
+  }
+
+  void _resetToDefaults() {
+    hideDistractions = false;
+    highContrast = false;
+    darkMode = false;
+    breakReminder = true;
+    taskTimeAlert = true;
+    smoothTransition = true;
+    pushNotifications = true;
+    notificationSounds = false;
+    _complexity = InterfaceComplexity.medium;
+    _displayMode = DisplayMode.balanced;
+    _fontSize = FontSizePreference.normal;
+    _spacing = ElementSpacing.medium;
+    notifyListeners();
   }
 }

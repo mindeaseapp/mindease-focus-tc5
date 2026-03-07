@@ -12,11 +12,15 @@ import 'package:mindease_focus/features/tasks/presentation/widgets/kanban_board_
 class KanbanBoard extends StatefulWidget {
   final bool highContrast;
   final bool hideDistractions;
+  final bool isSummary;
+  final double spacingFactor;
 
   const KanbanBoard({
     super.key,
     this.highContrast = false,
     this.hideDistractions = false,
+    this.isSummary = false,
+    this.spacingFactor = 1.0,
   });
 
   @override
@@ -95,7 +99,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHeader(context),
-        KanbanBoardStyles.gap24,
+        SizedBox(height: 24 * widget.spacingFactor),
         Expanded(child: _buildColumns(context, tasks, columns)),
       ],
     );
@@ -109,7 +113,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeaderTitle(context),
-              KanbanBoardStyles.gap16,
+              SizedBox(height: 16 * widget.spacingFactor),
               SizedBox(width: double.infinity, child: _buildAddTaskButton(context)),
             ],
           );
@@ -130,8 +134,8 @@ class _KanbanBoardState extends State<KanbanBoard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Quadro Kanban', style: KanbanBoardStyles.headerTitleStyle(context)),
-        if (!widget.hideDistractions) ...[
-          KanbanBoardStyles.gap4h,
+        if (!widget.hideDistractions && !widget.isSummary) ...[
+          SizedBox(height: 4 * widget.spacingFactor),
           Text(
             'Organize suas tarefas de forma visual',
             style: KanbanBoardStyles.headerSubtitleStyle(context),
@@ -215,6 +219,8 @@ class _KanbanBoardState extends State<KanbanBoard> {
       onTaskDeleted: _handleDeleteTask,
       onTaskEdited: _handleEditTask,
       highContrast: widget.highContrast,
+      isSummary: widget.isSummary,
+      spacingFactor: widget.spacingFactor,
     );
   }
 }

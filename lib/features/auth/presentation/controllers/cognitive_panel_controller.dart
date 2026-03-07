@@ -4,11 +4,13 @@ import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/co
 class CognitivePanelController extends ChangeNotifier {
   // ✅ opcional: avisa alguém quando a complexidade mudar (ex.: prefs)
   final ValueChanged<InterfaceComplexity>? onComplexityChanged;
+  final ValueChanged<DisplayMode>? onDisplayModeChanged;
   final ValueChanged<FontSizePreference>? onFontSizeChanged;
   final ValueChanged<ElementSpacing>? onSpacingChanged;
 
   CognitivePanelController({
     this.onComplexityChanged,
+    this.onDisplayModeChanged,
     this.onFontSizeChanged,
     this.onSpacingChanged,
   });
@@ -66,6 +68,7 @@ class CognitivePanelController extends ChangeNotifier {
     if (_displayMode == next) return;
     _displayMode = next;
     notifyListeners();
+    onDisplayModeChanged?.call(_displayMode);
   }
 
   void setSpacingFromSlider(double value) {
@@ -92,5 +95,39 @@ class CognitivePanelController extends ChangeNotifier {
     _fontSize = next;
     notifyListeners();
     onFontSizeChanged?.call(_fontSize);
+  }
+
+  // ✅ NOVO: Sincronização passiva do backend sem disparar gravação
+  void syncFromGlobal({
+    required InterfaceComplexity globalComplexity,
+    required DisplayMode globalDisplayMode,
+    required ElementSpacing globalSpacing,
+    required FontSizePreference globalFontSize,
+  }) {
+    bool hasChanges = false;
+    
+    if (_complexity != globalComplexity) {
+      _complexity = globalComplexity;
+      hasChanges = true;
+    }
+    if (_displayMode != globalDisplayMode) {
+      _displayMode = globalDisplayMode;
+      hasChanges = true;
+    }
+    if (_spacing != globalSpacing) {
+      _spacing = globalSpacing;
+      hasChanges = true;
+    }
+    if (_fontSize != globalFontSize) {
+      _fontSize = globalFontSize;
+      hasChanges = true;
+    }
+
+    if (hasChanges) {
+      notifyListeners();
+      // NOTA IMPORTANTE: Nós intencionalmente NÃO chamamos:
+      // onComplexityChanged, onDisplayModeChanged, etc.
+      // porque esses dados já vieram da fonte global de verdade.
+    }
   }
 }
