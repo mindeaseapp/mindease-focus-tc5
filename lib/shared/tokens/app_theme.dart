@@ -79,7 +79,6 @@ class AppTheme {
     highlightColor: Colors.transparent,
   );
 
-  // ✅ DARK COMPLETO
   static final ThemeData dark = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
@@ -192,18 +191,12 @@ class AppTheme {
     highlightColor: Colors.transparent,
   );
 
-  // ======================================================
-  // ✅ HIGH CONTRAST (Hacka - Acessibilidade Cognitiva)
-  // ======================================================
-
   static ThemeData get lightHighContrast => _applyHighContrast(light);
   static ThemeData get darkHighContrast => _applyHighContrast(dark);
 
-  /// ✅ reforço de contraste sem depender de token extra
   static ThemeData _applyHighContrast(ThemeData base) {
     final isDark = base.brightness == Brightness.dark;
 
-    // ✅ fallback garantido (não depende de AppColors.borderStrong)
     final strongBorderColor = isDark ? Colors.white : Colors.black;
 
     final strongBorder = BorderSide(
@@ -251,7 +244,6 @@ class AppTheme {
         ),
       ),
 
-      // ✅ deixa o switch com contorno mais evidente (contraste perceptível)
       switchTheme: base.switchTheme.copyWith(
         trackOutlineColor: WidgetStatePropertyAll(strongBorderColor),
         trackOutlineWidth: const WidgetStatePropertyAll(1.6),

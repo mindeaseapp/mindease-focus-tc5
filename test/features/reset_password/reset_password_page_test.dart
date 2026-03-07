@@ -44,16 +44,12 @@ void main() {
     });
 
     test('Fluxo resetPassword: Deve gerenciar o estado corretamente', () async {
-      // 1. Tenta enviar
       final future = controller.resetPassword('email@teste.com');
       
-      // 2. Verifica se entrou em loading
       expect(controller.isLoading, true);
 
-      // 3. Espera acabar
       await future;
 
-      // 4. Verifica se saiu do loading
       expect(controller.isLoading, false);
       expect(controller.errorMessage, null);
     });

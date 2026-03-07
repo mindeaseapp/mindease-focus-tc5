@@ -4,7 +4,6 @@ import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 
 class CognitivePanelStyles {
-  // Factors
   static double spacingFactor(ElementSpacing s) {
     switch (s) {
       case ElementSpacing.low:
@@ -27,13 +26,11 @@ class CognitivePanelStyles {
     }
   }
 
-  // Spacing
   static Widget vGap(double base, double factor) => SizedBox(height: base * factor);
 
   static const double fieldLabelSpacing = AppSpacing.xs;
   static const double sectionSpacing = AppSpacing.md;
 
-  // Typography
   static TextStyle? fieldLabelStyle(BuildContext context) =>
       Theme.of(context).textTheme.labelLarge;
 
@@ -43,7 +40,6 @@ class CognitivePanelStyles {
   static TextStyle? sliderValueStyle(BuildContext context) =>
       Theme.of(context).textTheme.bodySmall;
 
-  // Slider
   static const BoxConstraints sliderConstraints =
       BoxConstraints(minHeight: AppSizes.minTapArea);
 }

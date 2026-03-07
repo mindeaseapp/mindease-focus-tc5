@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 
-// Imports do seu projeto
 import 'package:mindease_focus/features/auth/presentation/pages/login/login_page.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/login_controller.dart';
@@ -12,7 +11,6 @@ import 'package:mindease_focus/core/navigation/navigation_service.dart';
 import 'package:mindease_focus/features/auth/data/repositories/auth_repository.dart';
 import 'package:mindease_focus/shared/domain/entities/user_entity.dart';
 
-// Mock simples para não quebrar o Provider
 class MockAuthController extends ChangeNotifier implements AuthController {
   @override
   bool get isAuthenticated => false;

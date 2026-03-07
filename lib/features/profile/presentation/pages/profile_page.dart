@@ -3,40 +3,31 @@ import 'package:provider/provider.dart';
 
 import 'package:mindease_focus/core/navigation/routes.dart';
 
-// Controllers
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/cognitive_panel_controller.dart';
 import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 
-// ViewModel
 import 'package:mindease_focus/features/profile/domain/models/profile_view/profile_view_model.dart';
 
-// Widgets (cards)
 import 'package:mindease_focus/features/profile/presentation/widgets/cards/cognitive_alerts/cognitive_alerts_card.dart';
 import 'package:mindease_focus/features/profile/presentation/widgets/cards/cognitive_panel/cognitive_panel_card.dart';
 import 'package:mindease_focus/features/profile/presentation/widgets/cards/focus_mode/focus_mode_card.dart';
 import 'package:mindease_focus/features/profile/presentation/widgets/cards/notifications/notifications_card.dart';
 
-// Widgets (settings)
 import 'package:mindease_focus/features/auth/presentation/widgets/settings_tile.dart';
 import 'package:mindease_focus/features/auth/presentation/widgets/settings_section_card.dart';
 
-// Identidade real
 import 'package:mindease_focus/features/profile/presentation/widgets/cards/profile_identity_tile/profile_identity_tile.dart';
 
-// Layout/Tokens
 import 'package:mindease_focus/shared/layout/centered_constrained.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 
-// Header + Drawer
 import 'package:mindease_focus/shared/widgets/mindease_header/mindease_header.dart';
 import 'package:mindease_focus/shared/widgets/mindease_drawer/mindease_drawer.dart';
 
-// ✅ NOVO: FAB com Popover + Ajuda
 import 'package:mindease_focus/shared/widgets/focus_mode/mindease_accessibility_fab.dart';
 
-// Styles
 import 'package:mindease_focus/features/profile/presentation/pages/profile_styles.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -57,7 +48,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    // ✅ Inicializa o controller local com callback para salvar no Supabase
     _cognitiveController = CognitivePanelController(
       onComplexityChanged: (newComplexity) {
         if (mounted) {
@@ -90,11 +80,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Controllers
     final prefs = context.watch<ProfilePreferencesController>();
     
-    // ✅ Sincronia passiva e segura: Atualiza apenas a UI sem enviar dados
-    // de volta para a nuvem recém carregados (evitando sobrescrita/loop).
     _cognitiveController.syncFromGlobal(
       globalComplexity: prefs.complexity,
       globalDisplayMode: prefs.displayMode,
@@ -102,7 +89,6 @@ class _ProfilePageState extends State<ProfilePage> {
       globalFontSize: prefs.fontSize,
     );
 
-    // Auth
     final authController = context.watch<AuthController>();
     final userEntity = authController.user;
     final userLabel = userEntity.displayName;
@@ -149,7 +135,6 @@ class _ProfilePageState extends State<ProfilePage> {
             )
           : null,
 
-      // ✅ AQUI: adiciona o Popover (expandir) + Ajuda na tela de Perfil
       floatingActionButton: const MindEaseAccessibilityFab(),
 
       body: SafeArea(
@@ -188,7 +173,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 AppSpacing.gapXl,
 
-                // 1) Identidade REAL do usuário
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(AppSpacing.md),
@@ -201,7 +185,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 AppSpacing.gapLg,
 
-                // 2) Seção do ViewModel
                 SettingsSectionCard(
                   semanticsLabel: 'Informações pessoais',
                   icon: Icons.person_outline,
@@ -213,19 +196,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 AppSpacing.gapLg,
 
-                // 3) Painel Cognitivo
                 CognitivePanelCard(controller: _cognitiveController),
                 AppSpacing.gapLg,
 
-                // 4) Modo Foco
                 const FocusModeCard(),
                 AppSpacing.gapLg,
 
-                // 5) Alertas e Preferências
                 CognitiveAlertsCard(controller: prefs),
                 AppSpacing.gapLg,
 
-                // 6) Notificações
                 NotificationsCard(controller: prefs),
                 AppSpacing.gapXl,
 

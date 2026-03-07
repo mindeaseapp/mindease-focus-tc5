@@ -21,7 +21,6 @@ void main() {
     mockRegisterController = MockRegisterController();
     mockAuthController = MockAuthController();
 
-    // Default stubs
     when(() => mockRegisterController.isLoading).thenReturn(false);
     when(() => mockRegisterController.isFormValid).thenReturn(false);
     when(() => mockRegisterController.errorMessage).thenReturn(null);
@@ -50,7 +49,7 @@ void main() {
 
       expect(find.text('MindEase'), findsOneWidget);
       expect(find.text('Crie sua conta'), findsOneWidget);
-      expect(find.byType(TextFormField), findsNWidgets(4)); // Name, Email, Pass, Confirm
+      expect(find.byType(TextFormField), findsNWidgets(4)); 
       expect(find.byType(Checkbox), findsOneWidget);
       expect(find.text('Criar conta'), findsOneWidget);
     });
@@ -117,8 +116,8 @@ void main() {
 
         await tester.ensureVisible(find.text('Criar conta'));
         await tester.tap(find.text('Criar conta'), warnIfMissed: false);
-        await tester.pump(); // Submit
-        await tester.pumpAndSettle(); // Navigation
+        await tester.pump();
+        await tester.pumpAndSettle(); 
 
         expect(find.text('Conta criada com sucesso!'), findsOneWidget);
         expect(find.text('Login Page'), findsOneWidget);

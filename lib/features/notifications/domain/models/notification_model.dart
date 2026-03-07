@@ -1,4 +1,3 @@
-/// Modelo imutável de uma notificação in-app (sininho).
 class NotificationModel {
   final String id;
   final String title;

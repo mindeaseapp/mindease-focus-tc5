@@ -9,9 +9,6 @@ class MockGoTrueClient extends Mock implements GoTrueClient {}
 class MockUser extends Mock implements User {}
 class FakeUserAttributes extends Fake implements UserAttributes {}
 
-// Note: AuthResponse and UserResponse are final and might be hard to mock if they don't have a public constructor or are not abstract.
-// Supabase AuthResponse has a constructor.
-
 void main() {
   late MockSupabaseClient mockSupabaseClient;
   late MockGoTrueClient mockGoTrueClient;
@@ -138,8 +135,6 @@ void main() {
     group('updatePassword', () {
     final tNewPassword = 'newPassword123';
     test('should call updateUser on supabase client', () async {
-      // Mocking UserAttributes is tricky if it overrides ==. 
-      // Using any() or matching by properties.
       
       final mockUserResponse = UserResponse.fromJson(<String, dynamic>{
         'id': 'user123',

@@ -20,7 +20,6 @@ class NotFoundPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        // ✅ REMOVE a seta/back do AppBar
         automaticallyImplyLeading: false,
 
         title: const Text('Página não encontrada'),

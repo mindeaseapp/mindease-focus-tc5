@@ -47,22 +47,19 @@ void main() {
     testWidgets('toggles focus mode when switch is tapped', skip: true, (tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
 
-      // Open the popover
       await tester.tap(find.byIcon(Icons.open_in_full_rounded));
       await tester.pumpAndSettle();
 
-      // Verify the element is present
       final textFinder = find.text('Ativar Modo Foco');
       expect(textFinder, findsOneWidget);
 
-      // Find the InkWell that wraps the text to ensure we tap the interactive area
       final inkWellFinder = find.ancestor(
         of: textFinder,
         matching: find.byType(InkWell),
       );
       
       await tester.tap(inkWellFinder);
-      await tester.pump(); // Process the tap event
+      await tester.pump(); 
       
       verify(() => mockFocusModeController.toggle()).called(1);
     });

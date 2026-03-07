@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// Imports de Layout e UI
 import 'package:mindease_focus/shared/layout/flex_grid.dart';
 import 'package:mindease_focus/shared/widgets/gradient_panel/gradient_panel.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
@@ -9,16 +8,13 @@ import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 import 'package:mindease_focus/shared/tokens/app_colors.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
-// Imports de Validadores
 import 'package:mindease_focus/features/auth/domain/validators/name_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/email_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/confirm_password_validator.dart';
 
-// Estilos
 import 'package:mindease_focus/features/auth/presentation/pages/register/register_styles.dart';
 
-// Controller
 import 'package:mindease_focus/features/auth/presentation/controllers/register_controller.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -234,7 +230,6 @@ class _RegisterPageState extends State<RegisterPage> {
             AppSpacing.gapMd,
           ],
 
-          // NOME COMPLETO
           TextFormField(
             controller: _nameController,
             focusNode: _nameFocusNode,
@@ -251,7 +246,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
           AppSpacing.gapMd,
 
-          // EMAIL
           TextFormField(
             controller: _emailController,
             focusNode: _emailFocusNode,
@@ -267,7 +261,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
           AppSpacing.gapMd,
 
-          // SENHA
           TextFormField(
             controller: _passwordController,
             focusNode: _passwordFocusNode,
@@ -289,7 +282,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
           AppSpacing.gapMd,
 
-          // CONFIRMAR SENHA
           TextFormField(
             controller: _confirmPasswordController,
             focusNode: _confirmPasswordFocusNode,
@@ -314,7 +306,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
           AppSpacing.gapSm,
 
-          // TERMOS DE USO
           InkWell(
             onTap: () {
               setState(() => _acceptedTerms = !_acceptedTerms);
@@ -341,7 +332,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
           AppSpacing.gapMd,
 
-          // BOTÃO CRIAR CONTA
           SizedBox(
             width: double.infinity,
             height: AppSizes.buttonHeight,

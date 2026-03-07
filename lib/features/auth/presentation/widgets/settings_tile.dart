@@ -28,8 +28,6 @@ class SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ListTile já respeita alvos de toque grandes (>= 48dp).
-    // Mesmo assim garantimos altura mínima.
     return Semantics(
       button: data.isInteractive,
       enabled: data.isInteractive,

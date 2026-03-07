@@ -97,7 +97,6 @@ void main() {
         (tester) async {
       await loadPage(tester);
 
-      // Usando find.byType(TextFormField).at(N) ou find.widgetWithText para maior precisão
       await tester.enterText(find.widgetWithText(TextFormField, 'Nome completo'), 'Usuário Teste');
       await tester.enterText(find.widgetWithText(TextFormField, 'Email'), 'teste@email.com');
       await tester.enterText(find.widgetWithText(TextFormField, 'Senha'), 'SenhaForte123!');

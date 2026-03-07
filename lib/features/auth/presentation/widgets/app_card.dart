@@ -20,11 +20,10 @@ class AppCard extends StatelessWidget {
     final contentPadding = padding ?? AppSpacing.card(context);
 
     return Semantics(
-      // Ajuda leitores de tela a entenderem que é um "bloco"
       container: true,
       label: semanticsLabel,
       child: Card(
-        elevation: 0, // igual ao print (flat)
+        elevation: 0, 
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.cardBorderRadius),
           side: const BorderSide(color: AppColors.border),

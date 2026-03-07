@@ -34,23 +34,20 @@ void main() {
       expect(complexityChangedCalled, true);
       expect(complexityChangedValue, InterfaceComplexity.simple);
       
-      // Simple enforces summary
       expect(controller.displayMode, DisplayMode.summary);
     });
 
     test('setDisplayMode should update if allowed', () {
-       controller.setComplexity(InterfaceComplexity.medium); // Medium allows balanced
+       controller.setComplexity(InterfaceComplexity.medium); 
        controller.setDisplayMode(DisplayMode.balanced);
        expect(controller.displayMode, DisplayMode.balanced);
     });
 
     test('setDisplayMode should revert to default if not allowed', () {
-       controller.setComplexity(InterfaceComplexity.simple); // Simple only allows summary
+       controller.setComplexity(InterfaceComplexity.simple); 
        
-       // Try setting detailed (not allowed in simple)
        controller.setDisplayMode(DisplayMode.detailed);
        
-       // Should stay/revert to summary (default for simple)
        expect(controller.displayMode, DisplayMode.summary);
     });
 

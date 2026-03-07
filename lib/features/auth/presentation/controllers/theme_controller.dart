@@ -12,7 +12,7 @@ class ThemeController extends ChangeNotifier {
 
   void toggleDarkMode(bool value) {
     final next = value ? ThemeMode.dark : ThemeMode.light;
-    if (_mode == next) return; // ✅ evita notify à toa
+    if (_mode == next) return; 
     _mode = next;
     notifyListeners();
   }
@@ -23,13 +23,9 @@ class ThemeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ==========================
-  // Sync with ProfilePreferences
-  // ==========================
   void updateFromPreferences(ProfilePreferencesController? prefs) {
     if (prefs == null) return;
     
-    // Sincroniza modo escuro
     final shouldBeDark = prefs.darkMode;
     final targetMode = shouldBeDark ? ThemeMode.dark : ThemeMode.light;
     if (_mode != targetMode) {
@@ -37,7 +33,6 @@ class ThemeController extends ChangeNotifier {
       notifyListeners();
     }
     
-    // Sincroniza alto contraste
     if (_highContrast != prefs.highContrast) {
       _highContrast = prefs.highContrast;
       notifyListeners();

@@ -157,7 +157,6 @@ class PomodoroTimerStyles {
         elevation: 0,
       );
 
-  // Dialog
   static final ShapeBorder dialogShape = RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(cardRadius),
   );

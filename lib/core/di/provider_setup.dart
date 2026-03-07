@@ -2,10 +2,8 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-// Services
 import 'package:mindease_focus/core/navigation/navigation_service.dart';
 
-// Controllers
 import 'package:mindease_focus/features/auth/presentation/controllers/theme_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/login_controller.dart';
@@ -19,7 +17,6 @@ import 'package:mindease_focus/features/tasks/presentation/controllers/task_cont
 import 'package:mindease_focus/features/dashboard/presentation/controllers/dashboard_controller.dart';
 import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 
-// UseCases
 import 'package:mindease_focus/features/auth/domain/usecases/get_user_usecase.dart';
 import 'package:mindease_focus/features/auth/domain/usecases/register_usecase.dart';
 import 'package:mindease_focus/features/auth/domain/usecases/login_usecase.dart';
@@ -30,7 +27,6 @@ import 'package:mindease_focus/features/tasks/domain/usecases/delete_task_usecas
 import 'package:mindease_focus/features/profile/domain/usecases/get_preferences_usecase.dart';
 import 'package:mindease_focus/features/profile/domain/usecases/update_preferences_usecase.dart';
 
-// Repositories & DataSources
 import 'package:mindease_focus/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:mindease_focus/features/auth/data/repositories/auth_repository.dart';
 import 'package:mindease_focus/features/profile/data/datasources/profile_remote_datasource.dart';
@@ -41,20 +37,16 @@ import 'package:mindease_focus/features/tasks/data/repositories/task_repository.
 List<SingleChildWidget> get providers {
   final supabase = Supabase.instance.client;
 
-  // Services
   final navigationService = NavigationService();
 
-  // DataSources
   final authDataSource = AuthRemoteDataSource(supabase);
   final profileDataSource = ProfileRemoteDataSourceImpl(supabase);
   final taskDataSource = TaskRemoteDataSourceImpl(supabase);
 
-  // Repositories
   final authRepository = AuthRepository(authDataSource);
   final profileRepository = ProfileRepository(profileDataSource);
   final taskRepository = TaskRepository(taskDataSource);
 
-  // UseCases
   final getUserUseCase = GetUserUseCase(authRepository);
   final registerUseCase = RegisterUseCase(authRepository);
   final loginUseCase = LoginUseCase(authRepository);
@@ -68,7 +60,6 @@ List<SingleChildWidget> get providers {
   return [
     Provider<NavigationService>.value(value: navigationService),
     
-    // Auth & Profile
     ChangeNotifierProvider(
       create: (_) => AuthController(
         getUserUseCase: getUserUseCase,
@@ -107,7 +98,6 @@ List<SingleChildWidget> get providers {
       },
     ),
 
-    // Theme Controller - sincroniza com ProfilePreferencesController
     ChangeNotifierProxyProvider<ProfilePreferencesController, ThemeController>(
       create: (_) => ThemeController(),
       update: (_, prefsCtrl, previous) {
@@ -117,7 +107,6 @@ List<SingleChildWidget> get providers {
       },
     ),
 
-    // Notificações in-app (sininho) — deve vir antes do PomodoroController
     ChangeNotifierProvider(create: (_) => NotificationController()),
 
     ChangeNotifierProvider(
@@ -130,7 +119,6 @@ List<SingleChildWidget> get providers {
     ),
     ChangeNotifierProvider(create: (_) => DashboardController()),
 
-    // Tasks & Focus
     ChangeNotifierProvider(create: (_) => FocusModeController()),
     ChangeNotifierProxyProvider3<NotificationController, ProfilePreferencesController, TaskController, PomodoroController>(
       create: (_) => PomodoroController(),

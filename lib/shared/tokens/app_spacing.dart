@@ -1,22 +1,10 @@
 import 'package:flutter/material.dart';
 
-/// =======================================================
-/// 📐 Design Tokens — Spacing
-/// Completo, previsível e responsivo
-/// Web + Android + iOS
-/// Baseado no sistema 8px (Material Design)
-/// =======================================================
 class AppSpacing {
   AppSpacing._();
 
-  // ======================================================
-  // 🔹 BASE UNIT (8px system)
-  // ======================================================
   static const double base = 8.0;
 
-  // ======================================================
-  // 🔹 SPACING SCALE (RAW VALUES)
-  // ======================================================
   static const double xxs = 2.0;
   static const double xs  = 4.0;
   static const double sm  = 8.0;
@@ -28,9 +16,6 @@ class AppSpacing {
   static const double huge = 64.0;
   static const double massive = 80.0;
 
-  // ======================================================
-  // 🔹 PAGE / LAYOUT
-  // ======================================================
   static const double pagePaddingMobile = 16.0;
   static const double pagePaddingTablet = 24.0;
   static const double pagePaddingDesktop = 32.0;
@@ -39,9 +24,6 @@ class AppSpacing {
   static const double sectionGapMd = 24.0;
   static const double sectionGapLg = 32.0;
 
-  // ======================================================
-  // 🔹 COMPONENT SPACING
-  // ======================================================
   static const double cardPaddingSm = 16.0;
   static const double cardPadding = 24.0;
   static const double cardPaddingLg = 32.0;
@@ -51,9 +33,6 @@ class AppSpacing {
   static const double buttonHeightSmall = 40.0;
   static const double buttonHeightLarge = 56.0;
 
-  // ======================================================
-  // 🔹 BORDER RADIUS
-  // ======================================================
   static const double radiusXs = 4.0;
   static const double radiusSm = 8.0;
   static const double radiusMd = 12.0;
@@ -61,18 +40,10 @@ class AppSpacing {
   static const double radiusXl = 24.0;
   static const double radiusRound = 999.0;
 
-  // ======================================================
-  // 🔹 RESPONSIVE BREAKPOINTS
-  // ======================================================
   static const double breakpointMobile = 600;
   static const double breakpointTablet = 900;
   static const double breakpointDesktop = 1200;
 
-  // ======================================================
-  // 🔹 RESPONSIVE HELPERS
-  // ======================================================
-
-  /// Padding horizontal responsivo (páginas)
   static double pagePadding(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
@@ -84,7 +55,6 @@ class AppSpacing {
     return pagePaddingMobile;
   }
 
-  /// Espaçamento entre seções (vertical)
   static double sectionGap(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
@@ -96,9 +66,6 @@ class AppSpacing {
     return sectionGapSm;
   }
 
-  // ======================================================
-  // 🔹 EDGEINSETS HELPERS (MUITO USADO)
-  // ======================================================
   static EdgeInsets all(double value) =>
       EdgeInsets.all(value);
 
@@ -121,9 +88,6 @@ class AppSpacing {
             : cardPadding,
       );
 
-  // ======================================================
-  // 🔹 SIZEDBOX HELPERS (GAPS)
-  // ======================================================
   static SizedBox gap(double value) =>
       SizedBox(height: value, width: value);
 

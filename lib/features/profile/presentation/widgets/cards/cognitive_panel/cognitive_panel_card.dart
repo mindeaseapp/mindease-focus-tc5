@@ -20,11 +20,9 @@ class CognitivePanelCard extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
-        // ✅ fatores calculados pelo estado atual do painel
         final spacingFactor = CognitivePanelStyles.spacingFactor(controller.spacing);
         final fontFactor = CognitivePanelStyles.fontFactor(controller.fontSize);
 
-        // ✅ aplica escala de fonte só nesse card (não mexe no app todo)
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(
             textScaler: TextScaler.linear(fontFactor),
@@ -60,7 +58,6 @@ class CognitivePanelCard extends StatelessWidget {
                   max: (ElementSpacing.values.length - 1).toDouble(),
                   onChanged: controller.setSpacingFromSlider,
                   semanticsValue: 'Espaçamento: ${controller.spacingLabel}',
-                  // ✅ opcional: também escala o “respiro” interno do bloco
                   internalSpacingFactor: spacingFactor,
                 ),
 
@@ -183,7 +180,6 @@ class _SliderBlock extends StatelessWidget {
   final ValueChanged<double> onChanged;
   final String semanticsValue;
 
-  /// ✅ para o espaçamento interno do bloco (entre título e slider)
   final double internalSpacingFactor;
 
   const _SliderBlock({

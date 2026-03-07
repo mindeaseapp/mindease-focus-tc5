@@ -11,7 +11,6 @@ class UserEntity {
 
   String get displayName => (name.isNotEmpty) ? name : (email.isNotEmpty ? email : 'Usuário');
 
-  // Um usuário vazio/anônimo para evitar null checks na UI toda hora
   factory UserEntity.empty() {
     return const UserEntity(id: '', email: '', name: '');
   }

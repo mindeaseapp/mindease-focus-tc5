@@ -21,7 +21,6 @@ import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/co
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicializa notificações push (Android/iOS/Desktop/Web)
   await NotificationService().init();
 
   await Supabase.initialize(
@@ -54,7 +53,6 @@ class _MindEaseAppState extends State<MindEaseApp> {
     final authController = context.watch<AuthController>();
     final navigationService = context.watch<NavigationService>();
 
-    // Redirecionamento de Password Recovery (Clean Arch: Centralizado no Controller)
     if (authController.needsPasswordReset) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         navigationService.navigatorKey.currentState?.pushNamedAndRemoveUntil(

@@ -155,7 +155,6 @@ void main() {
       ),
     );
 
-    // Usando pump com duração em vez de settle inicialmente para quebrar qualquer loop infinito detectado pelo framework
     await tester.pump(const Duration(milliseconds: 100));
     await tester.pumpAndSettle();
     

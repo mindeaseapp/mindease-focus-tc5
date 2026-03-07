@@ -29,7 +29,6 @@ void main() {
       controller.setEnabled(false);
       expect(controller.enabled, false);
 
-      // Should not notify if value is same
       bool notified = false;
       controller.addListener(() => notified = true);
       controller.setEnabled(false);

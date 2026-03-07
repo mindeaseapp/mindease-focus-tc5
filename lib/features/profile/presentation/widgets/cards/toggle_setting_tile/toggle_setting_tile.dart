@@ -11,11 +11,8 @@ class ToggleSettingTile extends StatelessWidget {
   final ValueChanged<bool> onChanged;
   final String semanticsLabel;
 
-  // ✅ NOVO (opcional): permite travar o switch
   final bool enabled;
 
-  // ✅ NOVO (opcional): texto a mostrar quando estiver travado
-  // (ex.: "Disponível no modo Médio/Avançado")
   final String? disabledReason;
 
   const ToggleSettingTile({
@@ -31,12 +28,10 @@ class ToggleSettingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Regra Hacka: "Ocultar distrações" remove textos secundários
     final hideDistractions = context.select<ProfilePreferencesController, bool>(
       (c) => c.hideDistractions,
     );
 
-    // ✅ se estiver desabilitado, prioriza o motivo (quando existir)
     final String? effectiveSubtitleText = enabled ? subtitle : (disabledReason ?? subtitle);
 
     final Widget? effectiveSubtitle =
@@ -53,7 +48,6 @@ class ToggleSettingTile extends StatelessWidget {
         enabled: enabled,
         label: semanticsLabel,
         toggled: value,
-        // opcional: dá uma dica pro leitor de tela quando estiver travado
         hint: enabled ? null : (disabledReason ?? 'Opção desativada'),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: AppSizes.minTapArea),
@@ -66,7 +60,7 @@ class ToggleSettingTile extends StatelessWidget {
             ),
             subtitle: effectiveSubtitle,
             value: value,
-            onChanged: enabled ? onChanged : null, // ✅ trava de verdade
+            onChanged: enabled ? onChanged : null, 
           ),
         ),
       ),

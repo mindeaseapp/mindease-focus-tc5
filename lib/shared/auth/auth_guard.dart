@@ -10,7 +10,6 @@ class AuthGuard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // O 'select' escuta apenas a mudança na propriedade isAuthenticated
     final isAuthenticated = context.select<AuthController, bool>(
       (auth) => auth.isAuthenticated,
     );
@@ -19,8 +18,6 @@ class AuthGuard extends StatelessWidget {
       return child;
     }
 
-    // Se não estiver autenticado, retorna a página de Login.
-    // Isso impede que a rota protegida seja renderizada.
     return const LoginPage();
   }
 }

@@ -11,7 +11,6 @@ class SettingsSwitchItemData {
   final bool value;
   final ValueChanged<bool>? onChanged;
 
-  /// A11y (opcional)
   final String? semanticsLabel;
   final String? semanticsHint;
 
@@ -40,7 +39,6 @@ class SettingsSwitchesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      // ✅ CORRETO: "semanticsLabel" (com S)
       semanticsLabel: title,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

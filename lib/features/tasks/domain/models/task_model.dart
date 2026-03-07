@@ -1,9 +1,5 @@
 import 'package:mindease_focus/features/dashboard/presentation/pages/dashboard_styles.dart';
 
-// ==============================
-// 📦 TASK MODEL (Entidade Única)
-// ==============================
-
 enum TaskStatus {
   todo,
   inProgress,
@@ -62,13 +58,11 @@ class Task {
     this.pomodoroCount = 0,
   });
 
-  // ✅ CONVERTER DE SUPABASE (JSON) -> PARA TASK
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
       id: json['id'].toString(),
       title: json['title'],
       description: json['description'],
-      // Converte a string 'todo' do banco para o enum TaskStatus.todo
       status: TaskStatus.values.firstWhere(
         (e) => e.toString().split('.').last == json['status'],
         orElse: () => TaskStatus.todo,
@@ -78,13 +72,11 @@ class Task {
     );
   }
 
-  // ✅ CONVERTER DE TASK -> PARA SUPABASE (JSON)
   Map<String, dynamic> toJson({required String userId}) {
     return {
-      'user_id': userId, // Vincula ao usuário logado
+      'user_id': userId, 
       'title': title,
       'description': description,
-      // Salva no banco apenas a string: 'todo', 'inProgress' etc
       'status': status.toString().split('.').last,
       'pomodoro_count': pomodoroCount,
     };
@@ -113,4 +105,3 @@ class Task {
   @override
   String toString() => 'Task(id: $id, title: $title, status: $status)';
 }
-// 🗑️ (Remova a lista initialTasks que existia aqui)

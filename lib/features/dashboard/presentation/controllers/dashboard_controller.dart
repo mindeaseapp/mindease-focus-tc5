@@ -18,7 +18,6 @@ class DashboardController extends ChangeNotifier {
     final inProgressCount = tasks.where((t) => t.status == TaskStatus.inProgress).length;
     final doneCount = tasks.where((t) => t.status == TaskStatus.done).length;
 
-    // Mensagem motivacional baseada no progresso
     String motivationalValue;
     String motivationalSubtitle;
 

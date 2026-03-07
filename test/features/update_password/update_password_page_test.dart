@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 
-// Imports do seu projeto
 import 'package:mindease_focus/features/auth/presentation/pages/update_password/update_password_page.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/update_password_controller.dart';
 import 'package:mindease_focus/features/auth/presentation/controllers/auth_controller.dart';

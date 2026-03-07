@@ -6,7 +6,6 @@ import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class TasksPageStyles {
-  // TabBar
   static const int tabCount = 2;
   static const double tabIndicatorWeight = 3;
   static const double tabIconSize = AppSizes.iconMD;
@@ -26,7 +25,6 @@ class TasksPageStyles {
      return Theme.of(context).colorScheme.onSurface.withValues(alpha: AppOpacity.strong);
   }
 
-  // Pomodoro Tab
   static EdgeInsets pomodoroPadding(double spacingFactor) => EdgeInsets.all(AppSpacing.lg * spacingFactor);
   static const double pomodoroMaxWidth = AppSizes.breakpointMobile;
   static double pomodoroTitleSpacing(double spacingFactor) => AppSpacing.lg * spacingFactor;
@@ -36,7 +34,6 @@ class TasksPageStyles {
     fontWeight: AppTypography.semiBold,
   );
 
-  // Kanban Tab
   static const double mobileBreakpoint = AppSizes.breakpointMobile;
 
   static EdgeInsets kanbanPadding({required bool isMobile, required double spacingFactor}) =>
@@ -48,7 +45,6 @@ class TasksPageStyles {
         : Colors.grey.shade50;
   }
 
-  // Error State
   static const EdgeInsets errorPadding = EdgeInsets.all(AppSpacing.md);
   static const EdgeInsets errorMargin = EdgeInsets.only(bottom: AppSpacing.md);
   static const double errorIconGap = AppSpacing.sm;

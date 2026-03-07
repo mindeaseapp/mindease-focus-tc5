@@ -14,8 +14,6 @@ class FocusModeCard extends StatelessWidget {
     final prefs = context.watch<ProfilePreferencesController>();
     final theme = context.read<ThemeController>();
 
-    // ✅ Hacka: quando "Ocultar distrações" está ON,
-    // reduz conteúdo visual (ex.: remove subtítulos).
     final reduceVisualNoise = prefs.hideDistractions;
 
     return SettingsSectionCard(
@@ -23,7 +21,6 @@ class FocusModeCard extends StatelessWidget {
       icon: Icons.visibility_outlined,
       title: 'Modo Foco',
       children: [
-        // ✅ Ocultar Distrações (efeito visual IMEDIATO no card)
         ToggleSettingTile(
           title: 'Ocultar Distrações',
           subtitle: reduceVisualNoise
@@ -35,7 +32,6 @@ class FocusModeCard extends StatelessWidget {
               'Ocultar distrações. ${prefs.hideDistractions ? "Ativado" : "Desativado"}',
         ),
 
-        // ✅ Alto Contraste (reflete globalmente no tema)
         ToggleSettingTile(
           title: 'Alto Contraste',
           subtitle: reduceVisualNoise
@@ -46,16 +42,11 @@ class FocusModeCard extends StatelessWidget {
             prefs.setHighContrast(value);
             theme.toggleHighContrast(value);
 
-            // opcional (se quiser seguir uma regra mais “forte” do hacka):
-            // ao ligar alto contraste, também liga "ocultar distrações"
-            // para reduzir carga cognitiva.
-            // if (value && !prefs.hideDistractions) prefs.setHideDistractions(true);
           },
           semanticsLabel:
               'Alto contraste. ${prefs.highContrast ? "Ativado" : "Desativado"}',
         ),
 
-        // ✅ Modo Escuro (reflete globalmente no tema)
         ToggleSettingTile(
           title: 'Modo Escuro',
           subtitle: reduceVisualNoise ? null : 'Interface com fundo escuro',

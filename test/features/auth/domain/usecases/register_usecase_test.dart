@@ -20,17 +20,14 @@ void main() {
   final tPassword = 'password123';
 
   test('should call registerUser on repository with correct parameters', () async {
-    // Arrange
     when(() => mockAuthRepository.registerUser(
           name: tName,
           email: tEmail,
           password: tPassword,
         )).thenAnswer((_) async => Future.value());
 
-    // Act
     await useCase(name: tName, email: tEmail, password: tPassword);
 
-    // Assert
     verify(() => mockAuthRepository.registerUser(
           name: tName,
           email: tEmail,
@@ -39,7 +36,6 @@ void main() {
   });
 
   test('should throw exception when registration fails', () async {
-    // Arrange
     final tException = Exception('Registration failed');
     when(() => mockAuthRepository.registerUser(
           name: tName,
@@ -47,7 +43,6 @@ void main() {
           password: tPassword,
         )).thenThrow(tException);
 
-    // Act & Assert
     expect(
       () => useCase(name: tName, email: tEmail, password: tPassword),
       throwsA(isA<Exception>()),

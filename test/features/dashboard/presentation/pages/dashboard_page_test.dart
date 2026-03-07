@@ -39,7 +39,6 @@ void main() {
     mockProfilePreferencesController = MockProfilePreferencesController();
     mockNavigationService = MockNavigationService();
 
-    // Default stubs
     when(() => mockDashboardController.welcomeHandled).thenReturn(true);
     when(() => mockDashboardController.getMetrics(any())).thenReturn([]);
     
@@ -75,20 +74,18 @@ void main() {
 
   group('DashboardPage', () {
     testWidgets('renders correctly', (tester) async {
-       // Mock specific metrics to verify rendering
        when(() => mockDashboardController.getMetrics(any())).thenReturn([
          DashboardMetric(kind: DashboardMetricKind.done, title: 'Tasks Done', value: '5', subtitle: 'Great job', icon: Icons.check)
        ]);
 
       await tester.pumpWidget(createWidgetUnderTest());
-      await tester.pumpAndSettle(); // Post frame callback
+      await tester.pumpAndSettle(); 
 
       expect(find.text('Dashboard').first, findsOneWidget);
       expect(find.text('Bem-vindo de volta! Aqui está seu resumo de hoje.'), findsOneWidget);
       expect(find.text('Tasks Done'), findsOneWidget);
       expect(find.text('5'), findsOneWidget);
       
-      // Verify TaskController.loadTasks called
       verify(() => mockTaskController.loadTasks()).called(1);
     });
 
@@ -126,17 +123,9 @@ void main() {
       
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
-
-      // Should hide some elements like metrics
-      // Code: if (!isFocusMode) ... [MetricsGrid, RecentTasks, etc]
-      // Metrics are mocked to return empty list usually, but if enabled=true, grid shouldn't be built.
       
       expect(find.text('Modo Foco Ativo'), findsOneWidget);
-      // Actually FocusBanner uses Container.
-      // MetricsGrid uses Card. RecentTasks uses Card.
-      // If focus mode enabled, only FocusBanner is shown?
       
-      // Let's check text that only appears in normal mode
       expect(find.text('Tarefas Recentes'), findsNothing);
       expect(find.text('Dica do Dia'), findsNothing);
     });

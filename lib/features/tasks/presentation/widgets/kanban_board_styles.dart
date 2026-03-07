@@ -6,11 +6,9 @@ import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class KanbanBoardStyles {
-  // Breakpoints
   static const double headerMobileBreakpoint = AppSizes.breakpointMobile;
   static const double columnsMobileBreakpoint = AppSizes.breakpointTablet;
 
-  // Spacing
   static const SizedBox gap24 = AppSpacing.gapLg;
   static const SizedBox gap16 = AppSpacing.gapMd;
   static const SizedBox gap12w = SizedBox(width: AppSpacing.md - AppSpacing.xs);
@@ -19,7 +17,6 @@ class KanbanBoardStyles {
   static bool _isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
 
-  /// Tinta a surface com uma cor (mantém escuro no dark)
   static Color _tintedSurface(
     BuildContext context, {
     required Color tint,
@@ -32,7 +29,6 @@ class KanbanBoardStyles {
     );
   }
 
-  // Header text
   static TextStyle headerTitleStyle(BuildContext context) {
     final theme = Theme.of(context);
     final base = theme.textTheme.headlineSmall ??
@@ -56,7 +52,6 @@ class KanbanBoardStyles {
     );
   }
 
-  // Button
   static ButtonStyle addTaskButtonStyle(BuildContext context) {
     final theme = Theme.of(context);
     return ElevatedButton.styleFrom(
@@ -68,11 +63,9 @@ class KanbanBoardStyles {
     );
   }
 
-  // Desktop column padding
   static const EdgeInsets desktopColumnPadding =
       EdgeInsets.symmetric(horizontal: AppSpacing.md - AppSpacing.xs);
 
-  // Desktop divider
   static double dividerWidth = 1;
   static double dividerThickness = 1;
 
@@ -82,13 +75,11 @@ class KanbanBoardStyles {
   static const double dividerIndent = AppSpacing.md;
   static const double dividerEndIndent = AppSpacing.md;
 
-  // Mobile column
   static const EdgeInsets mobileColumnBottomPadding =
       EdgeInsets.only(bottom: AppSpacing.md);
 
   static const double mobileColumnHeight = 300;
 
-  // Tip box
   static const EdgeInsets tipPadding = EdgeInsets.all(16);
   static const EdgeInsets tipMargin = EdgeInsets.only(top: 8);
 
@@ -128,7 +119,6 @@ class KanbanBoardStyles {
     );
   }
 
-  // Snackbars
   static const Duration snackDuration = Duration(seconds: 1);
 
   static Color savingSnackBg(BuildContext context) =>
@@ -137,7 +127,6 @@ class KanbanBoardStyles {
   static Color deleteSnackBg(BuildContext context) =>
       Theme.of(context).colorScheme.error;
 
-  /// ✅ Colunas com bg responsivo ao tema
   static List<Map<String, dynamic>> columns(BuildContext context) {
     final theme = Theme.of(context);
     final dark = _isDark(context);

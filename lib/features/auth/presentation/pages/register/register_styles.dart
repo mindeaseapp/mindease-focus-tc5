@@ -20,21 +20,17 @@ class RegisterStyles {
   );
 
   static final TextStyle description = AppTypography.body.copyWith(
-    // 🔧 substitui withOpacity (deprecated) sem alterar visual
     color: AppColors.textOnPrimary.withValues(alpha: AppOpacity.strong),
   );
 
   static const double cardPadding = AppSpacing.xl;
 
-  // Dimensions
   static const double mobileBreakpoint = AppSizes.breakpointTablet;
   static const double desktopContentWidth = AppSizes.maxContentWidth;
 
-  // Colors
   static const Color successColor = Colors.green;
   static const Color errorColor = Colors.red;
 
-  // Loading
   static const double loadingIconSize = AppSizes.iconXS + AppSpacing.sm;
   static const double loadingStrokeWidth = AppSpacing.xxs;
   static const Color loadingColor = Colors.white;

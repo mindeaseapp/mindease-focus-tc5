@@ -20,7 +20,6 @@ void main() {
       controller.markWelcomeHandled();
       expect(controller.welcomeHandled, true);
 
-      // Subsequent calls should not change state or notify if same
       bool notified = false;
       controller.addListener(() => notified = true);
       controller.markWelcomeHandled();
@@ -46,15 +45,12 @@ void main() {
       final metrics = controller.getMetrics(tasks);
 
       expect(metrics.length, 3);
-      // Card 1: Pendentes (todo + inProgress)
       expect(metrics[0].title, 'Pendentes');
-      expect(metrics[0].value, '1'); // 1 todo, 0 inProgress
+      expect(metrics[0].value, '1'); 
       
-      // Card 2: Concluídas
       expect(metrics[1].title, 'Concluídas');
-      expect(metrics[1].value, '1'); // 1 done
+      expect(metrics[1].value, '1'); 
 
-      // Card 3: Motivação
       expect(metrics[2].title, 'Motivação');
     });
   });

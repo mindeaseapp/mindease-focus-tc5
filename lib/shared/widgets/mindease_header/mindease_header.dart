@@ -78,7 +78,6 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
             ),
       actions: isMobile
           ? <Widget>[
-              // Sininho com contador — mobile
               Consumer<NotificationController>(
                 builder: (_, nc, __) => _NotificationBell(
                   unreadCount: nc.unreadCount,
@@ -98,8 +97,6 @@ class MindEaseHeader extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
-
-// ── Brand ──────────────────────────────────────────────────────────────────────
 
 class _BrandTitle extends StatelessWidget {
   final Widget? logo;
@@ -142,8 +139,6 @@ class _BrandTitle extends StatelessWidget {
     );
   }
 }
-
-// ── Nav bar desktop ─────────────────────────────────────────────────────────────
 
 class _WebNavBar extends StatelessWidget {
   final MindEaseNavItem current;
@@ -237,8 +232,6 @@ class _WebNavItem extends StatelessWidget {
   }
 }
 
-// ── User Menu (desktop) ─────────────────────────────────────────────────────────
-
 class _UserMenu extends StatelessWidget {
   final String userLabel;
   final ValueChanged<MindEaseNavItem> onNavigate;
@@ -260,7 +253,6 @@ class _UserMenu extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Sininho com contador ao lado do nome (desktop)
           _NotificationBell(
             unreadCount: nc.unreadCount,
             onTap: () => nc.markAllAsRead(),
@@ -308,8 +300,6 @@ class _UserMenu extends StatelessWidget {
     );
   }
 }
-
-// ── Sininho com contador ────────────────────────────────────────────────────────
 
 class _NotificationBell extends StatelessWidget {
   final int unreadCount;

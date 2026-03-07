@@ -27,7 +27,6 @@ class MindEaseDrawer extends StatelessWidget {
       child: SafeArea(
         child: Column(
           children: [
-            // ✅ topo: só logo + botão X (SEM texto MindEase)
             Padding(
               padding: MindEaseDrawerStyles.topPadding,
               child: Row(

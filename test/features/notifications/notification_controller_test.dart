@@ -10,7 +10,6 @@ void main() {
   });
 
   group('NotificationController', () {
-    // ── Estado inicial ────────────────────────────────────────────────────────
     group('estado inicial', () {
       test('lista começa vazia', () {
         expect(controller.notifications, isEmpty);
@@ -21,7 +20,6 @@ void main() {
       });
     });
 
-    // ── addNotification ───────────────────────────────────────────────────────
     group('addNotification', () {
       test('adiciona a notificação na lista', () {
         controller.addNotification(title: 'Foco concluído', body: 'Descansar!');
@@ -56,7 +54,6 @@ void main() {
       });
     });
 
-    // ── markAsRead ────────────────────────────────────────────────────────────
     group('markAsRead', () {
       test('marca notificação como lida', () {
         controller.addNotification(title: 'A', body: '');
@@ -71,13 +68,12 @@ void main() {
       test('não altera outras notificações', () {
         controller.addNotification(title: 'A', body: '');
         controller.addNotification(title: 'B', body: '');
-        // 'A' foi inserida antes → fica em notifications.last
         final idA = controller.notifications.last.id;
 
         controller.markAsRead(idA);
 
         expect(controller.notifications.last.isRead, true);
-        expect(controller.notifications.first.isRead, false); // 'B' intocada
+        expect(controller.notifications.first.isRead, false); 
         expect(controller.unreadCount, 1);
       });
 
@@ -97,7 +93,6 @@ void main() {
       });
     });
 
-    // ── markAllAsRead ─────────────────────────────────────────────────────────
     group('markAllAsRead', () {
       test('marca todas como lidas e unreadCount volta a zero', () {
         controller.addNotification(title: 'A', body: '');
@@ -125,7 +120,6 @@ void main() {
       });
     });
 
-    // ── clearAll ──────────────────────────────────────────────────────────────
     group('clearAll', () {
       test('esvazia a lista completamente', () {
         controller.addNotification(title: 'A', body: '');
@@ -152,7 +146,6 @@ void main() {
       });
     });
 
-    // ── Imutabilidade ──────────────────────────────────────────────────────────
     group('imutabilidade da lista', () {
       test('notifications retorna lista imutável', () {
         controller.addNotification(title: 'A', body: '');

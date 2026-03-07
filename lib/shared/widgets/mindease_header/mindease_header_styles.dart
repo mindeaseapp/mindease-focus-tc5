@@ -87,7 +87,6 @@ class MindEaseHeaderStyles {
     return base.copyWith(color: fg);
   }
 
-  // ===== User menu =====
   static const EdgeInsets userPadding = EdgeInsets.symmetric(
     horizontal: AppSpacing.md,
     vertical: AppSpacing.sm,

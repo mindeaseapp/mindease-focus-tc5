@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/features/auth/presentation/pages/login/login_styles.dart';
 
-/// Card para exibir features do MindEase
 class FeatureCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -16,9 +15,6 @@ class FeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Usamos ConstrainedBox em vez de SizedBox com altura fixa
-    // Isso garante que o card tenha no MÍNIMO o tamanho padrão, 
-    // mas possa crescer se o texto precisar de mais espaço.
     return ConstrainedBox(
       constraints: const BoxConstraints(
         minHeight: FeatureCardStyles.minHeight,
@@ -28,7 +24,7 @@ class FeatureCard extends StatelessWidget {
         decoration: FeatureCardStyles.cardDecoration(context),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min, // Importante para não forçar expansão desnecessária
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: FeatureCardStyles.iconPadding,
@@ -52,7 +48,6 @@ class FeatureCard extends StatelessWidget {
   }
 }
 
-/// Widget que exibe os três feature cards
 class FeatureCardsRow extends StatelessWidget {
   const FeatureCardsRow({super.key});
 
@@ -64,7 +59,7 @@ class FeatureCardsRow extends StatelessWidget {
       spacing: AppSpacing.md,
       runSpacing: AppSpacing.md,
       alignment: WrapAlignment.start,
-      crossAxisAlignment: WrapCrossAlignment.start, // Garante alinhamento no topo
+      crossAxisAlignment: WrapCrossAlignment.start, 
       children: [
         _buildResponsiveBox(
           isMobile,

@@ -133,15 +133,12 @@ void main() {
 
   testWidgets('shows error message if tasks fail to load', (tester) async {
     final taskController = FakeTaskController();
-    // Simular erro se necessário, mas o header já vai exigir o NotificationController
     await tester.pumpWidget(createTasksPage(taskController: taskController));
     await tester.pump();
-    // Verificações de erro...
   });
 
   testWidgets('renders Kanban in Tasks tab', (tester) async {
     await tester.pumpWidget(createTasksPage());
     await tester.pumpAndSettle();
-    // Verificações de Kanban...
   });
 }

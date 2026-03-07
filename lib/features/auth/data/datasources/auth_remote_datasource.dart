@@ -5,7 +5,6 @@ class AuthRemoteDataSource {
 
   AuthRemoteDataSource(this._supabase);
 
-  // Cadastro
   Future<void> signUp({
     required String email, 
     required String password, 
@@ -22,7 +21,6 @@ class AuthRemoteDataSource {
     }
   }
 
-  // --- Login ---
   Future<User> signIn({
     required String email,
     required String password,
@@ -38,19 +36,15 @@ class AuthRemoteDataSource {
     return res.user!;
   }
 
-  // --- Logout ---
   Future<void> signOut() async {
     await _supabase.auth.signOut();
   }
 
-  // --- Usuário Atual ---
   User? getCurrentUser() {
     return _supabase.auth.currentUser;
   }
 
-  // --- NOVO: Atualizar Senha ---
   Future<void> updatePassword(String newPassword) async {
-    // O usuário JÁ estará com sessão válida (o link mágico fez isso ao abrir o app)
     final UserResponse res = await _supabase.auth.updateUser(
       UserAttributes(password: newPassword),
     );
@@ -62,10 +56,8 @@ class AuthRemoteDataSource {
 
   Future<void> resetPasswordForEmail(String email) async {
     try {
-      // O Supabase enviará um email com um link mágico para o usuário
       await _supabase.auth.resetPasswordForEmail(
         email,
-        // redirectTo: 'io.mindease.app://reset-callback/', // Opcional: Configurar se usar Deep Link
       );
     } catch (e) {
       throw Exception('Erro ao solicitar recuperação de senha: ${e.toString()}');

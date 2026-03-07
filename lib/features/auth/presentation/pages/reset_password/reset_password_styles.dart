@@ -26,15 +26,12 @@ class ResetPasswordStyles {
 
   static const double cardPadding = AppSpacing.cardPadding;
 
-  // Dimensions
   static const double mobileBreakpoint = AppSizes.breakpointTablet;
   static const double desktopContentWidth = AppSizes.maxContentWidth;
 
-  // Colors
   static const Color successColor = Colors.green;
   static const Color errorColor = Colors.red;
 
-  // Loading
   static const double loadingIconSize = AppSizes.iconSM;
   static const double loadingStrokeWidth = AppSpacing.xxs;
   static const Color loadingColor = Colors.white;

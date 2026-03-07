@@ -1,10 +1,8 @@
 
 class PomodoroWidgetStyles {
-  // Defaults
   static const int initialSeconds = 1500;
   static const Duration tick = Duration(seconds: 1);
 
-  // UI
   static const String buttonLabel = 'Iniciar Foco';
 
   static String timeLabel(int seconds) {

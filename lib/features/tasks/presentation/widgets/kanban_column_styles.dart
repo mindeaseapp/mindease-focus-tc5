@@ -8,13 +8,11 @@ class KanbanColumnStyles {
   static bool _isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
 
-  // Container hover
   static const double hoverBgAlpha = AppOpacity.disabled;
   static const double hoverBorderWidth = AppSpacing.xxs;
   static BorderRadius columnRadius() => BorderRadius.circular(AppSizes.cardBorderRadiusSm);
   static const EdgeInsets columnPadding = EdgeInsets.all(AppSpacing.sm);
 
-  // Header
   static const EdgeInsets headerPadding = EdgeInsets.all(AppSpacing.md);
   static BorderRadius headerRadius() => BorderRadius.circular(AppSizes.cardBorderRadiusSm);
   static const double headerIconSize = AppSizes.iconSM;
@@ -31,7 +29,6 @@ class KanbanColumnStyles {
     );
   }
 
-  // Counter
   static const EdgeInsets counterPadding =
       EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs);
 
@@ -39,7 +36,6 @@ class KanbanColumnStyles {
 
   static Color counterBg(BuildContext context) {
     final theme = Theme.of(context);
-    // No dark: mantém escuro (surface), no light: branco.
     return _isDark(context) ? theme.colorScheme.surface : Colors.white;
   }
 
@@ -54,10 +50,8 @@ class KanbanColumnStyles {
     );
   }
 
-  // Spacing
   static const SizedBox gap8h = AppSpacing.gapSm;
 
-  // Drag UI
   static const double dragFeedbackElevation = AppSizes.cardElevationLg;
   static const double dragFeedbackWidth = AppSizes.drawerWidth;
   static const double dragFeedbackOpacity = AppOpacity.strong + AppOpacity.soft;
@@ -67,7 +61,6 @@ class KanbanColumnStyles {
 
   static const EdgeInsets taskBottomPadding = EdgeInsets.only(bottom: AppSpacing.md - AppSpacing.xs);
 
-  // Empty state
   static const EdgeInsets emptyPadding = EdgeInsets.all(AppSpacing.lg);
   static BorderRadius emptyRadius() => BorderRadius.circular(AppSizes.cardBorderRadiusSm);
 

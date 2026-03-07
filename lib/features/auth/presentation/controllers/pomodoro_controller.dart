@@ -39,8 +39,6 @@ class PomodoroController extends ChangeNotifier {
     _taskController = taskController;
   }
 
-  // ── Getters ────────────────────────────────────────────────────────────────
-
   PomodoroMode get mode => _mode;
   int get timeLeft => _timeLeft;
   bool get isRunning => _isRunning;
@@ -58,8 +56,6 @@ class PomodoroController extends ChangeNotifier {
     _currentTaskId = taskId;
     notifyListeners();
   }
-
-  // ── Controle do Timer ──────────────────────────────────────────────────────
 
   void toggleTimer() {
     _isRunning = !_isRunning;
@@ -86,7 +82,6 @@ class PomodoroController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Chamado quando o timer chega a zero (pelo _startTimer ou em testes).
   void onTimerComplete() {
     _timer?.cancel();
     _isRunning = false;
@@ -105,12 +100,6 @@ class PomodoroController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ── Alertas de conclusão ───────────────────────────────────────────────────
-
-  /// Lógica de negócio:
-  ///   taskTimeAlert=ON  → sininho in-app
-  ///   pushNotifications=ON → notificação nativa do SO / browser
-  ///   Ambos OFF → silêncio
   void _handleCompletionAlerts() {
     final prefs = _preferencesController;
     if (prefs == null) return;
@@ -122,14 +111,10 @@ class PomodoroController extends ChangeNotifier {
         ? 'Excelente trabalho! Hora de descansar um pouco.'
         : 'Descanso finalizado. Pronto para a próxima sessão?';
 
-    // Sininho in-app
     if (prefs.taskTimeAlert) {
       _notificationController?.addNotification(title: title, body: body);
 
-      // Push do sistema (Android / iOS / Desktop / Web)
-      // Conforme regra: Push só dispara se Alerta de Tempo estiver ON.
       if (prefs.pushNotifications) {
-        // ignore: unawaited_futures
         NotificationService()
             .showNotification(
               id: isFocus ? 1 : 2,
@@ -137,13 +122,11 @@ class PomodoroController extends ChangeNotifier {
               body: body,
             )
             .catchError((_) {
-          // Silencia erros de plataforma não inicializada (ex: testes)
         });
       }
     }
   }
 
-  // ── Internos ───────────────────────────────────────────────────────────────
 
   void _startTimer() {
     _timer?.cancel();

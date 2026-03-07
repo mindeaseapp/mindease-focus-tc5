@@ -9,7 +9,7 @@ import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/co
 
 class MockGetPreferencesUseCase extends Mock implements GetPreferencesUseCase {}
 class MockUpdatePreferencesUseCase extends Mock implements UpdatePreferencesUseCase {}
-class MockUserPreferencesModel extends Mock implements UserPreferencesModel {} // If needed for complex mocking
+class MockUserPreferencesModel extends Mock implements UserPreferencesModel {} 
 
 void main() {
   late ProfilePreferencesController controller;
@@ -74,13 +74,11 @@ void main() {
       expect(controller.breakReminder, false);
       expect(controller.fontSize, FontSizePreference.large);
       expect(controller.spacing, ElementSpacing.high);
-      // ... verify other fields
     });
 
      test('loadPreferences should not update state on error', () async {
       when(() => mockGetPreferencesUseCase('user1')).thenThrow(Exception('Load failed'));
 
-      // Capture initial state
       final initialHideDistractions = controller.hideDistractions;
 
       await controller.loadPreferences('user1');
@@ -88,7 +86,6 @@ void main() {
       expect(controller.hideDistractions, initialHideDistractions);
     });
 
-    // Note: Testing debounced save would require fake clock or waiting, sticking to state change verification logic
     test('setters should update state', () {
        controller.setHideDistractions(true);
        expect(controller.hideDistractions, true);

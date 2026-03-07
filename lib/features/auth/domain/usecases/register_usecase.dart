@@ -10,7 +10,6 @@ class RegisterUseCase {
     required String email,
     required String password,
   }) async {
-    // Aqui poderiam entrar regras de negócio complexas antes de chamar o repo
     await _repository.registerUser(
       name: name,
       email: email,

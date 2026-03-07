@@ -6,7 +6,6 @@ import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class LoginStyles {
-  // Typography
   static final TextStyle title = AppTypography.h2.copyWith(
     fontWeight: AppTypography.bold,
   );
@@ -37,14 +36,12 @@ class LoginStyles {
     fontWeight: AppTypography.semiBold,
   );
 
-  // Spacing & Dimensions
   static const double cardPadding = AppSpacing.xl;
   static const double iconContainerRadius = AppSpacing.radiusSm;
   static const double iconContainerPadding = AppSpacing.sm;
   static const EdgeInsets brandIconPadding = EdgeInsets.all(iconContainerPadding);
   static const BoxConstraints desktopCardConstraints = BoxConstraints(maxWidth: AppSizes.maxContentWidth);
   
-  // Decorations
   static BoxDecoration brandIconDecoration(BuildContext context) {
     return BoxDecoration(
       color: Colors.white.withValues(alpha: AppOpacity.medium),
@@ -54,11 +51,9 @@ class LoginStyles {
 }
 
 class FeatureCardStyles {
-  // Dimensions
   static const double minHeight = AppSizes.featureCardMinHeight;
   static const double responsiveWidth = AppSizes.featureCardWidth;
 
-  // Padding
   static const EdgeInsets contentPadding = EdgeInsets.symmetric(
     horizontal: AppSpacing.md,
     vertical: AppSpacing.lg,
@@ -66,7 +61,6 @@ class FeatureCardStyles {
   
   static const EdgeInsets iconPadding = EdgeInsets.all(AppSpacing.sm);
 
-  // Decorations
   static BoxDecoration cardDecoration(BuildContext context) {
     return BoxDecoration(
       color: AppColors.textOnPrimary.withValues(alpha: AppOpacity.soft),
@@ -85,7 +79,6 @@ class FeatureCardStyles {
     );
   }
 
-  // Typography & Icons
   static final TextStyle title = AppTypography.bodySmall.copyWith(
     color: AppColors.textOnPrimary,
     fontWeight: AppTypography.medium,

@@ -10,7 +10,6 @@ class ProfilePreferencesController extends ChangeNotifier {
   final GetPreferencesUseCase _getPreferencesUseCase;
   final UpdatePreferencesUseCase _updatePreferencesUseCase;
   
-  // Debounce para evitar excesso de writes
   Timer? _debounceTimer;
   String? _currentUserId;
   bool _hasLoadedPreferences = false;
@@ -21,47 +20,29 @@ class ProfilePreferencesController extends ChangeNotifier {
   })  : _getPreferencesUseCase = getPreferencesUseCase,
         _updatePreferencesUseCase = updatePreferencesUseCase;
 
-  // ==========================
-  // Modo Foco
-  // ==========================
   bool hideDistractions = false;
   bool highContrast = false;
   bool darkMode = false;
 
-  // ==========================
-  // Alertas Cognitivos
-  // ==========================
   bool breakReminder = true;
   bool taskTimeAlert = true;
   bool smoothTransition = true;
 
-  // ==========================
-  // Notificações
-  // ==========================
   bool pushNotifications = true;
   bool notificationSounds = false;
 
-  // ==========================
-  // ✅ Complexidade atual
-  // ==========================
   InterfaceComplexity _complexity = InterfaceComplexity.medium;
   InterfaceComplexity get complexity => _complexity;
 
   DisplayMode _displayMode = DisplayMode.balanced;
   DisplayMode get displayMode => _displayMode;
 
-  // ==========================
-  // Font Size e Spacing
-  // ==========================
   FontSizePreference _fontSize = FontSizePreference.normal;
   FontSizePreference get fontSize => _fontSize;
 
   ElementSpacing _spacing = ElementSpacing.medium;
   ElementSpacing get spacing => _spacing;
 
-  // ==========================
-  // Initialization
-  // ==========================
   Future<void> loadPreferences(String userId) async {
     _currentUserId = userId;
 
@@ -125,7 +106,6 @@ class ProfilePreferencesController extends ChangeNotifier {
   }
 
   void _enforceAfterComplexityChange() {
-    // Modo de Exibição
     final allowedModes = _complexity.allowedDisplayModes;
     if (!allowedModes.contains(_displayMode)) {
       _displayMode = _complexity.defaultDisplayMode;
@@ -271,24 +251,18 @@ class ProfilePreferencesController extends ChangeNotifier {
     _scheduleSave();
   }
 
-  // ==========================
-  // Auto-load on Auth Change
-  // ==========================
   void updateDependencies({AuthController? authController}) {
     if (authController == null) return;
     
     final userId = authController.user.id;
     final isAuthenticated = authController.isAuthenticated;
     
-    // Se o usuário está autenticado e ainda não carregamos as preferências
-    // OU se o userId mudou (novo login)
     if (isAuthenticated && userId.isNotEmpty) {
       if (!_hasLoadedPreferences || _currentUserId != userId) {
         _hasLoadedPreferences = true;
         loadPreferences(userId);
       }
     } else {
-      // Usuário fez logout, resetar flag e as variáveis
       _hasLoadedPreferences = false;
       _currentUserId = null;
       _resetToDefaults();

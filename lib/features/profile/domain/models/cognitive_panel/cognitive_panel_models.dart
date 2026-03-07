@@ -1,8 +1,3 @@
-// cognitive_panel_models.dart
-
-// =======================
-// Enums (seus atuais)
-// =======================
 enum InterfaceComplexity {
   simple,
   medium,
@@ -27,9 +22,6 @@ enum FontSizePreference {
   large,
 }
 
-// =======================
-// Labels (seus atuais)
-// =======================
 extension InterfaceComplexityLabel on InterfaceComplexity {
   String get label => switch (this) {
         InterfaceComplexity.simple => 'Simples - Menos opções e distrações',
@@ -62,11 +54,7 @@ extension FontSizePreferenceLabel on FontSizePreference {
       };
 }
 
-// =======================
-// ✅ Regras do Painel Cognitivo (seu atual)
-// =======================
 extension CognitiveRules on InterfaceComplexity {
-  // Modo resumo / balanceado / detalhado
   List<DisplayMode> get allowedDisplayModes => switch (this) {
         InterfaceComplexity.simple => const [DisplayMode.summary],
         InterfaceComplexity.medium =>
@@ -74,21 +62,18 @@ extension CognitiveRules on InterfaceComplexity {
         InterfaceComplexity.advanced => DisplayMode.values,
       };
 
-  // Espaçamento
   List<ElementSpacing> get allowedSpacings => switch (this) {
         InterfaceComplexity.simple =>
           const [ElementSpacing.medium, ElementSpacing.high],
         _ => ElementSpacing.values,
       };
 
-  // Tamanho de fonte
   List<FontSizePreference> get allowedFontSizes => switch (this) {
         InterfaceComplexity.simple =>
           const [FontSizePreference.normal, FontSizePreference.large],
         _ => FontSizePreference.values,
       };
 
-  // Defaults coerentes ao trocar complexidade
   DisplayMode get defaultDisplayMode => switch (this) {
         InterfaceComplexity.simple => DisplayMode.summary,
         InterfaceComplexity.medium => DisplayMode.balanced,
@@ -108,45 +93,31 @@ extension CognitiveRules on InterfaceComplexity {
       };
 }
 
-// =======================
-// ✅ NOVO: Regras dos Cards
-// Alertas Cognitivos + Notificações
-// =======================
-
-// Quais opções existem no card de Alertas Cognitivos
 enum CognitiveAlertSetting {
   breakReminder,
   taskTimeAlert,
   smoothTransition,
 }
 
-// Quais opções existem no card de Notificações
 enum NotificationSetting {
   pushNotifications,
   notificationSounds,
 }
 
 extension PreferencesRules on InterfaceComplexity {
-  // ✅ o que é permitido por complexidade (Alertas Cognitivos)
   Set<CognitiveAlertSetting> get allowedCognitiveAlerts => switch (this) {
-        // Simple: menos opções / menos ruído
         InterfaceComplexity.simple => {
             CognitiveAlertSetting.breakReminder,
             CognitiveAlertSetting.smoothTransition,
           },
-        // Medium/Advanced: tudo liberado
         _ => CognitiveAlertSetting.values.toSet(),
       };
 
-  // ✅ o que é permitido por complexidade (Notificações)
   Set<NotificationSetting> get allowedNotifications => switch (this) {
-        // Simple: só push (som fica travado)
         InterfaceComplexity.simple => {NotificationSetting.pushNotifications},
-        // Medium/Advanced: tudo liberado
         _ => NotificationSetting.values.toSet(),
       };
 
-  // ✅ Defaults (aplicados quando TROCA complexidade, igual seu painel)
   bool defaultCognitiveAlertValue(CognitiveAlertSetting s) => switch (this) {
         InterfaceComplexity.simple => switch (s) {
             CognitiveAlertSetting.breakReminder => true,
@@ -177,10 +148,6 @@ extension PreferencesRules on InterfaceComplexity {
       };
 }
 
-// =======================
-// (Opcional, mas útil)
-// Escalas (para UI)
-// =======================
 extension SpacingScale on ElementSpacing {
   double get scale => switch (this) {
         ElementSpacing.low => 0.90,

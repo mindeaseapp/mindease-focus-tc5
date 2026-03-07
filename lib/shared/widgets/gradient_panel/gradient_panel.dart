@@ -13,7 +13,6 @@ class GradientPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ NÃO quebra se essa tela não tiver o Provider acima dela
     final hideDistractions = context.select<ProfilePreferencesController?, bool>(
       (prefs) => prefs?.hideDistractions ?? false,
     );
@@ -26,7 +25,6 @@ class GradientPanel extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: hideDistractions
           ? BoxDecoration(
-              // ✅ modo foco: reduz estímulo visual (hacka)
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(AppSizes.cardBorderRadius),
               border: Border.all(

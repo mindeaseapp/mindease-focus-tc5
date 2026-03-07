@@ -262,7 +262,6 @@ class _LoginPageState extends State<LoginPage> {
 
             AppSpacing.gapLg,
 
-            // Entrar
             SizedBox(
               width: double.infinity,
               height: AppSizes.buttonHeight,
@@ -285,7 +284,6 @@ class _LoginPageState extends State<LoginPage> {
 
             AppSpacing.gapMd,
 
-            // Cadastro
             Center(
               child: Wrap(
                 alignment: WrapAlignment.center,

@@ -1,30 +1,16 @@
 import 'package:flutter/material.dart';
 
-/// =======================================================
-/// 🔤 Design Tokens — Typography
-/// Completo, acessível e responsivo (Web + Mobile)
-/// Alinhado ao Material Design 3
-/// =======================================================
 class AppTypography {
   AppTypography._();
 
-  // ======================================================
-  // 🔹 Font Family
-  // ======================================================
   static const String fontFamily = 'Inter';
 
-  // ======================================================
-  // 🔹 Font Weights
-  // ======================================================
   static const FontWeight light = FontWeight.w300;
   static const FontWeight regular = FontWeight.w400;
   static const FontWeight medium = FontWeight.w500;
   static const FontWeight semiBold = FontWeight.w600;
   static const FontWeight bold = FontWeight.w700;
 
-  // ======================================================
-  // 🔹 DISPLAY (Hero / Marketing / Landing)
-  // ======================================================
   static const TextStyle displayLarge = TextStyle(
     fontSize: 48,
     fontWeight: bold,
@@ -45,9 +31,6 @@ class AppTypography {
     height: 1.25,
   );
 
-  // ======================================================
-  // 🔹 HEADLINES (Estrutura visual)
-  // ======================================================
   static const TextStyle h1 = TextStyle(
     fontSize: 28,
     fontWeight: semiBold,
@@ -72,9 +55,6 @@ class AppTypography {
     height: 1.4,
   );
 
-  // ======================================================
-  // 🔹 TITLES (Cards, Sections, AppBar)
-  // ======================================================
   static const TextStyle titleLarge = TextStyle(
     fontSize: 18,
     fontWeight: semiBold,
@@ -90,9 +70,6 @@ class AppTypography {
     fontWeight: medium,
   );
 
-  // ======================================================
-  // 🔹 BODY (Leitura contínua)
-  // ======================================================
   static const TextStyle bodyLarge = TextStyle(
     fontSize: 18,
     fontWeight: regular,
@@ -111,9 +88,6 @@ class AppTypography {
     height: 1.5,
   );
 
-  // ======================================================
-  // 🔹 LABELS (Botões, Inputs, Navegação)
-  // ======================================================
   static const TextStyle labelLarge = TextStyle(
     fontSize: 16,
     fontWeight: medium,
@@ -132,9 +106,6 @@ class AppTypography {
     letterSpacing: 0.4,
   );
 
-  // ======================================================
-  // 🔹 NAVIGATION (Menus, Tabs)
-  // ======================================================
   static const TextStyle navItem = TextStyle(
     fontSize: 14,
     fontWeight: medium,
@@ -145,9 +116,6 @@ class AppTypography {
     fontWeight: semiBold,
   );
 
-  // ======================================================
-  // 🔹 SUPPORTING / HELPER
-  // ======================================================
   static const TextStyle helper = TextStyle(
     fontSize: 12,
     fontWeight: regular,
@@ -166,9 +134,6 @@ class AppTypography {
     letterSpacing: 1.2,
   );
 
-  // ======================================================
-  // 🔹 INTERACTION
-  // ======================================================
   static const TextStyle link = TextStyle(
     fontSize: 14,
     fontWeight: medium,
@@ -181,9 +146,6 @@ class AppTypography {
     letterSpacing: 0.5,
   );
 
-  // ======================================================
-  // 🔹 FEEDBACK / STATUS
-  // ======================================================
   static const TextStyle error = TextStyle(
     fontSize: 12,
     fontWeight: medium,
@@ -208,18 +170,12 @@ class AppTypography {
     color: Colors.blue,
   );
 
-  // ======================================================
-  // 🔹 MONOSPACE (logs, código, dados técnicos)
-  // ======================================================
   static const TextStyle mono = TextStyle(
     fontFamily: 'monospace',
     fontSize: 13,
     height: 1.4,
   );
 
-  // ======================================================
-  // 🔹 RESPONSIVE SCALE (WEB x MOBILE)
-  // ======================================================
   static TextStyle responsive(
     BuildContext context,
     TextStyle base,

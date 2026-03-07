@@ -4,12 +4,6 @@ import 'package:mindease_focus/features/notifications/data/services/notification
     if (dart.library.html) 'package:mindease_focus/features/notifications/data/services/notification_service_web.dart'
     as web_impl;
 
-/// Serviço de notificações push do sistema operacional.
-///
-/// - Android / iOS / macOS / Linux / Windows → flutter_local_notifications
-/// - Web → usa dart:html Notification API (importada condicionalmente)
-///
-/// Em ambiente de testes (plugin não inicializado) os erros são silenciados.
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
@@ -18,11 +12,7 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
 
-  /// Web não é suportada pelo flutter_local_notifications.
-  /// Nela usamos a Notification API via JS.
   bool get _isNativeSupported => !kIsWeb;
-
-  // ── Inicialização ─────────────────────────────────────────────────────────
 
   Future<void> init() async {
     if (kIsWeb) {
@@ -42,7 +32,6 @@ class NotificationService {
       macOS: darwin,
     );
 
-    // FLN v18+: initialize() usa o parâmetro nomeado 'settings:'
     await _plugin.initialize(
       settings,
       onDidReceiveNotificationResponse: (details) {
@@ -50,7 +39,6 @@ class NotificationService {
       },
     );
 
-    // Android 13+: solicitar permissão em runtime
     if (defaultTargetPlatform == TargetPlatform.android) {
       final android =
           _plugin.resolvePlatformSpecificImplementation<
@@ -58,8 +46,6 @@ class NotificationService {
       await android?.requestNotificationsPermission();
     }
   }
-
-  // ── Enviar notificação ─────────────────────────────────────────────────────
 
   Future<void> showNotification({
     required int id,
@@ -94,7 +80,6 @@ class NotificationService {
         macOS: darwin,
       );
 
-      // FLN v18: show() usa parâmetros posicionais para id, title, body e notificationDetails
       await _plugin.show(
         id,
         title,
@@ -103,11 +88,8 @@ class NotificationService {
         payload: payload,
       );
     } catch (_) {
-      // Silencia erros de plataforma / plugin não inicializado (ex: testes)
     }
   }
-
-  // ── Web — Notification API ─────────────────────────────────────────────────
 
   void _requestWebPermission() {
     if (kIsWeb) {

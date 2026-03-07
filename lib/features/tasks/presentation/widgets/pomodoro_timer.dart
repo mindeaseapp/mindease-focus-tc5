@@ -32,15 +32,10 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
     _dialogShown = true;
     
 
-    // Actually consistent with build method, we can instantiate it here.
 
     showDialog(
       context: context,
       builder: (context) {
-        // Re-instantiate styles with dialog context to be safe with theme access, 
-        // though typically outer context is fine for theme.
-        // Let's use the styles instance created above if possible, but context is different in builder.
-        // Actually, let's just use PomodoroTimerStyles(context) inside the builder to be safe.
         final dialogStyles = PomodoroTimerStyles(context);
 
         return AlertDialog(

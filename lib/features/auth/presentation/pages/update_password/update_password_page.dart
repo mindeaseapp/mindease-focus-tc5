@@ -6,11 +6,9 @@ import 'package:mindease_focus/features/auth/presentation/controllers/update_pas
 import 'package:mindease_focus/features/auth/domain/validators/password_validator.dart';
 import 'package:mindease_focus/features/auth/domain/validators/confirm_password_validator.dart';
 
-// Tokens e Layout
 import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_sizes.dart';
 
-// Estilos Locais
 import 'package:mindease_focus/features/auth/presentation/pages/update_password/update_password_styles.dart';
 
 class UpdatePasswordPage extends StatefulWidget {
@@ -84,7 +82,6 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                       ),
                       AppSpacing.gapLg,
 
-                      // Nova Senha
                       TextFormField(
                         controller: _passwordController,
                         obscureText: _obscureText,
@@ -101,7 +98,6 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                       ),
                       AppSpacing.gapMd,
 
-                      // Confirmar Senha
                       TextFormField(
                         controller: _confirmPasswordController,
                         obscureText: _obscureText,
@@ -116,7 +112,6 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                       ),
                       AppSpacing.gapLg,
 
-                      // Botão Salvar
                       SizedBox(
                         width: double.infinity,
                         height: AppSizes.buttonHeight,
@@ -146,18 +141,14 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
     );
   }
 
-  // Lógica de UI separada
   Future<void> _submit(BuildContext context, UpdatePasswordController controller) async {
     if (!_formKey.currentState!.validate()) return;
 
-    // Chama o UseCase através do Controller
     final success = await controller.updatePassword(_passwordController.text);
     
-    // Verifica se o widget ainda existe antes de usar o contexto
     if (!context.mounted) return;
 
     if (success) {
-      // Navegação de sucesso
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -167,7 +158,6 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
           actions: [
             TextButton(
               onPressed: () {
-                // Limpa a pilha e manda para o Login
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/login', 
                   (route) => false,
@@ -179,7 +169,6 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         ),
       );
     } else if (controller.errorMessage != null) {
-      // Feedback de erro
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(controller.errorMessage!),

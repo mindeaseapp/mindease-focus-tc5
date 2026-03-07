@@ -6,10 +6,8 @@ import 'package:mindease_focus/shared/tokens/app_spacing.dart';
 import 'package:mindease_focus/shared/tokens/app_typography.dart';
 
 class MindEaseDrawerStyles {
-  // ===== Drawer =====
   static double drawerWidth = AppSizes.drawerWidth;
 
-  // ===== Topo (header do drawer) =====
   static const EdgeInsets topPadding = EdgeInsets.fromLTRB(
     AppSpacing.md,
     AppSpacing.md,
@@ -31,11 +29,9 @@ class MindEaseDrawerStyles {
     return theme.colorScheme.primary;
   }
 
-  // ===== Dividers =====
   static Color dividerColor(BuildContext context) =>
       Theme.of(context).dividerColor;
 
-  // ===== "Sair" =====
   static const EdgeInsets logoutPadding = EdgeInsets.symmetric(
     horizontal: AppSpacing.md,
   );
@@ -47,7 +43,6 @@ class MindEaseDrawerStyles {
     );
   }
 
-  // ===== Itens =====
   static const EdgeInsets itemOuterPadding = EdgeInsets.symmetric(
     horizontal: AppSpacing.sm,
   );

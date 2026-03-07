@@ -40,7 +40,6 @@ class AuthController extends ChangeNotifier {
   }
 
   void _loadCurrentUser() {
-    // O Controller não sabe de onde vem, nem como trata o nome. Só pede.
     _user = _getUserUseCase();
     notifyListeners();
   }
@@ -58,7 +57,7 @@ class AuthController extends ChangeNotifier {
 
   @override
   void dispose() {
-    _authSubscription.cancel(); // Boa prática: cancelar o listener ao destruir
+    _authSubscription.cancel(); 
     super.dispose();
   }
 }

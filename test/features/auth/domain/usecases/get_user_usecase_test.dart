@@ -23,7 +23,6 @@ void main() {
   final tId = 'user-123';
 
   test('should return valid UserEntity when repository returns user with metadata', () {
-    // Arrange
     final mockUser = MockUser();
     when(() => mockUser.id).thenReturn(tId);
     when(() => mockUser.email).thenReturn(tEmail);
@@ -31,10 +30,8 @@ void main() {
     
     when(() => mockAuthRepository.currentUser).thenReturn(mockUser);
 
-    // Act
     final result = useCase();
 
-    // Assert
     expect(result, isA<UserEntity>());
     expect(result.id, tId);
     expect(result.email, tEmail);
@@ -42,7 +39,6 @@ void main() {
   });
 
   test('should return UserEntity with default name when metadata is missing', () {
-    // Arrange
     final mockUser = MockUser();
     when(() => mockUser.id).thenReturn(tId);
     when(() => mockUser.email).thenReturn(tEmail);
@@ -50,21 +46,16 @@ void main() {
 
     when(() => mockAuthRepository.currentUser).thenReturn(mockUser);
 
-    // Act
     final result = useCase();
 
-    // Assert
     expect(result.name, 'Usuário MindEase');
   });
 
   test('should return empty UserEntity when repository returns null', () {
-    // Arrange
     when(() => mockAuthRepository.currentUser).thenReturn(null);
 
-    // Act
     final result = useCase();
 
-    // Assert
     expect(result.id, isEmpty);
     expect(result.name, isEmpty);
     expect(result.email, isEmpty);

@@ -33,7 +33,6 @@ void main() {
     test('timer decrementa quando rodando', () async {
       final initial = controller.timeLeft;
       controller.toggleTimer();
-      // Em testes reais de timer usaríamos fake_async, aqui é apenas estrutural
       expect(controller.isRunning, true);
     });
   });

@@ -19,24 +19,19 @@ void main() {
   final tPassword = 'password123';
 
   test('should call loginUser on repository with correct parameters', () async {
-    // Arrange
     when(() => mockAuthRepository.loginUser(email: tEmail, password: tPassword))
         .thenAnswer((_) async => Future.value());
 
-    // Act
     await useCase(email: tEmail, password: tPassword);
 
-    // Assert
     verify(() => mockAuthRepository.loginUser(email: tEmail, password: tPassword)).called(1);
   });
 
   test('should throw exception when login fails', () async {
-    // Arrange
     const tException = 'Login failed';
     when(() => mockAuthRepository.loginUser(email: tEmail, password: tPassword))
         .thenThrow(Exception(tException));
 
-    // Act & Assert
     expect(
       () => useCase(email: tEmail, password: tPassword),
       throwsA(isA<Exception>()),

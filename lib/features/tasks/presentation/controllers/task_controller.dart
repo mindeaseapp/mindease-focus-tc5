@@ -86,7 +86,6 @@ class TaskController extends ChangeNotifier {
 
     final oldTask = _tasks[index];
 
-    // Optimistic update
     _tasks[index] = oldTask.copyWith(
       title: title,
       description: description,
@@ -165,18 +164,14 @@ class TaskController extends ChangeNotifier {
     _tasks[index] = updatedTask;
     notifyListeners();
 
-    // Lógica de alerta: a cada 4 pomodoros (exemplo)
     if (taskTimeAlertEnabled && updatedTask.pomodoroCount % 4 == 0) {
       final title = '🎯 Meta alcançada!';
       final body =
           'Você completou ${updatedTask.pomodoroCount} pomodoros na tarefa: ${task.title}.';
 
-      // Sininho in-app
       notificationController?.addNotification(title: title, body: body);
 
-      // Push do sistema (conforme regra: Push depende de Alerta ON)
       if (pushNotificationsEnabled) {
-        // ignore: unawaited_futures
         NotificationService()
             .showNotification(
           id: 3,
@@ -184,7 +179,6 @@ class TaskController extends ChangeNotifier {
           body: body,
         )
             .catchError((_) {
-          // Silencia erros de plataforma em testes
         });
       }
     }

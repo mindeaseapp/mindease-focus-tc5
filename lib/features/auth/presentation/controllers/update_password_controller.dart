@@ -15,16 +15,13 @@ class UpdatePasswordController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // 1. Atualiza a senha no Supabase
       await _repository.updateUserPassword(newPassword);
 
-      // 2. LOGOUT FORÇADO (Sua regra de segurança)
-      // Isso garante que a sessão do link mágico seja destruída
       await _repository.logoutUser();
 
       isLoading = false;
       notifyListeners();
-      return true; // Sucesso
+      return true;
     } catch (e) {
       isLoading = false;
       errorMessage = e.toString().replaceAll('Exception: ', '');

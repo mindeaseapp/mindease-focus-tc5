@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 
 class CognitivePanelController extends ChangeNotifier {
-  // ✅ opcional: avisa alguém quando a complexidade mudar (ex.: prefs)
   final ValueChanged<InterfaceComplexity>? onComplexityChanged;
   final ValueChanged<DisplayMode>? onDisplayModeChanged;
   final ValueChanged<FontSizePreference>? onFontSizeChanged;
@@ -52,12 +51,10 @@ class CognitivePanelController extends ChangeNotifier {
     if (_complexity == value) return;
     _complexity = value;
 
-    // ✅ previsível e consistente
     _enforceRulesAfterComplexityChange();
 
     notifyListeners();
 
-    // ✅ avisa (se alguém quiser reagir: prefs/app/analytics etc.)
     onComplexityChanged?.call(_complexity);
   }
 
@@ -97,7 +94,6 @@ class CognitivePanelController extends ChangeNotifier {
     onFontSizeChanged?.call(_fontSize);
   }
 
-  // ✅ NOVO: Sincronização passiva do backend sem disparar gravação
   void syncFromGlobal({
     required InterfaceComplexity globalComplexity,
     required DisplayMode globalDisplayMode,
@@ -125,9 +121,6 @@ class CognitivePanelController extends ChangeNotifier {
 
     if (hasChanges) {
       notifyListeners();
-      // NOTA IMPORTANTE: Nós intencionalmente NÃO chamamos:
-      // onComplexityChanged, onDisplayModeChanged, etc.
-      // porque esses dados já vieram da fonte global de verdade.
     }
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // ✅ ADICIONE ISSO
+import 'package:flutter/services.dart'; 
 
 import 'package:mindease_focus/features/profile/presentation/controllers/profile_preferences_controller.dart';
 import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
@@ -31,9 +31,6 @@ class NotificationsCard extends StatelessWidget {
 
         final canPush = allowed.contains(NotificationSetting.pushNotifications);
 
-        // ✅ Sons só fazem sentido se:
-        // - a complexidade permitir
-        // - push estiver ligado
         final canSoundsByComplexity =
             allowed.contains(NotificationSetting.notificationSounds);
         final canSounds = canSoundsByComplexity && controller.pushNotifications;
@@ -49,9 +46,6 @@ class NotificationsCard extends StatelessWidget {
           icon: Icons.notifications_none_outlined,
           title: 'Notificações',
           children: [
-            // ==========================
-            // Push Notifications
-            // ==========================
             ToggleSettingTile(
               title: 'Notificações Push',
               subtitle: 'Receba notificações no navegador',
@@ -67,7 +61,6 @@ class NotificationsCard extends StatelessWidget {
                       : '🛑 Notificações push desativadas',
                 );
 
-                // opcional: se desligar push, seu controller já desliga sons.
                 if (!v && controller.notificationSounds) {
                   _showSnack(context, '🔇 Sons desativados (push desligado)');
                 }
@@ -76,9 +69,6 @@ class NotificationsCard extends StatelessWidget {
                   'Notificações push. ${controller.pushNotifications ? "Ativado" : "Desativado"}',
             ),
 
-            // ==========================
-            // Notification Sounds
-            // ==========================
             ToggleSettingTile(
               title: 'Sons de Notificação',
               subtitle: 'Toque um som ao receber notificações',
@@ -89,7 +79,6 @@ class NotificationsCard extends StatelessWidget {
                 controller.setNotificationSounds(v);
 
                 if (v) {
-                  // ✅ feedback imediato (sem plugin)
                   SystemSound.play(SystemSoundType.click);
                 }
 

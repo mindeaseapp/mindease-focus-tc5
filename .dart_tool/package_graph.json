@@ -11,7 +11,8 @@
         "flutter_local_notifications",
         "flutter_svg",
         "provider",
-        "supabase_flutter"
+        "supabase_flutter",
+        "web"
       ],
       "devDependencies": [
         "flutter_lints",
@@ -52,6 +53,11 @@
         "test_api",
         "vector_math"
       ]
+    },
+    {
+      "name": "web",
+      "version": "1.1.1",
+      "dependencies": []
     },
     {
       "name": "flutter_local_notifications",
@@ -230,11 +236,6 @@
         "path",
         "xdg_directories"
       ]
-    },
-    {
-      "name": "web",
-      "version": "1.1.1",
-      "dependencies": []
     },
     {
       "name": "logging",

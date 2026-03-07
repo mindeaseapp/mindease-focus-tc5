@@ -79,7 +79,6 @@ class UserPreferencesModel {
     };
   }
   
-  // Factory para valores padrão
   factory UserPreferencesModel.defaults(String userId) {
     return UserPreferencesModel(
       userId: userId,

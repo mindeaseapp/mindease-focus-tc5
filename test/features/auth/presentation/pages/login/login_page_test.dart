@@ -23,7 +23,6 @@ void main() {
     mockAuthController = MockAuthController();
     mockNavigationService = MockNavigationService();
 
-    // Default stubs
     when(() => mockLoginController.isLoading).thenReturn(false);
     when(() => mockLoginController.isFormValid).thenReturn(false);
     when(() => mockLoginController.errorMessage).thenReturn(null);
@@ -54,7 +53,7 @@ void main() {
 
       expect(find.text('MindEase'), findsOneWidget);
       expect(find.text('Bem-vindo de volta'), findsOneWidget);
-      expect(find.byType(TextFormField), findsNWidgets(2)); // Email + Password
+      expect(find.byType(TextFormField), findsNWidgets(2)); 
       expect(find.text('Entrar'), findsOneWidget);
     });
 
@@ -64,19 +63,15 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest());
       
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      expect(find.text('Entrar'), findsNothing); // Replaced by loader
+      expect(find.text('Entrar'), findsNothing); 
     });
 
     testWidgets('calls login on submit when form is valid', (tester) async {
-      // Setup valid form state
       when(() => mockLoginController.isFormValid).thenReturn(true);
       when(() => mockLoginController.login(email: any(named: 'email'), password: any(named: 'password')))
           .thenAnswer((_) async => true);
 
       await tester.pumpWidget(createWidgetUnderTest());
-
-      // Try enabling button by typing (though controller validity mock controls enabled state usually, 
-      // the button onPressed checks controller.isFormValid)
       
       await tester.enterText(find.byType(TextFormField).at(0), 'test@test.com');
       await tester.enterText(find.byType(TextFormField).at(1), 'Password123!');
@@ -114,8 +109,8 @@ void main() {
         await tester.enterText(find.byType(TextFormField).at(0), 'test@test.com');
         await tester.enterText(find.byType(TextFormField).at(1), 'Password123!');
         await tester.tap(find.text('Entrar'));
-        await tester.pump(); // Process tap
-        await tester.pump(); // Process snackbar
+        await tester.pump(); 
+        await tester.pump();
 
         expect(find.text('Login failed'), findsOneWidget);
     });
@@ -123,7 +118,6 @@ void main() {
     testWidgets('navigates to register page', (tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       
-      // Found inside a Wrap/GestureDetector
       await tester.tap(find.text('Cadastre-se'));
       
       verify(() => mockNavigationService.navigateTo('/register')).called(1);

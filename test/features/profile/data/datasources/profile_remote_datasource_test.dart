@@ -7,9 +7,7 @@ import 'package:mindease_focus/features/profile/data/datasources/profile_remote_
 import 'package:mindease_focus/features/profile/domain/models/user_preferences/user_preferences_model.dart';
 import 'package:mindease_focus/features/profile/domain/models/cognitive_panel/cognitive_panel_models.dart';
 
-// Mocks for Supabase query chain
 
-// Fakes to handle "Builder is a Future"
 class FakePostgrestBuilder<T> extends Fake implements PostgrestFilterBuilder<T> {
   final T _result;
   FakePostgrestBuilder(this._result);
@@ -47,22 +45,8 @@ void main() {
     mockSupabaseClient = MockSupabaseClient();
     mockQueryBuilder = MockSupabaseQueryBuilder();
     mockFilterBuilder = MockPostgrestFilterBuilder();
-    mockTransformBuilder = MockPostgrestFilterBuilder(); // Note: mockTransformBuilder is typed as MockPostgrestTransformBuilder but assigned MockPostgrestFilterBuilder? 
-    // Wait, in original code: late MockPostgrestFilterBuilder mockTransformBuilder;
-    // But in the class defs above: class MockPostgrestTransformBuilder ...
-    // Let's stick to the types.
-    // Actually, in the ORIGINAL file, mockTransformBuilder was defined as `late MockPostgrestFilterBuilder mockTransformBuilder;` 
-    // BUT mapped to `MockPostgrestTransformBuilder` class? 
-    // Let's look at the file content I saw in Step 71.
-    // Line 33: late MockPostgrestFilterBuilder mockTransformBuilder;
-    // Line 40: mockTransformBuilder = MockPostgrestFilterBuilder();
-    // BUT usage: when(() => mockFilterBuilder.eq(...)).thenReturn(mockTransformBuilder);
-    // And mockTransformBuilder.maybeSingle().
-    // PostgrestFilterBuilder has maybeSingle? Yes, via inheritance? or mixin?
-    // If I use FakePostgrestTransformBuilder for maybeSingle, it should be fine.
-    
-    // I will use proper assignments here.
-    
+    mockTransformBuilder = MockPostgrestFilterBuilder(); 
+        
     mockTransformBuilder = MockPostgrestFilterBuilder(); 
     dataSource = ProfileRemoteDataSourceImpl(mockSupabaseClient);
   });
@@ -123,7 +107,6 @@ void main() {
       final result = await dataSource.getPreferences(tUserId);
 
       expect(result.userId, tUserId);
-      // Defaults check
       expect(result.breakReminder, true);
     });
 

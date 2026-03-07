@@ -106,7 +106,7 @@ class _EditTaskDialogState extends State<EditTaskDialog> {
                 ),
                 EditTaskDialogStyles.gap16,
                 DropdownButtonFormField<TaskStatus>(
-                  initialValue: _selectedStatus, // ✅ corrige o warning
+                  initialValue: _selectedStatus,
                   decoration: EditTaskDialogStyles.statusDecoration,
                   items: const [
                     DropdownMenuItem(value: TaskStatus.todo, child: Text('A Fazer')),

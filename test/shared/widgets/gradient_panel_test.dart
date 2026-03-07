@@ -11,9 +11,6 @@ class MockProfilePreferencesController extends Mock implements ProfilePreference
 void main() {
   group('GradientPanel', () {
     testWidgets('renders with gradient when hideDistractions is false', (tester) async {
-       // We need to provide the controller, or null.
-       // The code uses context.select<ProfilePreferencesController?, bool>(...).
-       // So we can provide null or a mock.
 
        final mockController = MockProfilePreferencesController();
        when(() => mockController.hideDistractions).thenReturn(false);
@@ -29,7 +26,6 @@ void main() {
         ),
       );
 
-      // Check if decoration has gradient
       final container = tester.widget<AnimatedContainer>(find.byType(AnimatedContainer));
       final decoration = container.decoration as BoxDecoration;
       expect(decoration.gradient, isNotNull);
@@ -51,18 +47,10 @@ void main() {
         ),
       );
 
-      // Check if decoration has color (no gradient)
       final container = tester.widget<AnimatedContainer>(find.byType(AnimatedContainer));
       final decoration = container.decoration as BoxDecoration;
       expect(decoration.gradient, isNull);
-      // In focus mode, it uses theme.colorScheme.surface
-      // We can't easily verify the exact color without knowing theme, but we check if it is set.
-      // Actually decoration.color might be null if using color parameter of container?
-      // No, it uses decoration: BoxDecoration(color: ...).
-      
-      // Wait, look at code: 
-      // decoration: hideDistractions ? BoxDecoration(color: ...) : BoxDecoration(gradient: ...)
-      
+            
       expect(decoration.color, isNotNull);
     });
   });
